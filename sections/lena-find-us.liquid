@@ -1,74 +1,110 @@
 {%- comment -%}
-  Find Us section with dynamic event cards + regular location cards.
+  Find Us section with dynamic event cards from metaobjects + regular location cards.
   Events auto-show only when their date is within the next 14 days.
   Grid adapts: 2 cards = half-width each, 3 = thirds, etc.
 {%- endcomment -%}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
 
 {%- assign now_ts = 'now' | date: '%s' | plus: 0 -%}
 {%- assign fourteen_days = 1209600 -%}
 
 {%- comment -%} First pass: count visible cards to set grid layout {%- endcomment -%}
 {%- assign visible_count = 0 -%}
-{%- for block in section.blocks -%}
-  {%- if block.type == 'event' -%}
-    {%- if block.settings.event_date != blank -%}
-      {%- assign event_ts = block.settings.event_date | date: '%s' | plus: 0 -%}
-      {%- assign diff = event_ts | minus: now_ts -%}
-      {%- if diff >= -86400 and diff <= fourteen_days -%}
-        {%- assign visible_count = visible_count | plus: 1 -%}
-      {%- endif -%}
+
+{%- comment -%} Count metaobject events within 14-day window {%- endcomment -%}
+{%- for event in shop.metaobjects.scheduled_event.values -%}
+  {%- if event.start_date.value != blank -%}
+    {%- assign event_start_ts = event.start_date.value | date: '%s' | plus: 0 -%}
+    {%- assign event_end_ts = event_start_ts -%}
+    {%- if event.end_date.value != blank -%}
+      {%- assign event_end_ts = event.end_date.value | date: '%s' | plus: 0 -%}
     {%- endif -%}
-  {%- elsif block.type == 'location' -%}
+    {%- assign diff_start = event_start_ts | minus: now_ts -%}
+    {%- assign diff_end = event_end_ts | minus: now_ts -%}
+    {%- if diff_start <= fourteen_days and diff_end >= -86400 -%}
+      {%- assign visible_count = visible_count | plus: 1 -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- comment -%} Count regular location blocks {%- endcomment -%}
+{%- for block in section.blocks -%}
+  {%- if block.type == 'location' -%}
     {%- assign visible_count = visible_count | plus: 1 -%}
   {%- endif -%}
 {%- endfor -%}
 
-<div style="text-align:center;margin-bottom:40px">
-  <div class="lena-section-eye"><span class="dm filled sm"></span> {{ section.settings.eyebrow }}</div>
-  <div class="lena-section-h">{{ section.settings.heading }}</div>
-  <div class="lena-section-p">{{ section.settings.subheading }}</div>
-</div>
+<div class="color-{{ section.settings.color_scheme }} gradient section-{{ section.id }}-padding">
+  <div style="text-align:center;margin-bottom:40px">
+    <div class="lena-section-eye"><span class="dm filled sm"></span> {{ section.settings.eyebrow }}</div>
+    <div class="lena-section-h">{{ section.settings.heading }}</div>
+    <div class="lena-section-p">{{ section.settings.subheading }}</div>
+  </div>
 
-<div class="lena-find-grid" data-cards="{{ visible_count }}">
-  {%- comment -%} Render event cards first {%- endcomment -%}
-  {%- for block in section.blocks -%}
-    {%- if block.type == 'event' -%}
-      {%- if block.settings.event_date != blank -%}
-        {%- assign event_ts = block.settings.event_date | date: '%s' | plus: 0 -%}
-        {%- assign diff = event_ts | minus: now_ts -%}
-        {%- if diff >= -86400 and diff <= fourteen_days -%}
-          <div class="lena-find-card event" {{ block.shopify_attributes }}>
-            <div class="fc-i">{{ block.settings.icon }}</div>
-            <h3>{{ block.settings.name }}</h3>
-            <div class="fc-sched">{{ block.settings.event_date | date: '%A, %B %e' }} &middot; {{ block.settings.time_text }}</div>
-            {%- if block.settings.description != blank -%}
-              <p>{{ block.settings.description }}</p>
+  <div class="lena-find-grid" data-cards="{{ visible_count }}">
+    {%- comment -%} Render metaobject event cards first {%- endcomment -%}
+    {%- for event in shop.metaobjects.scheduled_event.values -%}
+      {%- if event.start_date.value != blank -%}
+        {%- assign event_start_ts = event.start_date.value | date: '%s' | plus: 0 -%}
+        {%- assign event_end_ts = event_start_ts -%}
+        {%- if event.end_date.value != blank -%}
+          {%- assign event_end_ts = event.end_date.value | date: '%s' | plus: 0 -%}
+        {%- endif -%}
+        {%- assign diff_start = event_start_ts | minus: now_ts -%}
+        {%- assign diff_end = event_end_ts | minus: now_ts -%}
+        {%- if diff_start <= fourteen_days and diff_end >= -86400 -%}
+          <div class="lena-find-card event">
+            <div class="fc-i">{{ event.icon.value | default: '🎪' }}</div>
+            <h3>{{ event.name.value }}</h3>
+            <div class="fc-sched">
+              {{ event.start_date.value | date: '%A, %B %e' }}
+              {%- if event.end_date.value != blank and event.end_date.value != event.start_date.value -%}
+                &ndash; {{ event.end_date.value | date: '%A, %B %e' }}
+              {%- endif -%}
+              {%- if event.time_text.value != blank %} &middot; {{ event.time_text.value }}{% endif -%}
+            </div>
+            {%- if event.description.value != blank -%}
+              <p>{{ event.description.value }}</p>
             {%- endif -%}
-            {%- if block.settings.directions_url != blank -%}
-              <a class="lena-fc-dir" href="{{ block.settings.directions_url }}">Get directions &rarr;</a>
+            {%- if event.address.value != blank -%}
+              <a class="lena-fc-dir" href="https://www.google.com/maps/search/?api=1&query={{ event.address.value | url_encode }}" target="_blank" rel="noopener">Get directions &rarr;</a>
             {%- endif -%}
           </div>
         {%- endif -%}
       {%- endif -%}
-    {%- endif -%}
-  {%- endfor -%}
+    {%- endfor -%}
 
-  {%- comment -%} Then render regular location cards {%- endcomment -%}
-  {%- for block in section.blocks -%}
-    {%- if block.type == 'location' -%}
-      <div class="lena-find-card{% if block.settings.primary %} primary{% endif %}" {{ block.shopify_attributes }}>
-        <div class="fc-i">{{ block.settings.icon }}</div>
-        <h3>{{ block.settings.name }}</h3>
-        <div class="fc-sched">{{ block.settings.schedule }}</div>
-        {%- if block.settings.description != blank -%}
-          <p>{{ block.settings.description }}</p>
-        {%- endif -%}
-        {%- if block.settings.directions_url != blank -%}
-          <a class="lena-fc-dir" href="{{ block.settings.directions_url }}">Get directions &rarr;</a>
-        {%- endif -%}
-      </div>
-    {%- endif -%}
-  {%- endfor -%}
+    {%- comment -%} Then render regular location cards {%- endcomment -%}
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'location' -%}
+        <div class="lena-find-card{% if block.settings.primary %} primary{% endif %}" {{ block.shopify_attributes }}>
+          <div class="fc-i">{{ block.settings.icon }}</div>
+          <h3>{{ block.settings.name }}</h3>
+          <div class="fc-sched">{{ block.settings.schedule }}</div>
+          {%- if block.settings.description != blank -%}
+            <p>{{ block.settings.description }}</p>
+          {%- endif -%}
+          {%- if block.settings.directions_url != blank -%}
+            <a class="lena-fc-dir" href="{{ block.settings.directions_url }}" target="_blank" rel="noopener">Get directions &rarr;</a>
+          {%- elsif block.settings.address != blank -%}
+            <a class="lena-fc-dir" href="https://www.google.com/maps/search/?api=1&query={{ block.settings.address | url_encode }}" target="_blank" rel="noopener">Get directions &rarr;</a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
 </div>
 
 {% schema %}
@@ -124,45 +160,6 @@
   ],
   "blocks": [
     {
-      "type": "event",
-      "name": "Upcoming Event",
-      "settings": [
-        {
-          "type": "text",
-          "id": "name",
-          "label": "Event name"
-        },
-        {
-          "type": "text",
-          "id": "event_date",
-          "label": "Event date",
-          "info": "Format: YYYY-MM-DD (e.g. 2026-06-14). Only shown when within 14 days."
-        },
-        {
-          "type": "text",
-          "id": "time_text",
-          "label": "Time",
-          "info": "e.g. 10 AM \u2013 5 PM"
-        },
-        {
-          "type": "textarea",
-          "id": "description",
-          "label": "Description"
-        },
-        {
-          "type": "url",
-          "id": "directions_url",
-          "label": "Directions link"
-        },
-        {
-          "type": "text",
-          "id": "icon",
-          "label": "Icon emoji",
-          "default": "\ud83c\udfaa"
-        }
-      ]
-    },
-    {
       "type": "location",
       "name": "Regular Location",
       "settings": [
@@ -175,7 +172,7 @@
           "type": "text",
           "id": "schedule",
           "label": "Schedule text",
-          "info": "e.g. Every Saturday \u00b7 8:30 AM \u2013 1:30 PM"
+          "info": "e.g. Every Saturday · 8:30 AM – 1:30 PM"
         },
         {
           "type": "textarea",
@@ -183,15 +180,22 @@
           "label": "Description"
         },
         {
+          "type": "text",
+          "id": "address",
+          "label": "Address",
+          "info": "Full address — opens Google Maps when clicking 'Get directions'"
+        },
+        {
           "type": "url",
           "id": "directions_url",
-          "label": "Directions link"
+          "label": "Custom directions link",
+          "info": "Optional — overrides the auto-generated Google Maps link"
         },
         {
           "type": "text",
           "id": "icon",
           "label": "Icon emoji",
-          "default": "\ud83d\udccd"
+          "default": "📍"
         },
         {
           "type": "checkbox",
@@ -210,19 +214,21 @@
           "type": "location",
           "settings": {
             "name": "West Palm Beach Antique & Flea Market",
-            "schedule": "Every Saturday \u00b7 8:30 AM \u2013 1:30 PM",
-            "description": "Our flagship weekly market. Come early for first pick \u2014 many pieces sell out before noon.",
-            "icon": "\ud83d\udccd",
+            "schedule": "Every Saturday · 8:30 AM – 1:30 PM",
+            "description": "Our flagship weekly market. Come early for first pick — many pieces sell out before noon.",
+            "address": "400 Clematis St, West Palm Beach, FL 33401",
+            "icon": "📍",
             "primary": true
           }
         },
         {
           "type": "location",
           "settings": {
-            "name": "Kollective \u2014 Fort Lauderdale",
-            "schedule": "Open daily \u00b7 Las Olas Blvd",
+            "name": "Kollective — Fort Lauderdale",
+            "schedule": "Open daily · Las Olas Blvd",
             "description": "Signature velvet purses and select accessories on Las Olas Boulevard.",
-            "icon": "\ud83c\udfea",
+            "address": "Las Olas Blvd, Fort Lauderdale, FL",
+            "icon": "🏪",
             "primary": false
           }
         }

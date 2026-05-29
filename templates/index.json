@@ -237,6 +237,7 @@
             "name": "West Palm Beach Antique & Flea Market",
             "schedule": "Every Saturday \u00b7 8:30 AM \u2013 1:30 PM",
             "description": "Our flagship weekly market. Come early for first pick \u2014 many pieces sell out before noon.",
+            "address": "400 Clematis St, West Palm Beach, FL 33401",
             "icon": "\ud83d\udccd",
             "primary": true
           }
@@ -247,6 +248,7 @@
             "name": "Kollective \u2014 Fort Lauderdale",
             "schedule": "Open daily \u00b7 Las Olas Blvd",
             "description": "Signature velvet purses and select accessories on Las Olas Boulevard.",
+            "address": "Las Olas Blvd, Fort Lauderdale, FL",
             "icon": "\ud83c\udfea",
             "primary": false
           }
