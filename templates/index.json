@@ -16,7 +16,7 @@
           "type": "mosaic_image",
           "settings": {
             "image": "shopify://shop_images/MA-023_1.jpg",
-            "collection": "compact-mirrors-market-collections",
+            "collection": "compact-mirrors",
             "tag_label": "Compact Mirrors",
             "placeholder_text": "Lifestyle photo: Hands embroidering a compact mirror"
           }
