@@ -12,15 +12,6 @@
     "lena-hero": {
       "type": "lena-hero",
       "blocks": {
-        "mosaic-1": {
-          "type": "mosaic_image",
-          "settings": {
-            "image": "shopify://shop_images/MA-023_1.jpg",
-            "collection": "compact-mirrors",
-            "tag_label": "Compact Mirrors",
-            "placeholder_text": "Lifestyle photo: Hands embroidering a compact mirror"
-          }
-        },
         "mosaic-2": {
           "type": "mosaic_image",
           "settings": {
@@ -28,6 +19,15 @@
             "collection": "crochet-dolls",
             "tag_label": "Crochet Figures",
             "placeholder_text": "Crochet figure on styled surface"
+          }
+        },
+        "mosaic-1": {
+          "type": "mosaic_image",
+          "settings": {
+            "image": "shopify://shop_images/MA-023_1.jpg",
+            "collection": "compact-mirrors",
+            "tag_label": "Compact Mirrors",
+            "placeholder_text": "Lifestyle photo: Hands embroidering a compact mirror"
           }
         },
         "mosaic-3": {
@@ -50,8 +50,8 @@
         }
       },
       "block_order": [
-        "mosaic-1",
         "mosaic-2",
+        "mosaic-1",
         "mosaic-3",
         "mosaic-4"
       ],
@@ -78,6 +78,7 @@
     },
     "lena-drop-header": {
       "type": "custom-liquid",
+      "disabled": true,
       "settings": {
         "custom_liquid": "<div class=\"lena-drop-bar\">\n  <div>\n    <div class=\"lena-section-eye\"><span class=\"dm filled sm\"></span> Fresh From Vietnam</div>\n    <div class=\"lena-section-h\">This Week's <strong>Drop</strong></div>\n  </div>\n  <div style=\"display:flex;align-items:center;gap:14px\">\n    <div class=\"lena-countdown-pill\">\n      <span class=\"dm filled sm\" style=\"animation:dm-pulse 1.5s infinite\"></span>\n      <span id=\"lena-countdown\">Next drop soon</span>\n    </div>\n    <a class=\"lena-view-all\" href=\"/collections/this-weeks-drop\">View all &rarr;</a>\n  </div>\n</div>\n<script>\n(function(){\n  function update(){\n    var now=new Date();\n    var fri=new Date(now);\n    fri.setDate(now.getDate()+((5-now.getDay()+7)%7||7));\n    fri.setHours(20,0,0,0);\n    if(now.getDay()===5&&now.getHours()<20){fri.setDate(now.getDate());}\n    var diff=fri-now;\n    if(diff<=0){document.getElementById('lena-countdown').textContent='Drop is LIVE!';return;}\n    var d=Math.floor(diff/864e5),h=Math.floor(diff%864e5/36e5),m=Math.floor(diff%36e5/6e4);\n    document.getElementById('lena-countdown').textContent='Next drop in '+d+'d '+h+'h '+m+'m';\n  }\n  update();setInterval(update,60000);\n})();\n</script>",
         "color_scheme": "scheme-2",
@@ -87,6 +88,7 @@
     },
     "featured-collection": {
       "type": "featured-collection",
+      "disabled": true,
       "settings": {
         "collection": "this-weeks-drop",
         "products_to_show": 8,
