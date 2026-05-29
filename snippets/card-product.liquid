@@ -50,6 +50,7 @@
         {% if extend_height %} card--extend-height{% endif %}
         {% if card_product.featured_media == nil and settings.card_style == 'card' %} ratio{% endif %}
         {% if horizontal_class %} card--horizontal{% endif %}
+        {% unless card_product.available %} card--sold-out{% endunless %}
       "
       style="--ratio-percent: {{ 1 | divided_by: ratio | times: 100 }}%;"
     >
@@ -104,6 +105,21 @@
                 >
               {%- endif -%}
             </div>
+            {%- comment -%} Lena: 1-of-1 badge {%- endcomment -%}
+            <div class="lena-badge-1of1">
+              <span class="dm gold sm"></span> 1 of 1
+            </div>
+            {%- comment -%} Lena: New badge (products created within 7 days) {%- endcomment -%}
+            {%- assign now_timestamp = 'now' | date: '%s' | plus: 0 -%}
+            {%- assign created_timestamp = card_product.created_at | date: '%s' | plus: 0 -%}
+            {%- assign age_seconds = now_timestamp | minus: created_timestamp -%}
+            {%- if age_seconds < 604800 -%}
+              <div class="lena-badge-new">New</div>
+            {%- endif -%}
+            {%- comment -%} Lena: Sold-out overlay {%- endcomment -%}
+            {%- unless card_product.available -%}
+              <div class="lena-sold-overlay"><span>This piece found its home</span></div>
+            {%- endunless -%}
           </div>
         {%- endif -%}
         <div class="card__content">
@@ -145,6 +161,10 @@
       </div>
       <div class="card__content">
         <div class="card__information">
+          {%- comment -%} Lena: Category label {%- endcomment -%}
+          {%- if card_product.type != blank -%}
+            <div class="lena-card-cat">{{ card_product.type }}</div>
+          {%- endif -%}
           <h3
             class="card__heading{% if card_product.featured_media or settings.card_style == 'standard' %} h5{% endif %}"
             {% if card_product.featured_media or settings.card_style == 'card' %}
@@ -205,6 +225,16 @@
             {%- endif -%}
 
             {% render 'price', product: card_product, price_class: '', show_compare_at_price: true %}
+            {%- comment -%} Lena: Scarcity text or Notify button {%- endcomment -%}
+            {%- if card_product.available -%}
+              <div class="lena-scarcity">
+                <span class="dm filled sm"></span> Only piece in existence
+              </div>
+            {%- else -%}
+              <button class="lena-notify-btn" type="button">
+                <span class="dm sm"></span> Notify me of similar drops
+              </button>
+            {%- endif -%}
             {%- if card_product.quantity_price_breaks_configured? -%}
               {% if card_product.variants_count == 1 and quick_add == 'bulk' %}
                 {% liquid
@@ -548,22 +578,9 @@
             </div>
           {% endif %}
         {% endif %}
-        <div class="card__badge {{ settings.badge_position }}">
-          {%- if card_product.available == false -%}
-            <span
-              id="Badge-{{ section_id }}-{{ card_product.id }}"
-              class="badge badge--bottom-left color-{{ settings.sold_out_badge_color_scheme }}"
-            >
-              {{- 'products.product.sold_out' | t -}}
-            </span>
-          {%- elsif card_product.compare_at_price > card_product.price and card_product.available -%}
-            <span
-              id="Badge-{{ section_id }}-{{ card_product.id }}"
-              class="badge badge--bottom-left color-{{ settings.sale_badge_color_scheme }}"
-            >
-              {{- 'products.product.on_sale' | t -}}
-            </span>
-          {%- endif -%}
+        {%- comment -%} Lena: Default badges hidden — using custom 1-of-1 and New badges instead {%- endcomment -%}
+        <div class="card__badge {{ settings.badge_position }}" style="display:none">
+          <span id="Badge-{{ section_id }}-{{ card_product.id }}"></span>
         </div>
       </div>
     </div>
