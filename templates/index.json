@@ -57,7 +57,7 @@
       ],
       "settings": {
         "eyebrow": "Hand-Embroidered in Vietnam",
-        "heading": "<p>One piece at a time.<br><strong>Yours alone.</strong></p>",
+        "heading": "<p>One piece at a time.<br/><strong>Yours alone.</strong></p>",
         "subheading": "Every mirror, hat, and crochet figure in our gallery is a one-of-one — hand-embroidered by artisans in Vietnam. New drops every Friday.",
         "button_label_1": "Shop This Week's Drop",
         "button_link_1": "/collections/this-weeks-drop",
@@ -202,8 +202,9 @@
         "cat-hats",
         "cat-purses"
       ],
+      "name": "The Gallery",
       "settings": {
-        "title": "Shop by <strong>Category</strong>",
+        "title": "The Gallery",
         "heading_size": "h1",
         "image_ratio": "portrait",
         "columns_desktop": 4,
