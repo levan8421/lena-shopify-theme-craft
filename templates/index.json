@@ -235,29 +235,34 @@
           "type": "location",
           "settings": {
             "name": "West Palm Beach Antique & Flea Market",
-            "schedule": "Every Saturday \u00b7 8:30 AM \u2013 1:30 PM",
-            "description": "Our flagship weekly market. Come early for first pick \u2014 many pieces sell out before noon.",
-            "address": "400 Clematis St, West Palm Beach, FL 33401",
-            "icon": "\ud83d\udccd",
+            "schedule": "Every Saturday · 8:30 AM – 1:30 PM",
+            "description": "Our flagship weekly market. Come early for first pick — many pieces sell out before noon.",
+            "address": "300 Clematis St, West Palm Beach, FL 33401",
+            "directions_url": "",
+            "icon": "📍",
             "primary": true
           }
         },
         "loc-ftl": {
           "type": "location",
           "settings": {
-            "name": "Kollective \u2014 Fort Lauderdale",
-            "schedule": "Open daily \u00b7 Las Olas Blvd",
+            "name": "Kollective — Fort Lauderdale",
+            "schedule": "Open daily · Las Olas Blvd",
             "description": "Signature velvet purses and select accessories on Las Olas Boulevard.",
-            "address": "Las Olas Blvd, Fort Lauderdale, FL",
-            "icon": "\ud83c\udfea",
+            "address": "811 E Las Olas Blvd, Fort Lauderdale, FL 33301",
+            "directions_url": "",
+            "icon": "🏪",
             "primary": false
           }
         }
       },
-      "block_order": ["loc-wpb", "loc-ftl"],
+      "block_order": [
+        "loc-wpb",
+        "loc-ftl"
+      ],
       "settings": {
         "eyebrow": "In Person",
-        "heading": "Find Us This <strong>Weekend<\/strong>",
+        "heading": "Find Us This <strong>Weekend</strong>",
         "subheading": "See and feel the craftsmanship in person.",
         "color_scheme": "scheme-2",
         "padding_top": 52,
