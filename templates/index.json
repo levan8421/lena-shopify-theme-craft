@@ -174,7 +174,7 @@
         "cat-crochet": {
           "type": "featured_collection",
           "settings": {
-            "collection": "crochet-figures"
+            "collection": "crochet-dolls"
           }
         },
         "cat-mirrors": {
@@ -186,7 +186,7 @@
         "cat-hats": {
           "type": "featured_collection",
           "settings": {
-            "collection": "hats-headbands"
+            "collection": "ribbon-embroidery-hats"
           }
         },
         "cat-purses": {
