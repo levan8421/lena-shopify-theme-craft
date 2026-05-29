@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "lena-hero": {
@@ -6,7 +15,8 @@
         "mosaic-1": {
           "type": "mosaic_image",
           "settings": {
-            "collection": "compact-mirrors",
+            "image": "shopify://shop_images/MA-023_1.jpg",
+            "collection": "compact-mirrors-market-collections",
             "tag_label": "Compact Mirrors",
             "placeholder_text": "Lifestyle photo: Hands embroidering a compact mirror"
           }
@@ -14,7 +24,8 @@
         "mosaic-2": {
           "type": "mosaic_image",
           "settings": {
-            "collection": "crochet-figures",
+            "image": "shopify://shop_images/CRD-026_1.jpg",
+            "collection": "crochet-dolls",
             "tag_label": "Crochet Figures",
             "placeholder_text": "Crochet figure on styled surface"
           }
@@ -22,6 +33,7 @@
         "mosaic-3": {
           "type": "mosaic_image",
           "settings": {
+            "image": "shopify://shop_images/H-063_1.jpg",
             "collection": "hats-headbands",
             "tag_label": "Hats",
             "placeholder_text": "Ribbon-embroidery hat worn / in-context"
@@ -30,17 +42,23 @@
         "mosaic-4": {
           "type": "mosaic_image",
           "settings": {
-            "collection": "this-weeks-drop",
-            "tag_label": "New This Week",
-            "placeholder_text": "Flat-lay of this week's drop curated set"
+            "image": "shopify://shop_images/image_545ff223-9be4-4282-808b-2c88ffa63917.png",
+            "collection": "signature-purses",
+            "tag_label": "Signature Purses",
+            "placeholder_text": ""
           }
         }
       },
-      "block_order": ["mosaic-1", "mosaic-2", "mosaic-3", "mosaic-4"],
+      "block_order": [
+        "mosaic-1",
+        "mosaic-2",
+        "mosaic-3",
+        "mosaic-4"
+      ],
       "settings": {
         "eyebrow": "Hand-Embroidered in Vietnam",
-        "heading": "<p>One piece at a time.<br><strong>Yours alone.<\/strong><\/p>",
-        "subheading": "Every mirror, hat, and crochet figure in our gallery is a one-of-one \u2014 hand-embroidered by artisans in Vietnam. New drops every Friday.",
+        "heading": "<p>One piece at a time.<br><strong>Yours alone.</strong></p>",
+        "subheading": "Every mirror, hat, and crochet figure in our gallery is a one-of-one — hand-embroidered by artisans in Vietnam. New drops every Friday.",
         "button_label_1": "Shop This Week's Drop",
         "button_link_1": "/collections/this-weeks-drop",
         "button_label_2": "Join the Drop List",
@@ -109,14 +127,14 @@
         "heading": {
           "type": "heading",
           "settings": {
-            "heading": "From a small village in <strong>Vietnam<\/strong> to your hands",
+            "heading": "From a small village in <strong>Vietnam</strong> to your hands",
             "heading_size": "h1"
           }
         },
         "text": {
           "type": "text",
           "settings": {
-            "text": "<p>Every piece at Lena Handicrafts begins with a story \u2014 of artisans in Vietnam who transform thread, fabric, and yarn into one-of-a-kind works of art using techniques passed down through generations.</p><p>What started as a personal trip back to Vietnam became a mission: to bring the beauty of Vietnamese ribbon embroidery, hand-crocheting, and traditional weaving to the world \u2014 one unique piece at a time.</p>",
+            "text": "<p>Every piece at Lena Handicrafts begins with a story — of artisans in Vietnam who transform thread, fabric, and yarn into one-of-a-kind works of art using techniques passed down through generations.</p><p>What started as a personal trip back to Vietnam became a mission: to bring the beauty of Vietnamese ribbon embroidery, hand-crocheting, and traditional weaving to the world — one unique piece at a time.</p>",
             "text_style": "body"
           }
         },
@@ -125,13 +143,17 @@
           "settings": {
             "button_label": "Read the full story",
             "button_link": "/pages/our-story",
-            "outline_button": true
+            "button_style_secondary": false
           }
         }
       },
-      "block_order": ["caption", "heading", "text", "button"],
+      "block_order": [
+        "caption",
+        "heading",
+        "text",
+        "button"
+      ],
       "settings": {
-        "image": null,
         "height": "large",
         "desktop_image_width": "medium",
         "layout": "image_first",
@@ -140,8 +162,8 @@
         "desktop_content_position": "middle",
         "desktop_content_alignment": "left",
         "mobile_content_alignment": "left",
+        "section_color_scheme": "",
         "color_scheme": "scheme-1",
-        "image_color_scheme": "scheme-1",
         "padding_top": 52,
         "padding_bottom": 52
       }
@@ -174,9 +196,14 @@
           }
         }
       },
-      "block_order": ["cat-crochet", "cat-mirrors", "cat-hats", "cat-purses"],
+      "block_order": [
+        "cat-crochet",
+        "cat-mirrors",
+        "cat-hats",
+        "cat-purses"
+      ],
       "settings": {
-        "title": "Shop by <strong>Category<\/strong>",
+        "title": "Shop by <strong>Category</strong>",
         "heading_size": "h1",
         "image_ratio": "portrait",
         "columns_desktop": 4,
