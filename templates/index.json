@@ -229,9 +229,34 @@
       }
     },
     "lena-find-us": {
-      "type": "custom-liquid",
+      "type": "lena-find-us",
+      "blocks": {
+        "loc-wpb": {
+          "type": "location",
+          "settings": {
+            "name": "West Palm Beach Antique & Flea Market",
+            "schedule": "Every Saturday \u00b7 8:30 AM \u2013 1:30 PM",
+            "description": "Our flagship weekly market. Come early for first pick \u2014 many pieces sell out before noon.",
+            "icon": "\ud83d\udccd",
+            "primary": true
+          }
+        },
+        "loc-ftl": {
+          "type": "location",
+          "settings": {
+            "name": "Kollective \u2014 Fort Lauderdale",
+            "schedule": "Open daily \u00b7 Las Olas Blvd",
+            "description": "Signature velvet purses and select accessories on Las Olas Boulevard.",
+            "icon": "\ud83c\udfea",
+            "primary": false
+          }
+        }
+      },
+      "block_order": ["loc-wpb", "loc-ftl"],
       "settings": {
-        "custom_liquid": "<div style=\"text-align:center;margin-bottom:40px\">\n  <div class=\"lena-section-eye\"><span class=\"dm filled sm\"></span> In Person</div>\n  <div class=\"lena-section-h\">Find Us This <strong>Weekend</strong></div>\n  <div class=\"lena-section-p\">See and feel the craftsmanship in person.</div>\n</div>\n<div class=\"lena-find-grid\">\n  <div class=\"lena-find-card primary\">\n    <div class=\"fc-i\">&#128205;</div>\n    <h3>West Palm Beach Antique &amp; Flea Market</h3>\n    <div class=\"fc-sched\">Every Saturday &middot; 8:30 AM &ndash; 1:30 PM</div>\n    <p>Our flagship weekly market. Come early for first pick &mdash; many pieces sell out before noon.</p>\n    <a class=\"lena-fc-dir\" href=\"#\">Get directions &rarr;</a>\n  </div>\n  <div class=\"lena-find-card\">\n    <div class=\"fc-i\">&#127978;</div>\n    <h3>Kollective &mdash; Fort Lauderdale</h3>\n    <div class=\"fc-sched\">Open daily &middot; Las Olas Blvd</div>\n    <p>Signature velvet purses and select accessories on Las Olas Boulevard.</p>\n    <a class=\"lena-fc-dir\" href=\"#\">Get directions &rarr;</a>\n  </div>\n</div>",
+        "eyebrow": "In Person",
+        "heading": "Find Us This <strong>Weekend<\/strong>",
+        "subheading": "See and feel the craftsmanship in person.",
         "color_scheme": "scheme-2",
         "padding_top": 52,
         "padding_bottom": 52

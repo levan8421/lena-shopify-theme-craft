@@ -294,10 +294,11 @@
 }
 .lena-hero h1 {
   font-size: clamp(36px, 5vw, 58px);
-  font-weight: 200;
+  font-weight: 300;
   line-height: 1.15;
   letter-spacing: 0.03em;
   margin-bottom: 22px;
+  color: rgba(255,255,255,0.85);
 }
 .lena-hero h1 strong {
   font-weight: 600;
@@ -309,7 +310,7 @@
 .lena-hero-sub {
   font-size: 16px;
   line-height: 1.8;
-  color: rgba(255,255,255,0.45);
+  color: rgba(255,255,255,0.65);
   margin-bottom: 36px;
   max-width: 400px;
   font-weight: 300;
@@ -572,7 +573,7 @@
 .lena-spot-text p {
   font-size: 14px;
   line-height: 1.8;
-  color: rgba(255,255,255,0.45);
+  color: rgba(255,255,255,0.65);
   font-weight: 300;
 }
 
@@ -607,6 +608,10 @@
   letter-spacing: 0.02em;
   margin-bottom: 5px;
   line-height: 1.3;
+  color: var(--lena-ink);
+}
+.lena-find-card.primary h3 {
+  color: rgba(255,255,255,0.9);
 }
 .lena-find-card .fc-sched {
   font-size: 11px;
@@ -623,7 +628,7 @@
   line-height: 1.65;
   font-weight: 300;
 }
-.lena-find-card.primary p { color: rgba(255,255,255,0.4); }
+.lena-find-card.primary p { color: rgba(255,255,255,0.65); }
 .lena-fc-dir {
   display: inline-flex;
   align-items: center;
@@ -637,6 +642,38 @@
   text-decoration: none;
 }
 .lena-find-card.primary .lena-fc-dir { color: var(--lena-amber-soft); }
+
+/* Event card (special pop-up / market event) */
+.lena-find-card.event {
+  background: var(--lena-navy);
+  color: white;
+  border-color: var(--lena-amber-soft);
+  border-width: 2px;
+  position: relative;
+}
+.lena-find-card.event::before {
+  content: "UPCOMING EVENT";
+  position: absolute;
+  top: -10px;
+  left: 20px;
+  background: var(--lena-amber);
+  color: var(--lena-navy);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  padding: 3px 10px;
+  border-radius: 3px;
+}
+.lena-find-card.event h3 { color: rgba(255,255,255,0.9); }
+.lena-find-card.event .fc-sched { color: var(--lena-amber-soft); }
+.lena-find-card.event p { color: rgba(255,255,255,0.65); }
+.lena-find-card.event .lena-fc-dir { color: var(--lena-amber-soft); }
+
+/* Dynamic grid: expand cards when fewer than 3 */
+.lena-find-grid[data-cards="1"] { grid-template-columns: 1fr; max-width: 600px; margin-left: auto; margin-right: auto; }
+.lena-find-grid[data-cards="2"] { grid-template-columns: 1fr 1fr; }
+.lena-find-grid[data-cards="3"] { grid-template-columns: repeat(3, 1fr); }
+.lena-find-grid[data-cards="4"] { grid-template-columns: repeat(2, 1fr); }
 
 /* --- Newsletter Overrides --- */
 .newsletter-form__field-wrapper .field__input {

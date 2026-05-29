@@ -1,0 +1,233 @@
+{%- comment -%}
+  Find Us section with dynamic event cards + regular location cards.
+  Events auto-show only when their date is within the next 14 days.
+  Grid adapts: 2 cards = half-width each, 3 = thirds, etc.
+{%- endcomment -%}
+
+{%- assign now_ts = 'now' | date: '%s' | plus: 0 -%}
+{%- assign fourteen_days = 1209600 -%}
+
+{%- comment -%} First pass: count visible cards to set grid layout {%- endcomment -%}
+{%- assign visible_count = 0 -%}
+{%- for block in section.blocks -%}
+  {%- if block.type == 'event' -%}
+    {%- if block.settings.event_date != blank -%}
+      {%- assign event_ts = block.settings.event_date | date: '%s' | plus: 0 -%}
+      {%- assign diff = event_ts | minus: now_ts -%}
+      {%- if diff >= -86400 and diff <= fourteen_days -%}
+        {%- assign visible_count = visible_count | plus: 1 -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- elsif block.type == 'location' -%}
+    {%- assign visible_count = visible_count | plus: 1 -%}
+  {%- endif -%}
+{%- endfor -%}
+
+<div style="text-align:center;margin-bottom:40px">
+  <div class="lena-section-eye"><span class="dm filled sm"></span> {{ section.settings.eyebrow }}</div>
+  <div class="lena-section-h">{{ section.settings.heading }}</div>
+  <div class="lena-section-p">{{ section.settings.subheading }}</div>
+</div>
+
+<div class="lena-find-grid" data-cards="{{ visible_count }}">
+  {%- comment -%} Render event cards first {%- endcomment -%}
+  {%- for block in section.blocks -%}
+    {%- if block.type == 'event' -%}
+      {%- if block.settings.event_date != blank -%}
+        {%- assign event_ts = block.settings.event_date | date: '%s' | plus: 0 -%}
+        {%- assign diff = event_ts | minus: now_ts -%}
+        {%- if diff >= -86400 and diff <= fourteen_days -%}
+          <div class="lena-find-card event" {{ block.shopify_attributes }}>
+            <div class="fc-i">{{ block.settings.icon }}</div>
+            <h3>{{ block.settings.name }}</h3>
+            <div class="fc-sched">{{ block.settings.event_date | date: '%A, %B %e' }} &middot; {{ block.settings.time_text }}</div>
+            {%- if block.settings.description != blank -%}
+              <p>{{ block.settings.description }}</p>
+            {%- endif -%}
+            {%- if block.settings.directions_url != blank -%}
+              <a class="lena-fc-dir" href="{{ block.settings.directions_url }}">Get directions &rarr;</a>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
+
+  {%- comment -%} Then render regular location cards {%- endcomment -%}
+  {%- for block in section.blocks -%}
+    {%- if block.type == 'location' -%}
+      <div class="lena-find-card{% if block.settings.primary %} primary{% endif %}" {{ block.shopify_attributes }}>
+        <div class="fc-i">{{ block.settings.icon }}</div>
+        <h3>{{ block.settings.name }}</h3>
+        <div class="fc-sched">{{ block.settings.schedule }}</div>
+        {%- if block.settings.description != blank -%}
+          <p>{{ block.settings.description }}</p>
+        {%- endif -%}
+        {%- if block.settings.directions_url != blank -%}
+          <a class="lena-fc-dir" href="{{ block.settings.directions_url }}">Get directions &rarr;</a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  {%- endfor -%}
+</div>
+
+{% schema %}
+{
+  "name": "Find Us",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "In Person"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Find Us This <strong>Weekend</strong>"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "See and feel the craftsmanship in person."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-2"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 52
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 52
+    }
+  ],
+  "blocks": [
+    {
+      "type": "event",
+      "name": "Upcoming Event",
+      "settings": [
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Event name"
+        },
+        {
+          "type": "text",
+          "id": "event_date",
+          "label": "Event date",
+          "info": "Format: YYYY-MM-DD (e.g. 2026-06-14). Only shown when within 14 days."
+        },
+        {
+          "type": "text",
+          "id": "time_text",
+          "label": "Time",
+          "info": "e.g. 10 AM \u2013 5 PM"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description"
+        },
+        {
+          "type": "url",
+          "id": "directions_url",
+          "label": "Directions link"
+        },
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Icon emoji",
+          "default": "\ud83c\udfaa"
+        }
+      ]
+    },
+    {
+      "type": "location",
+      "name": "Regular Location",
+      "settings": [
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Location name"
+        },
+        {
+          "type": "text",
+          "id": "schedule",
+          "label": "Schedule text",
+          "info": "e.g. Every Saturday \u00b7 8:30 AM \u2013 1:30 PM"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description"
+        },
+        {
+          "type": "url",
+          "id": "directions_url",
+          "label": "Directions link"
+        },
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Icon emoji",
+          "default": "\ud83d\udccd"
+        },
+        {
+          "type": "checkbox",
+          "id": "primary",
+          "label": "Primary card (navy background)",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Find Us",
+      "blocks": [
+        {
+          "type": "location",
+          "settings": {
+            "name": "West Palm Beach Antique & Flea Market",
+            "schedule": "Every Saturday \u00b7 8:30 AM \u2013 1:30 PM",
+            "description": "Our flagship weekly market. Come early for first pick \u2014 many pieces sell out before noon.",
+            "icon": "\ud83d\udccd",
+            "primary": true
+          }
+        },
+        {
+          "type": "location",
+          "settings": {
+            "name": "Kollective \u2014 Fort Lauderdale",
+            "schedule": "Open daily \u00b7 Las Olas Blvd",
+            "description": "Signature velvet purses and select accessories on Las Olas Boulevard.",
+            "icon": "\ud83c\udfea",
+            "primary": false
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
