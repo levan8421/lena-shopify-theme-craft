@@ -1,0 +1,169 @@
+<section class="lena-hero">
+  <div class="lena-hero-bg"></div>
+  <div class="lena-hero-content">
+    <div class="lena-hero-text">
+      <div class="lena-hero-eyebrow"><span class="dm gold sm"></span> {{ section.settings.eyebrow }}</div>
+      <h1>{{ section.settings.heading }}</h1>
+      <p class="lena-hero-sub">{{ section.settings.subheading }}</p>
+      <div class="lena-hero-ctas">
+        {% if section.settings.button_label_1 != blank %}
+          <a class="lena-btn lena-btn-primary" href="{{ section.settings.button_link_1 }}">{{ section.settings.button_label_1 }}</a>
+        {% endif %}
+        {% if section.settings.button_label_2 != blank %}
+          <a class="lena-btn lena-btn-ghost" href="{{ section.settings.button_link_2 }}">{{ section.settings.button_label_2 }}</a>
+        {% endif %}
+      </div>
+    </div>
+    <div class="lena-hero-mosaic">
+      {%- for block in section.blocks -%}
+        <div class="lena-hero-img" {{ block.shopify_attributes }}>
+          {%- if block.settings.image != blank -%}
+            <a {% if block.settings.collection != blank %}href="{{ block.settings.collection.url }}"{% endif %} style="display:block;width:100%;height:100%">
+              {{ block.settings.image | image_url: width: 800 | image_tag: loading: 'lazy', style: 'width:100%;height:100%;object-fit:cover;' }}
+            </a>
+          {%- else -%}
+            <div class="lena-hero-img-ph">{{ block.settings.placeholder_text }}</div>
+          {%- endif -%}
+          {% if block.settings.tag_label != blank %}
+            <span class="img-tag">{{ block.settings.tag_label }}</span>
+          {% endif %}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Lena Hero",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "Hand-Embroidered in Vietnam"
+    },
+    {
+      "type": "richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "<p>One piece at a time.<br><strong>Yours alone.</strong></p>"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Every mirror, hat, and crochet figure in our gallery is a one-of-one \u2014 hand-embroidered by artisans in Vietnam. New drops every Friday."
+    },
+    {
+      "type": "text",
+      "id": "button_label_1",
+      "label": "Primary button label",
+      "default": "Shop This Week's Drop"
+    },
+    {
+      "type": "url",
+      "id": "button_link_1",
+      "label": "Primary button link"
+    },
+    {
+      "type": "text",
+      "id": "button_label_2",
+      "label": "Secondary button label",
+      "default": "Join the Drop List"
+    },
+    {
+      "type": "url",
+      "id": "button_link_2",
+      "label": "Secondary button link"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "type": "mosaic_image",
+      "name": "Mosaic image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Link to collection"
+        },
+        {
+          "type": "text",
+          "id": "tag_label",
+          "label": "Tag label",
+          "info": "Small label shown at bottom of image"
+        },
+        {
+          "type": "text",
+          "id": "placeholder_text",
+          "label": "Placeholder text",
+          "info": "Shown when no image is assigned"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Lena Hero",
+      "blocks": [
+        {
+          "type": "mosaic_image",
+          "settings": {
+            "tag_label": "Compact Mirrors",
+            "placeholder_text": "Lifestyle photo: Hands embroidering a compact mirror"
+          }
+        },
+        {
+          "type": "mosaic_image",
+          "settings": {
+            "tag_label": "Crochet Figures",
+            "placeholder_text": "Crochet figure on styled surface"
+          }
+        },
+        {
+          "type": "mosaic_image",
+          "settings": {
+            "tag_label": "Hats",
+            "placeholder_text": "Ribbon-embroidery hat worn / in-context"
+          }
+        },
+        {
+          "type": "mosaic_image",
+          "settings": {
+            "tag_label": "New This Week",
+            "placeholder_text": "Flat-lay of this week's drop curated set"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

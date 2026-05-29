@@ -1,10 +1,50 @@
 {
   "sections": {
     "lena-hero": {
-      "type": "custom-liquid",
+      "type": "lena-hero",
+      "blocks": {
+        "mosaic-1": {
+          "type": "mosaic_image",
+          "settings": {
+            "collection": "compact-mirrors",
+            "tag_label": "Compact Mirrors",
+            "placeholder_text": "Lifestyle photo: Hands embroidering a compact mirror"
+          }
+        },
+        "mosaic-2": {
+          "type": "mosaic_image",
+          "settings": {
+            "collection": "crochet-figures",
+            "tag_label": "Crochet Figures",
+            "placeholder_text": "Crochet figure on styled surface"
+          }
+        },
+        "mosaic-3": {
+          "type": "mosaic_image",
+          "settings": {
+            "collection": "hats-headbands",
+            "tag_label": "Hats",
+            "placeholder_text": "Ribbon-embroidery hat worn / in-context"
+          }
+        },
+        "mosaic-4": {
+          "type": "mosaic_image",
+          "settings": {
+            "collection": "this-weeks-drop",
+            "tag_label": "New This Week",
+            "placeholder_text": "Flat-lay of this week's drop curated set"
+          }
+        }
+      },
+      "block_order": ["mosaic-1", "mosaic-2", "mosaic-3", "mosaic-4"],
       "settings": {
-        "custom_liquid": "<section class=\"lena-hero\">\n  <div class=\"lena-hero-bg\"></div>\n  <div class=\"lena-hero-content\">\n    <div class=\"lena-hero-text\">\n      <div class=\"lena-hero-eyebrow\"><span class=\"dm gold sm\"></span> Hand-Embroidered in Vietnam</div>\n      <h1>One piece at a time.<br><strong>Yours alone.</strong></h1>\n      <p class=\"lena-hero-sub\">Every mirror, hat, and crochet figure in our gallery is a one-of-one &mdash; hand-embroidered by artisans in Vietnam. New drops every Friday.</p>\n      <div class=\"lena-hero-ctas\">\n        <a class=\"lena-btn lena-btn-primary\" href=\"/collections/this-weeks-drop\">Shop This Week's Drop</a>\n        <a class=\"lena-btn lena-btn-ghost\" href=\"#newsletter\">Join the Drop List</a>\n      </div>\n    </div>\n    <div class=\"lena-hero-mosaic\">\n      <div class=\"lena-hero-img\"><div class=\"lena-hero-img-ph\">Lifestyle photo:<br>Hands embroidering<br>a compact mirror</div><span class=\"img-tag\">Compact Mirrors</span></div>\n      <div class=\"lena-hero-img\"><div class=\"lena-hero-img-ph\">Crochet figure<br>on styled surface</div><span class=\"img-tag\">Crochet Figures</span></div>\n      <div class=\"lena-hero-img\"><div class=\"lena-hero-img-ph\">Ribbon-embroidery hat<br>worn / in-context</div><span class=\"img-tag\">Hats</span></div>\n      <div class=\"lena-hero-img\"><div class=\"lena-hero-img-ph\">Flat-lay of<br>this week's drop<br>curated set</div><span class=\"img-tag\">New This Week</span></div>\n    </div>\n  </div>\n</section>",
-        "color_scheme": "scheme-4",
+        "eyebrow": "Hand-Embroidered in Vietnam",
+        "heading": "<p>One piece at a time.<br><strong>Yours alone.<\/strong><\/p>",
+        "subheading": "Every mirror, hat, and crochet figure in our gallery is a one-of-one \u2014 hand-embroidered by artisans in Vietnam. New drops every Friday.",
+        "button_label_1": "Shop This Week's Drop",
+        "button_link_1": "/collections/this-weeks-drop",
+        "button_label_2": "Join the Drop List",
+        "button_link_2": "#newsletter",
         "padding_top": 0,
         "padding_bottom": 0
       }

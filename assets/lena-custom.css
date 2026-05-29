@@ -390,6 +390,16 @@
   grid-row: 2/4;
   background: linear-gradient(160deg, rgba(26,138,92,0.08), rgba(46,143,217,0.1));
 }
+.lena-hero-img a {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.lena-hero-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 .lena-hero-img .img-tag {
   position: absolute;
   bottom: 8px;
