@@ -156,6 +156,7 @@
         "button"
       ],
       "settings": {
+        "image": "shopify://shop_images/20260228_084654.jpg",
         "height": "large",
         "desktop_image_width": "medium",
         "layout": "image_first",
