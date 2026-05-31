@@ -197,13 +197,20 @@
           "settings": {
             "collection": "signature-purses"
           }
+        },
+        "featured_collection_ngFJAL": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "phone-travel-wallet"
+          }
         }
       },
       "block_order": [
         "cat-crochet",
         "cat-mirrors",
         "cat-hats",
-        "cat-purses"
+        "cat-purses",
+        "featured_collection_ngFJAL"
       ],
       "name": "The Gallery",
       "settings": {
