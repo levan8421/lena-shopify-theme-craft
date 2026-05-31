@@ -233,6 +233,7 @@
       "blocks": {
         "loc-wpb": {
           "type": "location",
+          "disabled": true,
           "settings": {
             "name": "West Palm Beach Antique & Flea Market",
             "schedule": "Every Saturday · 8:30 AM – 1:30 PM",
@@ -262,7 +263,7 @@
       ],
       "settings": {
         "eyebrow": "In Person",
-        "heading": "Find Us This <strong>Weekend</strong>",
+        "heading": "Find Us",
         "subheading": "See and feel the craftsmanship in person.",
         "color_scheme": "scheme-2",
         "padding_top": 52,
