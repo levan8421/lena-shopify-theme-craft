@@ -40,20 +40,21 @@ shopify theme push --unpublished  # Push as unpublished theme for review
 - `sections/header-group.json` — Announcement bar + header config
 - `sections/footer-group.json` — Newsletter + footer config
 - `snippets/card-product.liquid` — Product card (customized with 1-of-1 badges, scarcity text)
-- `assets/lena-custom.css` — All visual overrides (~300 lines)
+- `sections/lena-spotlight.liquid` — Artisan Spotlight (blog-powered, auto-rotating)
+- `assets/lena-custom.css` — All visual overrides (~350 lines)
 - `layout/theme.liquid` — Main layout (loads lena-custom.css)
 - `docs/` — Research report, implementation plan, HTML prototypes
 
 ## Homepage Section Stack
 
 1. **Hero** (`custom-liquid`) — Navy bg, mosaic grid, "One piece at a time. Yours alone."
-2. **Trust Strip** (`custom-liquid`) — 3 diamond icons: Handmade / 1 of 1 / Women-Owned
+2. **Trust Strip** (`custom-liquid`) — Scrolling diamond marquee: Handmade / 1 of 1 / Women-Owned
 3. **Drop Header** (`custom-liquid`) — "This Week's Drop" heading + countdown pill
 4. **Product Grid** (`featured-collection`) — Points to "this-weeks-drop" collection
 5. **Our Story** (`image-with-text`) — Founder photo + brand narrative
 6. **Shop by Category** (`collection-list`) — 4 collection tiles
-7. **Artisan Spotlight** (`custom-liquid`) — Navy bg, diamond photo frame
-8. **Find Us** (`custom-liquid`) — 3 location cards (WPB, Delray, Fort Lauderdale)
+7. **Artisan Spotlight** (`lena-spotlight`) — Blog-powered, auto-rotates every 1/2/4 weeks, diamond photo frame, "Read their story" link. Requires "Artisan Stories" blog.
+8. **Find Us** (`lena-find-us`) — Location cards + metaobject events
 
 ## Product Card Customizations
 

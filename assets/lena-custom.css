@@ -420,61 +420,56 @@ a.lena-notify-btn {
   border-radius: 4px;
 }
 
-/* --- Trust Strip --- */
+/* --- Trust Strip (Marquee) --- */
 .lena-trust-strip {
   background: white;
   border-bottom: 1px solid var(--lena-silver);
-  padding: 32px 24px;
+  overflow: hidden;
+  padding: 14px 0;
 }
-.lena-trust-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
-  gap: clamp(36px, 8vw, 96px);
-  flex-wrap: wrap;
+.lena-marquee {
+  position: relative;
+  width: 100%;
 }
-.lena-trust-item {
+.lena-marquee-track {
   display: flex;
+  white-space: nowrap;
+  animation: lena-marquee 28s linear infinite;
+  width: max-content;
+}
+.lena-marquee-item {
+  display: inline-flex;
   align-items: center;
-  gap: 18px;
-}
-.lena-trust-icon {
-  width: 46px;
-  height: 46px;
-  transform: rotate(45deg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  border-radius: 3px;
-}
-.lena-trust-icon > span {
-  transform: rotate(-45deg);
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.lena-trust-icon svg {
-  width: 22px;
-  height: 22px;
-}
-.lena-trust-icon.ti-hand { background: var(--lena-blue-ice); border: 1px solid rgba(46,143,217,0.18); }
-.lena-trust-icon.ti-one { background: var(--lena-success-pale); border: 1px solid rgba(26,138,92,0.18); }
-.lena-trust-icon.ti-own { background: var(--lena-amber-pale); border: 1px solid rgba(212,148,58,0.18); }
-.lena-trust-text strong {
-  display: block;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--lena-ink);
-  letter-spacing: 0.02em;
-}
-.lena-trust-text span {
+  gap: 8px;
+  padding: 0 32px;
   font-size: 13px;
   color: var(--lena-slate);
-  margin-top: 2px;
-  display: block;
+  letter-spacing: 0.03em;
+}
+.lena-marquee-item strong {
+  font-weight: 600;
+  color: var(--lena-ink);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 12px;
+}
+.lena-marquee-item .dm {
+  margin-right: 4px;
+}
+@keyframes lena-marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.lena-marquee:hover .lena-marquee-track {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lena-marquee-track {
+    animation: none;
+    justify-content: center;
+    flex-wrap: wrap;
+    white-space: normal;
+  }
 }
 
 /* --- Drop Section Header --- */
@@ -556,6 +551,9 @@ a.lena-notify-btn {
   margin-top: -33px;
   margin-left: -33px;
   transform: rotate(-45deg);
+  overflow: hidden;
+}
+.lena-spot-placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -587,6 +585,37 @@ a.lena-notify-btn {
   line-height: 1.8;
   color: rgba(255,255,255,0.65);
   font-weight: 300;
+}
+.lena-spot-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 16px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--lena-amber-soft);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.lena-spot-link:hover {
+  color: var(--lena-amber);
+  text-decoration: underline;
+}
+.lena-spot-nav {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 28px;
+}
+.lena-spot-nav .dm {
+  opacity: 0.3;
+  transition: opacity 0.2s;
+}
+.lena-spot-nav .dm.active {
+  opacity: 1;
+  background: var(--lena-amber-soft);
+  border-color: var(--lena-amber-soft);
 }
 
 /* --- Find Us Cards --- */

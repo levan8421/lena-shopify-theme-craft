@@ -1,0 +1,173 @@
+{%- comment -%}
+  Artisan Spotlight — auto-rotates featured artisan every 2 weeks.
+  Pulls from a blog (e.g. "Artisan Stories") selected in section settings.
+  Each blog post = one artisan profile (featured image + content).
+{%- endcomment -%}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+{%- assign blog = section.settings.blog -%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient section-{{ section.id }}-padding">
+  <div style="text-align:center;margin-bottom:40px">
+    <div class="lena-section-eye" style="color:var(--lena-amber-soft)">
+      <span class="dm gold sm"></span> {{ section.settings.eyebrow }}
+    </div>
+    <div class="lena-section-h" style="color:white">{{ section.settings.heading }}</div>
+  </div>
+
+  {%- if blog != blank and blog.articles_count > 0 -%}
+    {%- comment -%} Rotation: pick one article based on configurable period {%- endcomment -%}
+    {%- assign rotation_weeks = section.settings.rotation_weeks | default: 2 -%}
+    {%- assign week_num = 'now' | date: '%W' | plus: 0 -%}
+    {%- assign period = week_num | divided_by: rotation_weeks -%}
+    {%- assign article_index = period | modulo: blog.articles_count -%}
+
+    {%- assign current_index = 0 -%}
+    {%- for article in blog.articles -%}
+      {%- if current_index == article_index -%}
+        {%- assign featured = article -%}
+        {%- break -%}
+      {%- endif -%}
+      {%- assign current_index = current_index | plus: 1 -%}
+    {%- endfor -%}
+
+    {%- if featured -%}
+      <div class="lena-spot-card">
+        <div class="lena-spot-photo">
+          {%- if featured.image -%}
+            <div class="lena-spot-photo-inner">
+              <img
+                src="{{ featured.image | image_url: width: 460 }}"
+                alt="{{ featured.image.alt | default: featured.title | escape }}"
+                width="230"
+                height="230"
+                loading="lazy"
+                style="width:100%;height:100%;object-fit:cover;"
+              >
+            </div>
+          {%- else -%}
+            <div class="lena-spot-photo-inner lena-spot-placeholder">
+              Artisan<br>portrait<br>photo
+            </div>
+          {%- endif -%}
+        </div>
+        <div class="lena-spot-text">
+          <div class="lena-spot-role">
+            Featured Artisan &middot; {{ 'now' | date: '%B %Y' }}
+          </div>
+          <h3>{{ featured.title }}</h3>
+          <p>{{ featured.excerpt_or_content | strip_html | truncate: 280 }}</p>
+          <a href="{{ featured.url }}" class="lena-spot-link">
+            Read their story <span aria-hidden="true">&rarr;</span>
+          </a>
+        </div>
+      </div>
+
+      {%- if blog.articles_count > 1 -%}
+        <div class="lena-spot-nav">
+          {%- for article in blog.articles limit: 6 -%}
+            <span class="dm filled sm{% if article.id == featured.id %} active{% endif %}"></span>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    {%- endif -%}
+
+  {%- else -%}
+    {%- comment -%} Placeholder when no blog is configured {%- endcomment -%}
+    <div class="lena-spot-card">
+      <div class="lena-spot-photo">
+        <div class="lena-spot-photo-inner lena-spot-placeholder">
+          Artisan<br>portrait<br>photo
+        </div>
+      </div>
+      <div class="lena-spot-text">
+        <div class="lena-spot-role">Featured Artisan &middot; {{ 'now' | date: '%B %Y' }}</div>
+        <h3>The Crochet Artist</h3>
+        <p>Select an "Artisan Stories" blog in the section settings to feature real artisan profiles here.</p>
+      </div>
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Artisan Spotlight",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Artisan Spotlight"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Meet the <strong>Makers</strong>"
+    },
+    {
+      "type": "blog",
+      "id": "blog",
+      "label": "Artisan blog",
+      "info": "Each blog post = one artisan. Auto-rotates based on the frequency below."
+    },
+    {
+      "type": "select",
+      "id": "rotation_weeks",
+      "label": "Rotation frequency",
+      "default": "2",
+      "options": [
+        { "value": "1", "label": "Every week" },
+        { "value": "2", "label": "Every 2 weeks" },
+        { "value": "4", "label": "Every month" }
+      ],
+      "info": "How often the featured artisan changes"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-4"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 52
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 52
+    }
+  ],
+  "presets": [
+    {
+      "name": "Artisan Spotlight"
+    }
+  ]
+}
+{% endschema %}
