@@ -98,7 +98,19 @@
                 </p>
               {%- when 'title' -%}
                 <div class="product__title" {{ block.shopify_attributes }}>
+                  {%- comment -%} Lena: Category eyebrow {%- endcomment -%}
+                  {%- if product.type != blank -%}
+                    <div class="lena-pdp-cat">{{ product.type }}</div>
+                  {%- endif -%}
                   <h1>{{ product.title | escape }}</h1>
+                  {%- comment -%} Lena: 1-of-1 badge {%- endcomment -%}
+                  <div class="lena-pdp-badge-1of1">
+                    <span class="dm gold sm"></span> 1 of 1
+                  </div>
+                  {%- comment -%} Lena: Artisan attribution {%- endcomment -%}
+                  <p class="lena-pdp-artisan">
+                    <span class="dm filled sm"></span> Handmade by artisans in Vietnam
+                  </p>
                   <a href="{{ product.url }}" class="product__title">
                     <h2 class="h1">
                       {{ product.title | escape }}
@@ -114,6 +126,17 @@
                     price_class: 'price--large'
                   -%}
                 </div>
+                {%- comment -%} Lena: Scarcity or sold-out messaging {%- endcomment -%}
+                {%- if product.available -%}
+                  <div class="lena-pdp-scarcity">
+                    <span class="dm filled sm" style="background:var(--lena-success);border-color:var(--lena-success)"></span>
+                    Only piece in existence
+                  </div>
+                {%- else -%}
+                  <div class="lena-pdp-sold-msg">
+                    <span class="dm gold sm"></span> This piece found its home
+                  </div>
+                {%- endif -%}
                 {%- if product.quantity_price_breaks_configured? -%}
                   <div class="volume-pricing-note" id="Volume-Note-{{ section.id }}">
                     <span>{{ 'products.product.volume_pricing.note' | t }}</span>

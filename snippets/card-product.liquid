@@ -231,9 +231,9 @@
                 <span class="dm filled sm"></span> Only piece in existence
               </div>
             {%- else -%}
-              <button class="lena-notify-btn" type="button">
+              <a class="lena-notify-btn" href="#newsletter">
                 <span class="dm sm"></span> Notify me of similar drops
-              </button>
+              </a>
             {%- endif -%}
             {%- if card_product.quantity_price_breaks_configured? -%}
               {% if card_product.variants_count == 1 and quick_add == 'bulk' %}

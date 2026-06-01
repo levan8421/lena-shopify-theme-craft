@@ -154,11 +154,12 @@
 .lena-sold-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(14, 34, 64, 0.35);
-  backdrop-filter: blur(2px);
+  background: rgba(14, 34, 64, 0.25);
+  backdrop-filter: blur(1px);
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
+  padding-bottom: 16px;
   z-index: 3;
 }
 .lena-sold-overlay span {
@@ -193,6 +194,9 @@
 .lena-notify-btn:hover {
   background: var(--lena-blue-bright);
   color: white;
+}
+a.lena-notify-btn {
+  text-decoration: none;
 }
 
 /* Sold-out card text styling */
@@ -420,49 +424,57 @@
 .lena-trust-strip {
   background: white;
   border-bottom: 1px solid var(--lena-silver);
-  padding: 20px 24px;
+  padding: 32px 24px;
 }
 .lena-trust-inner {
   max-width: 1200px;
   margin: 0 auto;
   display: flex;
   justify-content: center;
-  gap: clamp(20px, 5vw, 56px);
+  gap: clamp(36px, 8vw, 96px);
   flex-wrap: wrap;
 }
 .lena-trust-item {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 18px;
 }
 .lena-trust-icon {
-  width: 36px;
-  height: 36px;
+  width: 46px;
+  height: 46px;
   transform: rotate(45deg);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  border-radius: 2px;
+  border-radius: 3px;
 }
 .lena-trust-icon > span {
   transform: rotate(-45deg);
-  font-size: 15px;
   line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.lena-trust-icon.ti-hand { background: var(--lena-blue-ice); border: 1px solid rgba(46,143,217,0.15); }
-.lena-trust-icon.ti-one { background: var(--lena-success-pale); border: 1px solid rgba(26,138,92,0.15); }
-.lena-trust-icon.ti-own { background: var(--lena-amber-pale); border: 1px solid rgba(212,148,58,0.15); }
+.lena-trust-icon svg {
+  width: 22px;
+  height: 22px;
+}
+.lena-trust-icon.ti-hand { background: var(--lena-blue-ice); border: 1px solid rgba(46,143,217,0.18); }
+.lena-trust-icon.ti-one { background: var(--lena-success-pale); border: 1px solid rgba(26,138,92,0.18); }
+.lena-trust-icon.ti-own { background: var(--lena-amber-pale); border: 1px solid rgba(212,148,58,0.18); }
 .lena-trust-text strong {
   display: block;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--lena-ink);
   letter-spacing: 0.02em;
 }
 .lena-trust-text span {
-  font-size: 11.5px;
+  font-size: 13px;
   color: var(--lena-slate);
+  margin-top: 2px;
+  display: block;
 }
 
 /* --- Drop Section Header --- */
@@ -685,6 +697,103 @@
   border-color: var(--lena-blue-bright);
 }
 
+/* --- Product Detail Page (PDP) Lena Branding --- */
+.product__title > a.product__title { display: none; }
+
+.lena-pdp-cat {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--lena-blue-bright);
+  margin-bottom: 8px;
+}
+
+.lena-pdp-badge-1of1 {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--lena-navy);
+  color: var(--lena-amber-soft);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 4px;
+  margin-top: 10px;
+  margin-bottom: 4px;
+}
+
+.lena-pdp-artisan {
+  font-size: 13px;
+  color: var(--lena-slate);
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lena-pdp-scarcity {
+  font-size: 13px;
+  color: var(--lena-success);
+  font-weight: 500;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lena-pdp-sold-msg {
+  font-size: 13px;
+  color: var(--lena-slate);
+  font-weight: 500;
+  font-style: italic;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* --- Collection Banner Lena Branding --- */
+.lena-collection-banner {
+  text-align: left;
+}
+.lena-collection-banner .collection-hero__description {
+  max-width: 100%;
+}
+
+.lena-collection-banner .lena-section-eye {
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.lena-collection-title {
+  letter-spacing: 0.06em;
+}
+
+.lena-collection-count {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 14px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--lena-slate);
+  background: var(--lena-blue-tint);
+  padding: 5px 14px;
+  border-radius: 20px;
+}
+.lena-collection-count .dm {
+  background: var(--lena-blue-bright);
+  border-color: var(--lena-blue-bright);
+}
+
 /* --- Responsive --- */
 @media (max-width: 900px) {
   .lena-hero-content { grid-template-columns: 1fr; gap: 36px; }
@@ -698,4 +807,6 @@
   .lena-hero-ctas { flex-direction: column; align-items: stretch; }
   .lena-hero-ctas .lena-btn { justify-content: center; }
   .lena-find-grid { grid-template-columns: 1fr; }
+  .lena-pdp-badge-1of1 { font-size: 9px; padding: 5px 11px; }
+  .lena-pdp-artisan { font-size: 12px; }
 }

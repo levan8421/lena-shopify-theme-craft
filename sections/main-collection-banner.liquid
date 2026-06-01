@@ -11,8 +11,12 @@
 
 <div class="collection-hero{% if section.settings.show_collection_image and collection.image %} collection-hero--with-image{% endif %} color-{{ section.settings.color_scheme }} gradient">
   <div class="collection-hero__inner page-width {% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}">
-    <div class="collection-hero__text-wrapper">
-      <h1 class="collection-hero__title">
+    <div class="collection-hero__text-wrapper lena-collection-banner">
+      {%- comment -%} Lena: Diamond eyebrow {%- endcomment -%}
+      <div class="lena-section-eye">
+        <span class="dm filled sm"></span> Collection <span class="dm filled sm"></span>
+      </div>
+      <h1 class="collection-hero__title lena-collection-title">
         <span class="visually-hidden">{{ 'sections.collection_template.title' | t }}: </span>
         {{- collection.title | escape -}}
       </h1>
@@ -20,6 +24,13 @@
       {%- if section.settings.show_collection_description -%}
         <div class="collection-hero__description rte">{{ collection.description }}</div>
       {%- endif -%}
+
+      {%- comment -%} Lena: Product count pill {%- endcomment -%}
+      <div class="lena-collection-count">
+        <span class="dm filled sm"></span>
+        {{ collection.products_count }}
+        {%- if collection.products_count == 1 -%} piece{%- else -%} pieces{%- endif -%}
+      </div>
     </div>
 
     {%- if section.settings.show_collection_image and collection.image -%}
