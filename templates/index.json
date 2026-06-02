@@ -90,7 +90,7 @@
     "featured-collection": {
       "type": "featured-collection",
       "settings": {
-        "collection": "this-weeks-drop",
+        "collection": "new-arrivals",
         "products_to_show": 4,
         "title": "",
         "heading_size": "h2",
