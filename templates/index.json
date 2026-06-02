@@ -87,10 +87,9 @@
     },
     "featured-collection": {
       "type": "featured-collection",
-      "disabled": true,
       "settings": {
-        "collection": "new-arrivals",
-        "products_to_show": 8,
+        "collection": "this-weeks-drop",
+        "products_to_show": 4,
         "title": "",
         "heading_size": "h2",
         "description": "",
@@ -99,7 +98,7 @@
         "columns_desktop": 4,
         "enable_desktop_slider": false,
         "full_width": false,
-        "show_view_all": false,
+        "show_view_all": true,
         "view_all_style": "solid",
         "color_scheme": "scheme-2",
         "image_ratio": "portrait",
