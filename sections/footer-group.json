@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "name": "t:sections.footer.name",
   "type": "footer",
@@ -15,7 +24,7 @@
         "paragraph": {
           "type": "paragraph",
           "settings": {
-            "text": "<p>Get the email 24 hours before each Friday drop. Pieces sell out fast \u2014 the list is how regulars shop first.</p>"
+            "text": "<p>Get the email 24 hours before each Friday drop. Pieces sell out fast — the list is how regulars shop first.</p>"
           }
         },
         "email_form": {
@@ -23,7 +32,11 @@
           "settings": {}
         }
       },
-      "block_order": ["heading", "paragraph", "email_form"],
+      "block_order": [
+        "heading",
+        "paragraph",
+        "email_form"
+      ],
       "settings": {
         "color_scheme": "scheme-5",
         "full_width": true,
@@ -33,6 +46,19 @@
     },
     "footer": {
       "type": "footer",
+      "blocks": {
+        "link_list_QJhpGH": {
+          "type": "link_list",
+          "settings": {
+            "heading": "Quick links",
+            "menu": "footer"
+          }
+        }
+      },
+      "block_order": [
+        "link_list_QJhpGH"
+      ],
+      "disabled": true,
       "settings": {
         "color_scheme": "scheme-4",
         "newsletter_enable": false,
@@ -49,5 +75,8 @@
       }
     }
   },
-  "order": ["newsletter", "footer"]
+  "order": [
+    "newsletter",
+    "footer"
+  ]
 }
