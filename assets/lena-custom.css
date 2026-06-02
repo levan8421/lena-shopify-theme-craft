@@ -25,6 +25,11 @@
   --lena-success-pale: #E6F7EF;
 }
 
+/* --- Smooth scroll for anchor links (menu → homepage sections) --- */
+html {
+  scroll-behavior: smooth;
+}
+
 /* --- Diamond Motif System --- */
 .dm {
   display: inline-block;

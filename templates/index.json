@@ -87,6 +87,34 @@
         "padding_bottom": 0
       }
     },
+    "featured-collection": {
+      "type": "featured-collection",
+      "settings": {
+        "collection": "this-weeks-drop",
+        "products_to_show": 4,
+        "title": "",
+        "heading_size": "h2",
+        "description": "",
+        "show_description": false,
+        "description_style": "body",
+        "columns_desktop": 4,
+        "enable_desktop_slider": false,
+        "full_width": false,
+        "show_view_all": true,
+        "view_all_style": "solid",
+        "color_scheme": "scheme-2",
+        "image_ratio": "portrait",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "none",
+        "columns_mobile": "2",
+        "swipe_on_mobile": false,
+        "padding_top": 20,
+        "padding_bottom": 52
+      }
+    },
     "our-story": {
       "type": "image-with-text",
       "blocks": {
@@ -257,6 +285,7 @@
     "lena-hero",
     "lena-trust",
     "lena-drop-header",
+    "featured-collection",
     "our-story",
     "shop-by-category",
     "lena-spotlight",
