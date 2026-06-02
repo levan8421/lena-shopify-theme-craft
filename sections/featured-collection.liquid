@@ -64,6 +64,7 @@
   endif
 -%}
 
+{%- if section.settings.collection != blank and section.settings.collection.products.size > 0 -%}
 <div
   class="color-{{ section.settings.color_scheme }} isolate gradient"
 >
@@ -213,6 +214,7 @@
     {%- endif -%}
   </div>
 </div>
+{%- endif -%}
 
 {% schema %}
 {
