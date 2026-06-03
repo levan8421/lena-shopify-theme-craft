@@ -81,7 +81,7 @@
       "type": "lena-drop-header",
       "settings": {
         "eyebrow": "Fresh From Vietnam",
-        "collection_handle": "new-arrivals",
+        "collection_handle": "this-weeks-drop",
         "color_scheme": "scheme-2",
         "padding_top": 52,
         "padding_bottom": 0
