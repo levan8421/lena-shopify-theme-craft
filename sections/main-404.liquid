@@ -1,23 +1,174 @@
 <style type="text/css">
-  .template-404 .title + * {
-    margin-top: 1rem;
+  .lena-404 {
+    padding: 6rem 2rem 4rem;
+    text-align: center;
+    max-width: 640px;
+    margin: 0 auto;
   }
 
-  @media screen and (min-width: 750px) {
-    .template-404 .title + * {
-      margin-top: 2rem;
+  .lena-404__diamond {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 2rem;
+  }
+
+  .lena-404__code {
+    font-size: 5rem;
+    font-weight: 700;
+    color: var(--lena-blue-bright, #2E8FD9);
+    line-height: 1;
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  .lena-404__title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--lena-ink, #141A24);
+    margin: 0 0 1rem;
+  }
+
+  .lena-404__text {
+    font-size: 1.1rem;
+    color: var(--lena-slate, #6B7585);
+    margin: 0 0 2rem;
+    line-height: 1.6;
+  }
+
+  .lena-404__search {
+    max-width: 420px;
+    margin: 0 auto 2rem;
+  }
+
+  .lena-404__search form {
+    display: flex;
+    border: 1.5px solid var(--lena-silver, #E2E5EA);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .lena-404__search form:focus-within {
+    border-color: var(--lena-blue-bright, #2E8FD9);
+  }
+
+  .lena-404__search input[type="search"] {
+    flex: 1;
+    border: none;
+    padding: 0.9rem 1.2rem;
+    font-size: 1rem;
+    background: transparent;
+    outline: none;
+    color: var(--lena-ink, #141A24);
+  }
+
+  .lena-404__search button {
+    background: var(--lena-blue-bright, #2E8FD9);
+    color: #fff;
+    border: none;
+    padding: 0.9rem 1.4rem;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.2s;
+  }
+
+  .lena-404__search button:hover {
+    background: var(--lena-blue-deep, #1B4F8A);
+  }
+
+  .lena-404__links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .lena-404__link {
+    display: inline-block;
+    padding: 0.6rem 1.4rem;
+    border: 1.5px solid var(--lena-silver, #E2E5EA);
+    border-radius: 6px;
+    color: var(--lena-graphite, #3A4250);
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .lena-404__link:hover {
+    border-color: var(--lena-blue-bright, #2E8FD9);
+    color: var(--lena-blue-bright, #2E8FD9);
+  }
+
+  .lena-404__home {
+    display: inline-block;
+    background: var(--lena-blue-bright, #2E8FD9);
+    color: #fff;
+    padding: 0.8rem 2rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background 0.2s;
+  }
+
+  .lena-404__home:hover {
+    background: var(--lena-blue-deep, #1B4F8A);
+    color: #fff;
+  }
+
+  @media screen and (max-width: 640px) {
+    .lena-404 {
+      padding: 4rem 1.5rem 3rem;
+    }
+
+    .lena-404__code {
+      font-size: 3.5rem;
+    }
+
+    .lena-404__title {
+      font-size: 1.4rem;
     }
   }
 </style>
 
-<div class="template-404 page-width page-margin center">
-  <p>
-    {{ 'templates.404.subtext' | t }}
+<div class="lena-404 page-width">
+  <div class="lena-404__diamond">
+    <span class="dm filled"></span>
+    <span class="dm filled gold"></span>
+    <span class="dm filled"></span>
+  </div>
+
+  <p class="lena-404__code">404</p>
+  <h1 class="lena-404__title">{{ 'templates.404.title' | t }}</h1>
+  <p class="lena-404__text">
+    The page you're looking for may have been moved or is no longer available.
+    Try searching for what you need or browse our collections below.
   </p>
-  <h1 class="title">
-    {{ 'templates.404.title' | t }}
-  </h1>
-  <a href="{{ routes.all_products_collection_url }}" class="button">
-    {{ 'general.continue_shopping' | t }}
+
+  <div class="lena-404__search">
+    <form action="{{ routes.search_url }}" method="get" role="search">
+      <input
+        type="search"
+        name="q"
+        placeholder="Search for products..."
+        aria-label="Search"
+      >
+      <button type="submit" aria-label="Search">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+    </form>
+  </div>
+
+  <div class="lena-404__links">
+    <a href="{{ routes.collections_url }}" class="lena-404__link">All Collections</a>
+    <a href="{{ routes.all_products_collection_url }}" class="lena-404__link">All Products</a>
+    <a href="/collections/new-arrivals" class="lena-404__link">New Arrivals</a>
+    <a href="/pages/contact" class="lena-404__link">Contact Us</a>
+  </div>
+
+  <a href="{{ routes.root_url }}" class="lena-404__home">
+    Back to Home
   </a>
 </div>

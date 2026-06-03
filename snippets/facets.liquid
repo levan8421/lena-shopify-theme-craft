@@ -199,7 +199,26 @@
                               if value.count == 0 and value.active == false
                                 assign is_disabled = true
                               endif
+
+                              # Filter out non-color values from the Color filter
+                              assign lena_skip_value = false
+                              assign lena_filter_lower = filter.label | downcase
+                              if lena_filter_lower == 'color'
+                                assign lena_color_whitelist = 'pink,red,orange,yellow,green,blue,purple,brown,beige,white,gray,grey,black,multi,navy,teal,coral,ivory,cream,gold,silver,rose,lavender,mint,burgundy,maroon,tan,khaki,olive,turquoise,magenta,peach,charcoal,indigo,aqua,mauve,plum,rust,salmon,taupe,wine,amber,bronze,champagne,copper,crimson,emerald,fuchsia,jade,lilac,mustard,sage,sapphire,scarlet,slate,violet' | split: ','
+                                assign lena_value_lower = value.label | downcase
+                                assign lena_is_color = false
+                                for lena_color in lena_color_whitelist
+                                  if lena_value_lower == lena_color
+                                    assign lena_is_color = true
+                                    break
+                                  endif
+                                endfor
+                                unless lena_is_color
+                                  assign lena_skip_value = true
+                                endunless
+                              endif
                             %}
+                            {%- unless lena_skip_value -%}
                             {%- capture label_class -%}
                             facets__label facet-checkbox{% if is_disabled %} disabled{% endif %}{% if value.active %} active{% endif %}
                             {%- endcapture -%}
@@ -274,6 +293,7 @@
                                 </label>
                               {%- endif -%}
                             </li>
+                            {%- endunless -%}
                           {%- endfor -%}
                         </ul>
                       </fieldset>
@@ -567,7 +587,26 @@
                                 if value.count == 0 and value.active == false
                                   assign is_disabled = true
                                 endif
+
+                                # Filter out non-color values from the Color filter
+                                assign lena_skip_value = false
+                                assign lena_filter_lower = filter.label | downcase
+                                if lena_filter_lower == 'color'
+                                  assign lena_color_whitelist = 'pink,red,orange,yellow,green,blue,purple,brown,beige,white,gray,grey,black,multi,navy,teal,coral,ivory,cream,gold,silver,rose,lavender,mint,burgundy,maroon,tan,khaki,olive,turquoise,magenta,peach,charcoal,indigo,aqua,mauve,plum,rust,salmon,taupe,wine,amber,bronze,champagne,copper,crimson,emerald,fuchsia,jade,lilac,mustard,sage,sapphire,scarlet,slate,violet' | split: ','
+                                  assign lena_value_lower = value.label | downcase
+                                  assign lena_is_color = false
+                                  for lena_color in lena_color_whitelist
+                                    if lena_value_lower == lena_color
+                                      assign lena_is_color = true
+                                      break
+                                    endif
+                                  endfor
+                                  unless lena_is_color
+                                    assign lena_skip_value = true
+                                  endunless
+                                endif
                               %}
+                              {%- unless lena_skip_value -%}
 
                               {%- capture label_class -%}
                               facets__label mobile-facets__label{% if is_disabled %} disabled{% endif %}{% if value.active %} active{% endif %}
@@ -642,6 +681,7 @@
                                   </label>
                                 {% endif %}
                               </li>
+                              {%- endunless -%}
                             {%- endfor -%}
                           </ul>
 
