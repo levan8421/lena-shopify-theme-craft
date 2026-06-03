@@ -30,6 +30,8 @@ shopify theme push --unpublished   # Push for review
 | `sections/main-collection-banner.liquid` | 14–33 | Collection: diamond eyebrow, title class, product count pill |
 | `sections/featured-collection.liquid` | 67, ~215 | Conditional wrapper: hides section when linked collection is empty |
 | `snippets/card-product.liquid` | 108–122, 164–167, 228–237 | Cards: badges, sold overlay, category label, scarcity/notify |
+| `snippets/facets.liquid` | 204–220, 592–608 | Color filter whitelist: skips non-color tag values (e.g. "Accessories", "artisan") |
+| `sections/main-404.liquid` | 1–175 | Full rewrite: branded 404 with search, nav links, diamond motifs |
 
 ### Comment convention
 

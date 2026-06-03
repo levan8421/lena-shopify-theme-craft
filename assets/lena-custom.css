@@ -837,9 +837,42 @@ a.lena-notify-btn {
 }
 @media (max-width: 640px) {
   .lena-hero { min-height: auto; }
-  .lena-hero-mosaic { display: none; }
+
+  /* Hero mosaic: horizontal scroll strip instead of hidden */
+  .lena-hero-mosaic {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    gap: 12px;
+    padding-bottom: 8px;
+  }
+  .lena-hero-mosaic::-webkit-scrollbar { display: none; }
+  .lena-hero-mosaic { scrollbar-width: none; }
+  .lena-hero-img {
+    flex: 0 0 72%;
+    height: 150px;
+    scroll-snap-align: start;
+  }
+  .lena-hero-img:nth-child(1),
+  .lena-hero-img:nth-child(4) {
+    grid-row: auto;
+  }
+  .lena-hero-img .img-tag {
+    font-size: 8px;
+    padding: 3px 8px;
+  }
+
   .lena-hero-ctas { flex-direction: column; align-items: stretch; }
   .lena-hero-ctas .lena-btn { justify-content: center; }
+
+  /* Drop header: stack to prevent overflow */
+  .lena-drop-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
   .lena-find-grid { grid-template-columns: 1fr; }
   .lena-pdp-badge-1of1 { font-size: 9px; padding: 5px 11px; }
   .lena-pdp-artisan { font-size: 12px; }

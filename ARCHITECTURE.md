@@ -1,8 +1,8 @@
 # ARCHITECTURE.md — Lena Handicrafts Theme Deep Reference
 
-> Line numbers verified 2026-06-02. Re-verify after major CSS edits.
+> Line numbers verified 2026-06-03. Re-verify after major CSS or facets edits.
 
-## CSS Architecture (`assets/lena-custom.css`, 846 lines)
+## CSS Architecture (`assets/lena-custom.css`, 879 lines)
 
 | Lines | Section | Key selectors |
 |-------|---------|---------------|
@@ -22,7 +22,7 @@
 | 724–732 | Newsletter Overrides | `.newsletter-form__field-wrapper` focus states |
 | 734–792 | PDP Branding | `.lena-pdp-cat`, `.lena-pdp-badge-1of1`, `.lena-pdp-artisan`, `.lena-pdp-scarcity`, `.lena-pdp-sold-msg` |
 | 794–829 | Collection Banner | `.lena-collection-banner`, `.lena-collection-title`, `.lena-collection-count` |
-| 831–846 | Responsive | `@media (max-width: 900px)` tablet, `@media (max-width: 640px)` mobile |
+| 831–879 | Responsive | `@media (max-width: 900px)` tablet, `@media (max-width: 640px)` mobile |
 
 ## CSS Variables
 
@@ -73,6 +73,32 @@
 - **Settings:** `eyebrow`, `heading`, `subheading`, `color_scheme`, `padding_top`, `padding_bottom`
 - **Blocks:** `location` — `name`, `schedule`, `description`, `address`, `directions_url`, `icon`, `primary` (bool)
 - **Also reads:** `shop.metaobjects.scheduled_event` — auto-shows events within 14-day window
+
+## 404 Page (`sections/main-404.liquid`, 175 lines)
+
+Fully branded 404 page replacing the stock Dawn 404. Self-contained styles (no external CSS dependency).
+
+| Feature | Details |
+|---------|---------|
+| Diamond motif header | `.lena-404__diamond` — 3 diamonds (blue, gold, blue) |
+| Error code | `.lena-404__code` — Large "404" in `--lena-blue-bright` |
+| Search bar | `.lena-404__search` — Form submitting to `{{ routes.search_url }}` with focus ring |
+| Quick nav links | `.lena-404__links` — All Collections, All Products, New Arrivals, Contact Us |
+| Home CTA | `.lena-404__home` — Blue button back to root |
+| Responsive | `@media (max-width: 640px)` reduces padding and font sizes |
+
+## Color Filter Whitelist (`snippets/facets.liquid`)
+
+Shopify's Storefront Filtering API exposes all product tags under the "Color" filter, including non-color values like "Accessories", "artisan", "Compact Mirrors". A Liquid whitelist (55+ recognized color names) skips non-color values before rendering.
+
+| Location | Lines | Loop |
+|----------|-------|------|
+| Desktop filters | 204–220 | `for value in filter.values` (first occurrence) |
+| Mobile/drawer filters | 592–608 | `for value in filter.values` (second occurrence) |
+
+**How it works:** Before each `<li>`, checks `value.label` against `lena_color_whitelist`. Non-matches set `lena_skip_value = true`, and the `<li>` is wrapped in `{%- unless lena_skip_value -%}`. The whitelist includes standard colors plus extended names (navy, teal, coral, champagne, etc.).
+
+**Note:** The Color filter will appear empty on collections until products have `color-{family}` tags applied via the batch uploader app.
 
 ## Product Card Customizations (`snippets/card-product.liquid`)
 
@@ -140,6 +166,8 @@ These live as `custom_liquid` HTML inside `templates/index.json`, not as section
 | Change event display window | `sections/lena-find-us.liquid` line 21 (`1209600` = 14 days) |
 | Change spotlight rotation | Shopify admin → section settings → `rotation_weeks` |
 | Add new CSS section | Append before responsive block (before line 831) |
-| Change responsive breakpoints | `assets/lena-custom.css` lines 831–846 |
+| Change responsive breakpoints | `assets/lena-custom.css` lines 831–879 |
+| Change 404 page content/style | `sections/main-404.liquid` (self-contained styles + markup) |
+| Edit color filter whitelist | `snippets/facets.liquid` lines 204–220 (desktop) and 592–608 (mobile) — keep both in sync |
 | Change fonts / page width | `config/settings_data.json` |
 | Change color schemes | `config/settings_data.json` → `color_schemes` |
