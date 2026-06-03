@@ -135,6 +135,7 @@ These live as `custom_liquid` HTML inside `templates/index.json`, not as section
 | Change scarcity/sold text | `snippets/card-product.liquid` lines 228–237 + `sections/main-product.liquid` lines 129–139 |
 | Change PDP branding | `sections/main-product.liquid` lines 101–139 |
 | Change collection banner | `sections/main-collection-banner.liquid` lines 14–33 |
+| Edit Q&A content | `templates/index.json` → `lena-qa` blocks, or Shopify admin (section settings) |
 | Add/edit Find Us locations | Shopify admin (section blocks) or `templates/index.json` |
 | Change event display window | `sections/lena-find-us.liquid` line 21 (`1209600` = 14 days) |
 | Change spotlight rotation | Shopify admin → section settings → `rotation_weeks` |

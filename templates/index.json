@@ -273,6 +273,87 @@
         "padding_bottom": 52
       }
     },
+    "lena-qa": {
+      "type": "collapsible-content",
+      "blocks": {
+        "qa-handmade": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "Q: Are all your products handmade?",
+            "icon": "check_mark",
+            "row_content": "<p>Yes! Every item is handmade by skilled artisans, so no two pieces are exactly the same.</p>",
+            "page": ""
+          }
+        },
+        "qa-who": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "Q: Who makes your products?",
+            "icon": "check_mark",
+            "row_content": "<p>Handmade by our family, friends, and artisan partners in Vietnam.</p>",
+            "page": ""
+          }
+        },
+        "qa-design": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "Q: How do I choose the design I want?",
+            "icon": "check_mark",
+            "row_content": "<p>Each piece is unique and made in small batches of only 2\u20133. Just email us at <a><strong>lenahandicrafts4u@gmail.com</strong></a> with the design or description you like, and we\u2019ll confirm availability. If it\u2019s sold out, we\u2019ll suggest a similar handmade design from our current collection.</p>",
+            "page": ""
+          }
+        },
+        "qa-in-person": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "Q: How can I see and choose a product in person?",
+            "icon": "check_mark",
+            "row_content": "<p>You\u2019re welcome to visit us at our <a href=\"/pages/market-schedule\" title=\"Market Schedule\">scheduled events</a> or at our local retail partners.</p>",
+            "page": ""
+          }
+        },
+        "qa-photo": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "Q: Will my item look exactly like the photo?",
+            "icon": "check_mark",
+            "row_content": "<p>Because each piece is handmade, slight variations in color, design, or embroidery make your item truly one of a kind.</p>",
+            "page": ""
+          }
+        },
+        "qa-return": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "Q: How do I start a return?",
+            "icon": "check_mark",
+            "row_content": "<p>You have <strong>15 days for purses </strong>or <strong>7 days for accessories</strong> to return your item in its original condition. Just email us at <a><strong>lenahandicrafts4u@gmail.com</strong></a> to get started. Refunds are processed once we receive your return. <em>Please refer to our </em><a href=\"/policies/refund-policy\" title=\"Refund Policy\"><em>Shipping &amp; Return Policies</em></a><em> for more details.</em></p>",
+            "page": ""
+          }
+        }
+      },
+      "block_order": [
+        "qa-handmade",
+        "qa-who",
+        "qa-design",
+        "qa-in-person",
+        "qa-photo",
+        "qa-return"
+      ],
+      "settings": {
+        "caption": "",
+        "heading": "Questions & Answers",
+        "heading_size": "h1",
+        "heading_alignment": "center",
+        "layout": "none",
+        "container_color_scheme": "",
+        "color_scheme": "",
+        "open_first_collapsible_row": false,
+        "image_ratio": "adapt",
+        "desktop_layout": "image_second",
+        "padding_top": 20,
+        "padding_bottom": 20
+      }
+    },
     "lena-find-us": {
       "type": "lena-find-us",
       "blocks": {
@@ -324,6 +405,7 @@
     "our-story",
     "shop-by-category",
     "lena-spotlight",
+    "lena-qa",
     "lena-find-us"
   ]
 }

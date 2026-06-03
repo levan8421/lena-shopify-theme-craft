@@ -50,7 +50,8 @@ All Lena changes in stock files are marked: `{%- comment -%} Lena: <description>
 | 5 | Our Story | `image-with-text` | Founder photo + brand narrative |
 | 6 | The Gallery | `collection-list` | 5 collection tiles |
 | 7 | Artisan Spotlight | `lena-spotlight` | Requires "Artisan Stories" blog |
-| 8 | Find Us | `lena-find-us` | Uses `scheduled_event` metaobjects |
+| 8 | Q&A | `collapsible-content` | 6 accordion items (handmade, artisans, design, in-person, photo, returns) |
+| 9 | Find Us | `lena-find-us` | Uses `scheduled_event` metaobjects |
 
 **Note:** Trust Strip is custom-liquid HTML inside `templates/index.json`, NOT a standalone section file.
 
