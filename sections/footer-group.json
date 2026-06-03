@@ -49,6 +49,7 @@
       "blocks": {
         "link_list_QJhpGH": {
           "type": "link_list",
+          "disabled": true,
           "settings": {
             "heading": "Quick links",
             "menu": "footer"
@@ -58,12 +59,11 @@
       "block_order": [
         "link_list_QJhpGH"
       ],
-      "disabled": true,
       "settings": {
         "color_scheme": "scheme-4",
         "newsletter_enable": false,
         "newsletter_heading": "Subscribe to our emails",
-        "enable_follow_on_shop": false,
+        "enable_follow_on_shop": true,
         "show_social": true,
         "enable_country_selector": false,
         "enable_language_selector": false,

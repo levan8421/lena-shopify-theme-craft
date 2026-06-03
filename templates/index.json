@@ -201,7 +201,19 @@
         "featured_collection_8Qe4FN": {
           "type": "featured_collection",
           "settings": {
-            "collection": "velvet-purses"
+            "collection": "velvet-clutches-lux-bar"
+          }
+        },
+        "featured_collection_yzefPm": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "velvet-clutches-grande"
+          }
+        },
+        "featured_collection_9rkkEm": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "velvet-clutches-midi"
           }
         },
         "featured_collection_pJtiwf": {
@@ -229,6 +241,8 @@
         "cat-mirrors",
         "featured_collection_6XefqJ",
         "featured_collection_8Qe4FN",
+        "featured_collection_yzefPm",
+        "featured_collection_9rkkEm",
         "featured_collection_pJtiwf",
         "featured_collection_wePPrf",
         "featured_collection_ngFJAL"
