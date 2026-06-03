@@ -186,28 +186,27 @@
             "collection": "ribbon-embroidery-hats"
           }
         },
-        "featured_collection_hphpxM": {
-          "type": "featured_collection",
-          "settings": {
-            "collection": "compact-mirrors"
-          }
-        },
         "cat-mirrors": {
           "type": "featured_collection",
-          "disabled": true,
           "settings": {
             "collection": "artisan-compact-mirrors"
           }
         },
         "featured_collection_6XefqJ": {
           "type": "featured_collection",
-          "disabled": true,
           "settings": {
             "collection": "motif-compact-mirrors"
           }
         },
+        "featured_collection_eEfXbj": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "velvet-purses"
+          }
+        },
         "featured_collection_AE3DGi": {
           "type": "featured_collection",
+          "disabled": true,
           "settings": {
             "collection": "signature-purses"
           }
@@ -235,21 +234,18 @@
         },
         "featured_collection_pJtiwf": {
           "type": "featured_collection",
-          "disabled": true,
           "settings": {
             "collection": "rattan-purses"
           }
         },
         "featured_collection_wePPrf": {
           "type": "featured_collection",
-          "disabled": true,
           "settings": {
             "collection": "glass-bead-woven-handbags"
           }
         },
         "featured_collection_ngFJAL": {
           "type": "featured_collection",
-          "disabled": true,
           "settings": {
             "collection": "phone-travel-wallet"
           }
@@ -258,9 +254,9 @@
       "block_order": [
         "cat-crochet",
         "cat-hats",
-        "featured_collection_hphpxM",
         "cat-mirrors",
         "featured_collection_6XefqJ",
+        "featured_collection_eEfXbj",
         "featured_collection_AE3DGi",
         "featured_collection_8Qe4FN",
         "featured_collection_yzefPm",
