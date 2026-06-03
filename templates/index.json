@@ -180,16 +180,22 @@
             "collection": "crochet-dolls"
           }
         },
-        "cat-mirrors": {
-          "type": "featured_collection",
-          "settings": {
-            "collection": "compact-mirrors"
-          }
-        },
         "cat-hats": {
           "type": "featured_collection",
           "settings": {
             "collection": "ribbon-embroidery-hats"
+          }
+        },
+        "cat-mirrors": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "artisan-compact-mirrors"
+          }
+        },
+        "featured_collection_6XefqJ": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "motif-compact-mirrors"
           }
         },
         "featured_collection_8Qe4FN": {
@@ -219,8 +225,9 @@
       },
       "block_order": [
         "cat-crochet",
-        "cat-mirrors",
         "cat-hats",
+        "cat-mirrors",
+        "featured_collection_6XefqJ",
         "featured_collection_8Qe4FN",
         "featured_collection_pJtiwf",
         "featured_collection_wePPrf",
