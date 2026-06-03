@@ -294,15 +294,6 @@
             "page": ""
           }
         },
-        "qa-design": {
-          "type": "collapsible_row",
-          "settings": {
-            "heading": "Q: How do I choose the design I want?",
-            "icon": "check_mark",
-            "row_content": "<p>Each piece is unique and made in small batches of only 2–3. Just email us at <a><strong>info@lenahandicrafts.com</strong></a> with the design or description you like, and we’ll confirm availability. If it’s sold out, we’ll suggest a similar handmade design from our current collection.</p>",
-            "page": ""
-          }
-        },
         "qa-in-person": {
           "type": "collapsible_row",
           "settings": {
@@ -326,7 +317,7 @@
           "settings": {
             "heading": "Q: How do I start a return?",
             "icon": "check_mark",
-            "row_content": "<p>You have <strong>15 days for purses </strong>or <strong>7 days for accessories</strong> to return your item in its original condition. Just email us at <a><strong>lenahandicrafts4u@gmail.com</strong></a> to get started. Refunds are processed once we receive your return. <em>Please refer to our </em><a href=\"/policies/refund-policy\" title=\"Refund Policy\"><em>Shipping & Return Policies</em></a><em> for more details.</em></p>",
+            "row_content": "<p>You have <strong>15 days for purses </strong>or <strong>7 days for accessories</strong> to return your item in its original condition. Just email us at <a href=\"mailto:info@lenahandicrafts.com\" title=\"mailto:info@lenahandicrafts.com\"><strong>info@lenahandicrafts.com</strong></a> to get started. Refunds are processed once we receive your return. <em>Please refer to our </em><a href=\"/policies/refund-policy\" title=\"Refund Policy\"><em>Shipping & Return Policies</em></a><em> for more details.</em></p>",
             "page": ""
           }
         }
@@ -334,7 +325,6 @@
       "block_order": [
         "qa-handmade",
         "qa-who",
-        "qa-design",
         "qa-in-person",
         "qa-photo",
         "qa-return"
