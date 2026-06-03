@@ -1,0 +1,48 @@
+{
+  "sections": {
+    "main-collection-banner": {
+      "type": "main-collection-banner",
+      "settings": {
+        "show_collection_description": true,
+        "show_collection_image": false,
+        "color_scheme": "scheme-1"
+      }
+    },
+    "lena-drop-coming-soon": {
+      "type": "lena-drop-coming-soon",
+      "settings": {
+        "eyebrow": "Fresh From Vietnam",
+        "heading": "New Drop <strong>Coming Soon</strong>",
+        "description": "We're preparing something special. Every piece is handcrafted by artisans in Vietnam \u2014 one of a kind, made just for you. Check back when the countdown hits zero, or explore what's available now.",
+        "cta_label": "Shop Available Pieces",
+        "cta_link": "/collections/all",
+        "color_scheme": "scheme-1"
+      }
+    },
+    "main-collection-product-grid": {
+      "type": "main-collection-product-grid",
+      "settings": {
+        "products_per_page": 16,
+        "columns_desktop": 4,
+        "columns_mobile": "2",
+        "color_scheme": "scheme-1",
+        "image_ratio": "portrait",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "none",
+        "enable_filtering": false,
+        "filter_type": "horizontal",
+        "enable_sorting": false,
+        "padding_top": 20,
+        "padding_bottom": 68
+      }
+    }
+  },
+  "order": [
+    "main-collection-banner",
+    "lena-drop-coming-soon",
+    "main-collection-product-grid"
+  ]
+}

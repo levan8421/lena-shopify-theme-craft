@@ -21,16 +21,18 @@
         {{- collection.title | escape -}}
       </h1>
 
-      {%- if section.settings.show_collection_description -%}
+      {%- if section.settings.show_collection_description and collection.products_count > 0 -%}
         <div class="collection-hero__description rte">{{ collection.description }}</div>
       {%- endif -%}
 
-      {%- comment -%} Lena: Product count pill {%- endcomment -%}
+      {%- comment -%} Lena: Product count pill (hidden when empty — coming-soon section handles messaging) {%- endcomment -%}
+      {%- if collection.products_count > 0 -%}
       <div class="lena-collection-count">
         <span class="dm filled sm"></span>
         {{ collection.products_count }}
         {%- if collection.products_count == 1 -%} piece{%- else -%} pieces{%- endif -%}
       </div>
+      {%- endif -%}
     </div>
 
     {%- if section.settings.show_collection_image and collection.image -%}
