@@ -18,7 +18,7 @@
           "type": "announcement",
           "settings": {
             "text": "Free shipping on orders over $70 ♦ Handmade in Vietnam",
-            "link": ""
+            "link": "shopify://policies/shipping-policy"
           }
         },
         "announcement-bar-1": {
