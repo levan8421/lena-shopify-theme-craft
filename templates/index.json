@@ -192,10 +192,22 @@
             "collection": "ribbon-embroidery-hats"
           }
         },
-        "cat-purses": {
+        "featured_collection_8Qe4FN": {
           "type": "featured_collection",
           "settings": {
-            "collection": "signature-purses"
+            "collection": "velvet-purses"
+          }
+        },
+        "featured_collection_pJtiwf": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "rattan-purses"
+          }
+        },
+        "featured_collection_wePPrf": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "glass-bead-woven-handbags"
           }
         },
         "featured_collection_ngFJAL": {
@@ -209,7 +221,9 @@
         "cat-crochet",
         "cat-mirrors",
         "cat-hats",
-        "cat-purses",
+        "featured_collection_8Qe4FN",
+        "featured_collection_pJtiwf",
+        "featured_collection_wePPrf",
         "featured_collection_ngFJAL"
       ],
       "name": "The Gallery",
