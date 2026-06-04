@@ -27,9 +27,9 @@
     <div>
       <div class="lena-section-eye"><span class="dm filled sm"></span> {{ section.settings.eyebrow }}</div>
       {%- if has_products -%}
-        <div class="lena-section-h">This Week's <strong>Drop</strong></div>
+        <div class="lena-section-h">{{ section.settings.heading_active }}</div>
       {%- else -%}
-        <div class="lena-section-h">New Drop <strong>Coming Soon</strong></div>
+        <div class="lena-section-h">{{ section.settings.heading_empty }}</div>
       {%- endif -%}
     </div>
     <div style="display:flex;align-items:center;gap:14px">
@@ -46,13 +46,22 @@
 
 <script>
 (function(){
+  var customDate = '{{ section.settings.next_drop_date | escape }}';
   function update(){
     var now=new Date();
-    var fri=new Date(now);
-    fri.setDate(now.getDate()+((5-now.getDay()+7)%7||7));
-    fri.setHours(20,0,0,0);
-    if(now.getDay()===5&&now.getHours()<20){fri.setDate(now.getDate());}
-    var diff=fri-now;
+    var target;
+    if(customDate && customDate.trim()){
+      target=new Date(customDate.trim());
+      if(isNaN(target.getTime())){target=null;}
+    }
+    if(!target){
+      // Default: next Friday at 6:00 AM EST (11:00 UTC)
+      target=new Date(now);
+      target.setDate(now.getDate()+((5-now.getDay()+7)%7||7));
+      target.setUTCHours(11,0,0,0);
+      if(now.getDay()===5&&now<target){target.setDate(now.getDate());}
+    }
+    var diff=target-now;
     if(diff<=0){document.getElementById('lena-countdown').textContent='Drop is LIVE!';return;}
     var d=Math.floor(diff/864e5),h=Math.floor(diff%864e5/36e5),m=Math.floor(diff%36e5/6e4);
     document.getElementById('lena-countdown').textContent='Next drop in '+d+'d '+h+'h '+m+'m';
@@ -72,6 +81,25 @@
       "id": "eyebrow",
       "label": "Eyebrow",
       "default": "Fresh From Vietnam"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading_active",
+      "label": "Heading (has products)",
+      "default": "Latest <strong>Drop</strong>"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading_empty",
+      "label": "Heading (no products)",
+      "default": "New Drop <strong>Coming Soon</strong>"
+    },
+    {
+      "type": "text",
+      "id": "next_drop_date",
+      "label": "Next drop date & time",
+      "default": "",
+      "info": "Format: 2026-06-13 06:00. Leave blank to auto-target next Friday 6 AM EST."
     },
     {
       "type": "text",
