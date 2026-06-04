@@ -1,0 +1,90 @@
+{%- comment -%}
+  Email capture popup — general newsletter signup.
+  Auto-shows after 10s or on exit-intent. Shows once per visitor (localStorage).
+  Tags: newsletter (general interest only — not drop-list).
+{%- endcomment -%}
+
+<div id="lena-popup-overlay" class="lena-popup-overlay" style="display:none">
+  <div class="lena-popup" role="dialog" aria-modal="true" aria-label="Newsletter signup">
+    <button class="lena-popup-close" aria-label="Close">&times;</button>
+    <div class="lena-popup-content">
+      <span class="dm gold"></span>
+      <h2>{{ section.settings.heading }}</h2>
+      <p>{{ section.settings.text }}</p>
+      {% form 'customer', class: 'lena-popup-form' %}
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        <div class="lena-popup-field">
+          <input type="email" name="contact[email]"
+            placeholder="{{ section.settings.placeholder }}" required
+            autocomplete="email" autocapitalize="off">
+          <button type="submit">{{ section.settings.button_label }}</button>
+        </div>
+      {% endform %}
+      <div class="lena-popup-success" style="display:none">
+        <span class="dm gold sm"></span> {{ section.settings.success_message }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var DK = 'lena-popup-dismissed', SK = 'lena-popup-subscribed';
+  if (localStorage.getItem(DK) || localStorage.getItem(SK)) return;
+
+  var overlay = document.getElementById('lena-popup-overlay');
+  var shown = false;
+
+  function show() {
+    if (shown) return;
+    shown = true;
+    overlay.style.display = '';
+    document.body.style.overflow = 'hidden';
+  }
+  function hide() {
+    overlay.style.display = 'none';
+    document.body.style.overflow = '';
+    localStorage.setItem(DK, '1');
+  }
+
+  setTimeout(show, {{ section.settings.delay_seconds | default: 10 | times: 1000 }});
+
+  document.addEventListener('mouseout', function(e) {
+    if (e.clientY < 5 && !e.relatedTarget) show();
+  });
+
+  overlay.querySelector('.lena-popup-close').addEventListener('click', hide);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) hide(); });
+  document.addEventListener('keyup', function(e) { if (e.key === 'Escape' && shown) hide(); });
+
+  var form = overlay.querySelector('form');
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    fetch(form.action || '/contact', { method: 'POST', body: new FormData(form) })
+      .then(function() {
+        localStorage.setItem(SK, '1');
+        overlay.querySelector('.lena-popup-form').style.display = 'none';
+        overlay.querySelector('.lena-popup-success').style.display = '';
+        setTimeout(hide, 2000);
+      });
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Email Popup",
+  "tag": "section",
+  "class": "lena-popup-section",
+  "limit": 1,
+  "settings": [
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Stay in the <strong>Loop</strong>" },
+    { "type": "textarea", "id": "text", "label": "Body text", "default": "Get updates on new collections, artisan stories, and exclusive events. No spam \u2014 just beautiful handmade things." },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Sign Me Up" },
+    { "type": "text", "id": "placeholder", "label": "Email placeholder", "default": "Your email" },
+    { "type": "text", "id": "success_message", "label": "Success message", "default": "Welcome! You\u2019re on the list." },
+    { "type": "range", "id": "delay_seconds", "label": "Delay (seconds)", "min": 3, "max": 30, "step": 1, "default": 10 }
+  ],
+  "presets": [{ "name": "Email Popup" }]
+}
+{% endschema %}

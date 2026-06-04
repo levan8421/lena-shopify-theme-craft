@@ -2,7 +2,7 @@
 
 > Line numbers verified 2026-06-03. Re-verify after major CSS or facets edits.
 
-## CSS Architecture (`assets/lena-custom.css`, 879 lines)
+## CSS Architecture (`assets/lena-custom.css`, 917 lines)
 
 | Lines | Section | Key selectors |
 |-------|---------|---------------|
@@ -23,6 +23,7 @@
 | 734–792 | PDP Branding | `.lena-pdp-cat`, `.lena-pdp-badge-1of1`, `.lena-pdp-artisan`, `.lena-pdp-scarcity`, `.lena-pdp-sold-msg` |
 | 794–829 | Collection Banner | `.lena-collection-banner`, `.lena-collection-title`, `.lena-collection-count` |
 | 831–879 | Responsive | `@media (max-width: 900px)` tablet, `@media (max-width: 640px)` mobile |
+| 881–917 | Popup / Modal | `.lena-popup-overlay`, `.lena-popup`, `.lena-popup-close`, `.lena-popup-field`, `.lena-popup-success`, mobile stack |
 
 ## CSS Variables
 
@@ -74,6 +75,20 @@
 - **Blocks:** `location` — `name`, `schedule`, `description`, `address`, `directions_url`, `icon`, `primary` (bool)
 - **Also reads:** `shop.metaobjects.scheduled_event` — auto-shows events within 14-day window
 
+### `lena-email-popup.liquid`
+- **Settings:** `heading` (inline_richtext), `text` (textarea), `button_label`, `placeholder`, `success_message`, `delay_seconds` (range 3–30, default 10)
+- **No blocks.** Limit 1 per theme.
+- **Behavior:** Auto-shows after `delay_seconds` or on exit-intent (mouse toward browser top). localStorage prevents re-showing after dismiss or subscribe.
+- **Tags contact with:** `newsletter` (general interest only)
+- **Rendered in:** `layout/theme.liquid` (after footer-group)
+
+### `lena-notify-modal.liquid` (snippet)
+- **No schema** (rendered via `{% render %}`, not `{% section %}`).
+- **JS API:** `window.lenaNotify(label, handle)` — opens modal, sets category label and tags dynamically.
+- **Tags contact with:** `newsletter,notify-{handle}` (e.g. `newsletter,notify-crochet-dolls`)
+- **Called from:** `snippets/card-product.liquid` notify button on sold-out products.
+- **Rendered in:** `layout/theme.liquid` (after email popup section)
+
 ## 404 Page (`sections/main-404.liquid`, 175 lines)
 
 Fully branded 404 page replacing the stock Dawn 404. Self-contained styles (no external CSS dependency).
@@ -109,7 +124,7 @@ Shopify's Storefront Filtering API exposes all product tags under the "Color" fi
 | 119–122 | Sold-out overlay (`.lena-sold-overlay`) | `!card_product.available` |
 | 164–167 | Category label (`.lena-card-cat`) | `card_product.type` present |
 | 228–232 | Scarcity text (`.lena-scarcity`) | `card_product.available` |
-| 233–237 | Notify button (`.lena-notify-btn`) | `!card_product.available` |
+| 233–238 | Notify button (`.lena-notify-btn`) | `!card_product.available` — opens category-specific modal via `window.lenaNotify()` |
 
 ## PDP Customizations (`sections/main-product.liquid`)
 
@@ -171,3 +186,15 @@ These live as `custom_liquid` HTML inside `templates/index.json`, not as section
 | Edit color filter whitelist | `snippets/facets.liquid` lines 204–220 (desktop) and 592–608 (mobile) — keep both in sync |
 | Change fonts / page width | `config/settings_data.json` |
 | Change color schemes | `config/settings_data.json` → `color_schemes` |
+| Change email popup text/delay | Shopify admin → Email Popup section settings, or `sections/lena-email-popup.liquid` |
+| Change notify modal text | `snippets/lena-notify-modal.liquid` |
+| Change newsletter tags | `sections/newsletter.liquid` line 49, `sections/footer.liquid` line 174 (drop-list), `sections/lena-email-popup.liquid` (general), `snippets/lena-notify-modal.liquid` (category) |
+
+## Newsletter Tagging Strategy
+
+| Segment | Tag(s) | Capture point |
+|---------|--------|---------------|
+| General interest | `newsletter` | Email popup (auto 10s / exit-intent) |
+| Drop list | `newsletter,drop-list` | Hero "Join the Drop List" button → footer newsletter, footer newsletter form |
+| Category notify | `newsletter,notify-{handle}` | "Notify Me" button on sold-out product cards |
+| POS subscribers | `newsletter,drop-list` | Shopify Flow auto-tags on customer creation with marketing consent |

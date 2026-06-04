@@ -1,0 +1,70 @@
+{%- comment -%}
+  Category-specific notify modal for sold-out products.
+  Rendered once in theme.liquid. Cards call window.lenaNotify(label, handle).
+  Tags contact with: newsletter, notify-{handle}
+{%- endcomment -%}
+
+<div id="lena-notify-overlay" class="lena-popup-overlay" style="display:none">
+  <div class="lena-popup lena-notify-popup" role="dialog" aria-modal="true" aria-label="Product notification signup">
+    <button class="lena-popup-close" aria-label="Close">&times;</button>
+    <div class="lena-popup-content">
+      <span class="dm filled sm"></span>
+      <h2>Get Notified</h2>
+      <p>We'll email you when new <strong id="lena-notify-cat-label">items</strong> drop.</p>
+      <form id="lena-notify-form" method="post" action="/contact">
+        <input type="hidden" name="form_type" value="customer">
+        <input type="hidden" name="utf8" value="&#x2713;">
+        <input type="hidden" name="contact[tags]" id="lena-notify-tags" value="newsletter">
+        <div class="lena-popup-field">
+          <input type="email" name="contact[email]" placeholder="Your email" required
+            autocomplete="email" autocapitalize="off">
+          <button type="submit">Notify Me</button>
+        </div>
+      </form>
+      <div class="lena-notify-success lena-popup-success" style="display:none">
+        <span class="dm gold sm"></span> You'll be the first to know!
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var overlay = document.getElementById('lena-notify-overlay');
+  if (!overlay) return;
+  var catLabel = document.getElementById('lena-notify-cat-label');
+  var tagsInput = document.getElementById('lena-notify-tags');
+  var form = document.getElementById('lena-notify-form');
+  var success = overlay.querySelector('.lena-notify-success');
+
+  function show(label, handle) {
+    catLabel.textContent = label || 'items';
+    tagsInput.value = 'newsletter,notify-' + (handle || 'general');
+    form.style.display = '';
+    success.style.display = 'none';
+    form.querySelector('input[type="email"]').value = '';
+    overlay.style.display = '';
+    document.body.style.overflow = 'hidden';
+  }
+  function hide() {
+    overlay.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  overlay.querySelector('.lena-popup-close').addEventListener('click', hide);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) hide(); });
+  document.addEventListener('keyup', function(e) { if (e.key === 'Escape') hide(); });
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    fetch('/contact', { method: 'POST', body: new FormData(form) })
+      .then(function() {
+        form.style.display = 'none';
+        success.style.display = '';
+        setTimeout(hide, 2500);
+      });
+  });
+
+  window.lenaNotify = show;
+})();
+</script>

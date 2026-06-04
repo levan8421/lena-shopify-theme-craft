@@ -877,3 +877,41 @@ a.lena-notify-btn {
   .lena-pdp-badge-1of1 { font-size: 9px; padding: 5px 11px; }
   .lena-pdp-artisan { font-size: 12px; }
 }
+
+/* ── Popup / Modal shared ───────────────────────────── */
+.lena-popup-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: rgba(0,0,0,.55);
+  display: flex; align-items: center; justify-content: center;
+}
+.lena-popup {
+  background: var(--lena-snow, #fafbfc);
+  border-radius: 16px; max-width: 420px; width: 90%;
+  padding: 40px 32px; text-align: center; position: relative;
+}
+.lena-popup-close {
+  position: absolute; top: 12px; right: 16px;
+  background: none; border: none; font-size: 24px; cursor: pointer;
+  color: var(--lena-slate); line-height: 1;
+}
+.lena-popup h2 { font-family: var(--font-heading-family); margin: 12px 0 8px; }
+.lena-popup p { color: var(--lena-slate); font-size: 14px; margin-bottom: 20px; }
+.lena-popup-field { display: flex; gap: 8px; }
+.lena-popup-field input[type="email"] {
+  flex: 1; padding: 10px 14px; border: 1px solid var(--lena-silver, #ccc);
+  border-radius: 8px; font-size: 14px;
+}
+.lena-popup-field button[type="submit"] {
+  padding: 10px 20px; border: none; border-radius: 8px;
+  background: var(--lena-blue-bright); color: #fff;
+  font-weight: 600; cursor: pointer; white-space: nowrap;
+}
+.lena-popup-field button[type="submit"]:hover { opacity: 0.9; }
+.lena-popup-success { font-size: 15px; color: var(--lena-success); padding: 16px 0; }
+.lena-notify-popup h2 { font-size: 20px; }
+button.lena-notify-btn { background: none; border: none; cursor: pointer; }
+
+@media (max-width: 640px) {
+  .lena-popup { padding: 32px 20px; }
+  .lena-popup-field { flex-direction: column; }
+}
