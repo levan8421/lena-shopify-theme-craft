@@ -281,6 +281,7 @@
     },
     "lena-spotlight": {
       "type": "lena-spotlight",
+      "disabled": true,
       "settings": {
         "eyebrow": "Artisan Spotlight",
         "heading": "Meet the <strong>Makers</strong>",
