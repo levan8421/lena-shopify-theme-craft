@@ -34,7 +34,7 @@
           "type": "mosaic_image",
           "settings": {
             "image": "shopify://shop_images/H-063_1.jpg",
-            "collection": "hats-headbands",
+            "collection": "ribbon-embroidery-hats",
             "tag_label": "Hats",
             "placeholder_text": "Ribbon-embroidery hat worn / in-context"
           }
