@@ -10,7 +10,7 @@
 {
   "current": {
     "logo": "shopify://shop_images/Logo_Lena.png",
-    "logo_width": 200,
+    "logo_width": 300,
     "type_header_font": "josefin_sans_n4",
     "heading_scale": 110,
     "type_body_font": "libre_franklin_n4",
@@ -138,6 +138,17 @@
         "type": "main-password-footer",
         "settings": {
           "color_scheme": "scheme-1"
+        }
+      },
+      "lena-email-popup": {
+        "type": "lena-email-popup",
+        "settings": {
+          "heading": "Stay in the <strong>Loop</strong>",
+          "text": "Get updates on new collections, artisan stories, and exclusive events. No spam — just beautiful handmade things.",
+          "button_label": "Sign Me Up",
+          "placeholder": "Your email",
+          "success_message": "Welcome! You’re on the list.",
+          "delay_seconds": 10
         }
       }
     },
