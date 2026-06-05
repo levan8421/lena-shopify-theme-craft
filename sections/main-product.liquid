@@ -135,7 +135,7 @@
                   -%}
                 </div>
                 {%- comment -%} Lena: Scarcity or sold-out messaging {%- endcomment -%}
-                {%- if product.available -%}
+                {%- if product.available and lena_qty == 1 -%}
                   <div class="lena-pdp-scarcity">
                     <span class="dm filled sm" style="background:var(--lena-success);border-color:var(--lena-success)"></span>
                     Only piece in existence

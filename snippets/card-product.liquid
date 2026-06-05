@@ -234,7 +234,7 @@
 
             {% render 'price', product: card_product, price_class: '', show_compare_at_price: true %}
             {%- comment -%} Lena: Scarcity text or Notify button {%- endcomment -%}
-            {%- if card_product.available -%}
+            {%- if card_product.available and lena_qty == 1 -%}
               <div class="lena-scarcity">
                 <span class="dm filled sm"></span> Only piece in existence
               </div>
