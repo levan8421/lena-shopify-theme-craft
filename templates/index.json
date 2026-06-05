@@ -171,6 +171,51 @@
         "padding_bottom": 52
       }
     },
+    "lena-testimonials": {
+      "type": "lena-testimonials",
+      "blocks": {
+        "testimonial-1": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "The mirror I bought is absolutely stunning — the embroidery is even more beautiful in person!",
+            "author_name": "Sarah M.",
+            "author_info": "West Palm Beach market",
+            "rating": 5
+          }
+        },
+        "testimonial-2": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "I've never seen anything like these hats. You can tell every stitch was made with care.",
+            "author_name": "Maria L.",
+            "author_info": "Fort Lauderdale",
+            "rating": 5
+          }
+        },
+        "testimonial-3": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "My crochet doll is the most unique gift I've ever given. My daughter absolutely loved it.",
+            "author_name": "Jennifer K.",
+            "author_info": "Returning customer",
+            "rating": 5
+          }
+        }
+      },
+      "block_order": [
+        "testimonial-1",
+        "testimonial-2",
+        "testimonial-3"
+      ],
+      "settings": {
+        "eyebrow": "What Customers Say",
+        "heading": "Loved by <strong>Collectors</strong>",
+        "subheading": "Real words from real customers we've met in person.",
+        "color_scheme": "scheme-2",
+        "padding_top": 52,
+        "padding_bottom": 52
+      }
+    },
     "shop-by-category": {
       "type": "collection-list",
       "blocks": {
@@ -363,51 +408,6 @@
         "padding_bottom": 20
       }
     },
-    "lena-testimonials": {
-      "type": "lena-testimonials",
-      "blocks": {
-        "testimonial-1": {
-          "type": "testimonial",
-          "settings": {
-            "quote": "The mirror I bought is absolutely stunning \u2014 the embroidery is even more beautiful in person!",
-            "author_name": "Sarah M.",
-            "author_info": "West Palm Beach market",
-            "rating": 5
-          }
-        },
-        "testimonial-2": {
-          "type": "testimonial",
-          "settings": {
-            "quote": "I've never seen anything like these hats. You can tell every stitch was made with care.",
-            "author_name": "Maria L.",
-            "author_info": "Fort Lauderdale",
-            "rating": 5
-          }
-        },
-        "testimonial-3": {
-          "type": "testimonial",
-          "settings": {
-            "quote": "My crochet doll is the most unique gift I've ever given. My daughter absolutely loved it.",
-            "author_name": "Jennifer K.",
-            "author_info": "Returning customer",
-            "rating": 5
-          }
-        }
-      },
-      "block_order": [
-        "testimonial-1",
-        "testimonial-2",
-        "testimonial-3"
-      ],
-      "settings": {
-        "eyebrow": "What Customers Say",
-        "heading": "Loved by <strong>Collectors</strong>",
-        "subheading": "Real words from real customers we've met in person.",
-        "color_scheme": "scheme-2",
-        "padding_top": 52,
-        "padding_bottom": 52
-      }
-    },
     "lena-find-us": {
       "type": "lena-find-us",
       "blocks": {
@@ -457,10 +457,10 @@
     "lena-drop-header",
     "featured-collection",
     "our-story",
+    "lena-testimonials",
     "shop-by-category",
     "lena-spotlight",
     "lena-qa",
-    "lena-testimonials",
     "lena-find-us"
   ]
 }
