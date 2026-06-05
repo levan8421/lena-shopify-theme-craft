@@ -140,11 +140,12 @@
                     <span class="dm filled sm" style="background:var(--lena-success);border-color:var(--lena-success)"></span>
                     Only piece in existence
                   </div>
-                {%- else -%}
+                {%- endif -%}
+                {%- unless product.available -%}
                   <div class="lena-pdp-sold-msg">
                     <span class="dm gold sm"></span> This piece found its home
                   </div>
-                {%- endif -%}
+                {%- endunless -%}
                 {%- if product.quantity_price_breaks_configured? -%}
                   <div class="volume-pricing-note" id="Volume-Note-{{ section.id }}">
                     <span>{{ 'products.product.volume_pricing.note' | t }}</span>
