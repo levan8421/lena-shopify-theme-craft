@@ -145,6 +145,10 @@
                   <div class="lena-pdp-sold-msg">
                     <span class="dm gold sm"></span> This piece found its home
                   </div>
+                  <button class="lena-pdp-notify-btn" type="button"
+                    onclick="window.lenaNotify('{{ product.type | escape }}','{{ product.type | handleize }}')">
+                    <span class="dm sm"></span> Notify me of similar items
+                  </button>
                 {%- endunless -%}
                 {%- if product.quantity_price_breaks_configured? -%}
                   <div class="volume-pricing-note" id="Volume-Note-{{ section.id }}">

@@ -123,7 +123,7 @@ Shopify's Storefront Filtering API exposes all product tags under the "Color" fi
 | 112–118 | "New" badge (`.lena-badge-new`) | `created_at` < 7 days ago (604800s) |
 | 119–122 | Sold-out overlay (`.lena-sold-overlay`) | `!card_product.available` |
 | 164–167 | Category label (`.lena-card-cat`) | `card_product.type` present |
-| 228–232 | Scarcity text (`.lena-scarcity`) | `card_product.available` |
+| 228–232 | Scarcity text (`.lena-scarcity`) | `card_product.available and lena_qty == 1` |
 | 233–238 | Notify button (`.lena-notify-btn`) | `!card_product.available` — opens category-specific modal via `window.lenaNotify()` |
 
 ## PDP Customizations (`sections/main-product.liquid`)
@@ -133,8 +133,9 @@ Shopify's Storefront Filtering API exposes all product tags under the "Color" fi
 | 101–104 | Category eyebrow (`.lena-pdp-cat`) | `product.type` present |
 | 106–117 | Inventory badge (`.lena-pdp-badge-1of1`) | qty > 0: "1 of 1" when qty=1, "N in stock" when qty>1; hidden when sold out |
 | 110–113 | Artisan attribution (`.lena-pdp-artisan`) | Always |
-| 130–134 | Scarcity text (`.lena-pdp-scarcity`) | `product.available` |
+| 130–134 | Scarcity text (`.lena-pdp-scarcity`) | `product.available and lena_qty == 1` |
 | 135–139 | Sold-out message (`.lena-pdp-sold-msg`) | `!product.available` |
+| 140–143 | Notify button (`.lena-pdp-notify-btn`) | `!product.available` — opens category-specific modal via `window.lenaNotify()` |
 
 ## Collection Banner (`sections/main-collection-banner.liquid`)
 

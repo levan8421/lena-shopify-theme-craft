@@ -792,6 +792,27 @@ a.lena-notify-btn {
   align-items: center;
   gap: 8px;
 }
+.lena-pdp-notify-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--lena-blue-bright);
+  border: 1.5px solid var(--lena-blue-bright);
+  padding: 8px 18px;
+  border-radius: 6px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: all 0.2s;
+  background: none;
+  cursor: pointer;
+}
+.lena-pdp-notify-btn:hover {
+  background: var(--lena-blue-bright);
+  color: white;
+}
 
 /* --- Collection Banner Lena Branding --- */
 .lena-collection-banner {
