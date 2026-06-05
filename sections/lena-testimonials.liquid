@@ -1,0 +1,190 @@
+{%- comment -%}
+  Lena Testimonials — manually-entered customer reviews from in-person events.
+  Grid adapts: 1-3 columns based on testimonial count.
+  Managed entirely from Theme Editor: add, edit, remove, reorder blocks.
+{%- endcomment -%}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+{%- assign testimonial_count = 0 -%}
+{%- for block in section.blocks -%}
+  {%- if block.type == 'testimonial' and block.settings.quote != blank -%}
+    {%- assign testimonial_count = testimonial_count | plus: 1 -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- if testimonial_count > 0 -%}
+<div class="color-{{ section.settings.color_scheme }} gradient section-{{ section.id }}-padding">
+  <div style="text-align:center;margin-bottom:40px">
+    <div class="lena-section-eye"><span class="dm filled sm"></span> {{ section.settings.eyebrow }}</div>
+    <div class="lena-section-h">{{ section.settings.heading }}</div>
+    {%- if section.settings.subheading != blank -%}
+      <div class="lena-section-p">{{ section.settings.subheading }}</div>
+    {%- endif -%}
+  </div>
+
+  <div class="lena-testimonial-grid" data-cards="{{ testimonial_count }}">
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'testimonial' and block.settings.quote != blank -%}
+        <div class="lena-testimonial-card" {{ block.shopify_attributes }}>
+          {%- if block.settings.rating > 0 -%}
+            <div class="lena-testimonial-stars">
+              {%- for i in (1..5) -%}
+                {%- if i <= block.settings.rating -%}
+                  <span class="lena-star filled">&#9733;</span>
+                {%- else -%}
+                  <span class="lena-star">&#9733;</span>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+          <blockquote class="lena-testimonial-quote">
+            <span class="dm filled sm"></span>
+            {{ block.settings.quote }}
+          </blockquote>
+          <div class="lena-testimonial-author">
+            <strong>{{ block.settings.author_name }}</strong>
+            {%- if block.settings.author_info != blank -%}
+              <span class="lena-testimonial-info">{{ block.settings.author_info }}</span>
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Testimonials",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "What Customers Say"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Loved by <strong>Collectors</strong>"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Real words from real customers we've met in person."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-2"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 52
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 52
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Quote"
+        },
+        {
+          "type": "text",
+          "id": "author_name",
+          "label": "Customer name"
+        },
+        {
+          "type": "text",
+          "id": "author_info",
+          "label": "Customer info",
+          "info": "e.g. \"Local customer\" or \"West Palm Beach\""
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "min": 0,
+          "max": 5,
+          "step": 1,
+          "label": "Star rating",
+          "default": 5,
+          "info": "Set to 0 to hide stars"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Testimonials",
+      "blocks": [
+        {
+          "type": "testimonial",
+          "settings": {
+            "quote": "The mirror I bought is absolutely stunning \u2014 the embroidery is even more beautiful in person!",
+            "author_name": "Sarah M.",
+            "author_info": "West Palm Beach market",
+            "rating": 5
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "quote": "I've never seen anything like these hats. You can tell every stitch was made with care.",
+            "author_name": "Maria L.",
+            "author_info": "Fort Lauderdale",
+            "rating": 5
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "quote": "My crochet doll is the most unique gift I've ever given. My daughter absolutely loved it.",
+            "author_name": "Jennifer K.",
+            "author_info": "Returning customer",
+            "rating": 5
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

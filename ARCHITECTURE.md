@@ -1,8 +1,8 @@
 # ARCHITECTURE.md — Lena Handicrafts Theme Deep Reference
 
-> Line numbers verified 2026-06-03. Re-verify after major CSS or facets edits.
+> Line numbers verified 2026-06-05. Re-verify after major CSS or facets edits.
 
-## CSS Architecture (`assets/lena-custom.css`, 917 lines)
+## CSS Architecture (`assets/lena-custom.css`, 1018 lines)
 
 | Lines | Section | Key selectors |
 |-------|---------|---------------|
@@ -12,18 +12,20 @@
 | 51–61 | Announcement Bar | `.announcement-bar` overrides |
 | 63–83 | Header / Nav | `.section-header` backdrop blur, `.header__menu-item::after` underline animation |
 | 85–215 | Product Cards | `.lena-badge-1of1`, `.lena-badge-new`, `.lena-sold-overlay`, `.lena-scarcity`, `.lena-card-cat`, `.lena-notify-btn`, `.card--sold-out` |
-| 216–247 | Section Headers | `.lena-section-eye`, `.lena-section-h`, `.lena-section-p` |
-| 249–426 | Hero Section | `.lena-hero`, `.lena-hero-bg`, `.lena-hero-content`, `.lena-hero-mosaic`, `.lena-hero-img`, `.lena-btn`, `.lena-btn-primary`, `.lena-btn-ghost` |
-| 428–478 | Trust Strip (Marquee) | `.lena-trust-strip`, `.lena-marquee`, `.lena-marquee-track`, `.lena-marquee-item`, `@keyframes lena-marquee` |
-| 480–515 | Drop Section Header | `.lena-drop-bar`, `.lena-countdown-pill`, `.lena-view-all` |
-| 517–528 | Category Cards Overlay | `.collection-list .card__media::after`, `.collection-list .card:hover` |
-| 530–624 | Artisan Spotlight | `.lena-spot-card`, `.lena-spot-photo`, `.lena-spot-photo-inner`, `.lena-spot-role`, `.lena-spot-link`, `.lena-spot-nav` |
-| 626–722 | Find Us Cards | `.lena-find-grid`, `.lena-find-card`, `.lena-find-card.primary`, `.lena-find-card.event`, `.lena-fc-dir`, `[data-cards]` grid |
-| 724–732 | Newsletter Overrides | `.newsletter-form__field-wrapper` focus states |
-| 734–792 | PDP Branding | `.lena-pdp-cat`, `.lena-pdp-badge-1of1`, `.lena-pdp-artisan`, `.lena-pdp-scarcity`, `.lena-pdp-sold-msg` |
-| 794–829 | Collection Banner | `.lena-collection-banner`, `.lena-collection-title`, `.lena-collection-count` |
-| 831–879 | Responsive | `@media (max-width: 900px)` tablet, `@media (max-width: 640px)` mobile |
-| 881–917 | Popup / Modal | `.lena-popup-overlay`, `.lena-popup`, `.lena-popup-close`, `.lena-popup-field`, `.lena-popup-success`, mobile stack |
+| 218–247 | Section Headers | `.lena-section-eye`, `.lena-section-h`, `.lena-section-p` |
+| 251–426 | Hero Section | `.lena-hero`, `.lena-hero-bg`, `.lena-hero-content`, `.lena-hero-mosaic`, `.lena-hero-img`, `.lena-btn`, `.lena-btn-primary`, `.lena-btn-ghost` |
+| 430–478 | Trust Strip (Marquee) | `.lena-trust-strip`, `.lena-marquee`, `.lena-marquee-track`, `.lena-marquee-item`, `@keyframes lena-marquee` |
+| 482–515 | Drop Section Header | `.lena-drop-bar`, `.lena-countdown-pill`, `.lena-view-all` |
+| 519–528 | Category Cards Overlay | `.collection-list .card__media::after`, `.collection-list .card:hover` |
+| 532–624 | Artisan Spotlight | `.lena-spot-card`, `.lena-spot-photo`, `.lena-spot-photo-inner`, `.lena-spot-role`, `.lena-spot-link`, `.lena-spot-nav` |
+| 628–722 | Find Us Cards | `.lena-find-grid`, `.lena-find-card`, `.lena-find-card.primary`, `.lena-find-card.event`, `.lena-fc-dir`, `[data-cards]` grid |
+| 726–732 | Newsletter Overrides | `.newsletter-form__field-wrapper` focus states |
+| 736–815 | PDP Branding | `.lena-pdp-cat`, `.lena-pdp-badge-1of1`, `.lena-pdp-artisan`, `.lena-pdp-scarcity`, `.lena-pdp-sold-msg`, `.lena-pdp-notify-btn` |
+| 817–852 | Collection Banner | `.lena-collection-banner`, `.lena-collection-title`, `.lena-collection-count` |
+| 854–920 | Testimonials | `.lena-testimonial-grid`, `.lena-testimonial-card`, `.lena-star`, `.lena-testimonial-quote`, `.lena-testimonial-author` |
+| 922–928 | Product Specifications | `.lena-specs-table` — two-column table for PDP metafield display |
+| 930–980 | Responsive | `@media (max-width: 900px)` tablet, `@media (max-width: 640px)` mobile |
+| 982–1018 | Popup / Modal | `.lena-popup-overlay`, `.lena-popup`, `.lena-popup-close`, `.lena-popup-field`, `.lena-popup-success`, mobile stack |
 
 ## CSS Variables
 
@@ -74,6 +76,13 @@
 - **Settings:** `eyebrow`, `heading`, `subheading`, `color_scheme`, `padding_top`, `padding_bottom`
 - **Blocks:** `location` — `name`, `schedule`, `description`, `address`, `directions_url`, `icon`, `primary` (bool)
 - **Also reads:** `shop.metaobjects.scheduled_event` — auto-shows events within 14-day window
+
+### `lena-testimonials.liquid`
+- **Settings:** `eyebrow`, `heading` (inline_richtext), `subheading`, `color_scheme`, `padding_top`, `padding_bottom`
+- **Blocks:** `testimonial` (max 6) — `quote` (textarea), `author_name`, `author_info`, `rating` (range 0–5, default 5)
+- **Grid:** `.lena-testimonial-grid` adapts via `data-cards` attribute (1–3 columns). Cards have star rating, italic quote with diamond motif, author info.
+- **Used in:** `templates/index.json` (between Q&A and Find Us sections)
+- **Managed in:** Theme Editor — add/edit/remove/reorder testimonials without code
 
 ### `lena-email-popup.liquid`
 - **Settings:** `heading` (inline_richtext), `text` (textarea), `button_label`, `placeholder`, `success_message`, `delay_seconds` (range 3–30, default 10)
@@ -136,6 +145,14 @@ Shopify's Storefront Filtering API exposes all product tags under the "Color" fi
 | 130–134 | Scarcity text (`.lena-pdp-scarcity`) | `product.available and lena_qty == 1` |
 | 135–139 | Sold-out message (`.lena-pdp-sold-msg`) | `!product.available` |
 | 140–143 | Notify button (`.lena-pdp-notify-btn`) | `!product.available` — opens category-specific modal via `window.lenaNotify()` |
+| 268–299 | Specifications table (`.lena-specs-table`) | New `specifications` block type — collapsible accordion with up to 8 label/value rows. Values connectable to product metafields via Theme Editor dynamic sources. Only renders rows with non-blank values. |
+
+## Collection Product Grid (`sections/main-collection-product-grid.liquid`)
+
+| Lines | Feature |
+|-------|---------|
+| 143–202 | In-stock-first sorting: two-loop approach renders `product.available` items first, then sold-out items. Reorders within each page. |
+| 225–230 | `products_per_page` range: 8–48 (default 48). High default ensures most collections fit on 1 page for effective availability sorting. |
 
 ## Collection Banner (`sections/main-collection-banner.liquid`)
 
@@ -189,6 +206,9 @@ These live as `custom_liquid` HTML inside `templates/index.json`, not as section
 | Change color schemes | `config/settings_data.json` → `color_schemes` |
 | Change email popup text/delay | Shopify admin → Email Popup section settings, or `sections/lena-email-popup.liquid` |
 | Change notify modal text | `snippets/lena-notify-modal.liquid` |
+| Add/edit testimonials | Shopify admin (section blocks) or `templates/index.json` → `lena-testimonials` |
+| Change PDP specifications | Theme Editor → Product page → "Product Specifications" block → connect values to metafields via dynamic sources |
+| Change products per page | `sections/main-collection-product-grid.liquid` line 225 (range setting) + `templates/collection.json` |
 | Change newsletter tags | `sections/newsletter.liquid` line 49, `sections/footer.liquid` line 174 (drop-list), `sections/lena-email-popup.liquid` (general), `snippets/lena-notify-modal.liquid` (category) |
 
 ## Newsletter Tagging Strategy
