@@ -103,10 +103,18 @@
                     <div class="lena-pdp-cat">{{ product.type }}</div>
                   {%- endif -%}
                   <h1>{{ product.title | escape }}</h1>
-                  {%- comment -%} Lena: 1-of-1 badge {%- endcomment -%}
-                  <div class="lena-pdp-badge-1of1">
-                    <span class="dm gold sm"></span> 1 of 1
-                  </div>
+                  {%- comment -%} Lena: inventory badge — "1 of 1" for unique, "N in stock" for multiples {%- endcomment -%}
+                  {%- assign lena_qty = product.selected_or_first_available_variant.inventory_quantity | default: 0 -%}
+                  {%- if lena_qty > 0 -%}
+                    <div class="lena-pdp-badge-1of1">
+                      <span class="dm gold sm"></span>
+                      {%- if lena_qty == 1 -%}
+                        1 of 1
+                      {%- else -%}
+                        {{ lena_qty }} in stock
+                      {%- endif -%}
+                    </div>
+                  {%- endif -%}
                   {%- comment -%} Lena: Artisan attribution {%- endcomment -%}
                   <p class="lena-pdp-artisan">
                     <span class="dm filled sm"></span> Handmade by artisans in Vietnam

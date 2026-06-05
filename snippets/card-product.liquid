@@ -105,10 +105,18 @@
                 >
               {%- endif -%}
             </div>
-            {%- comment -%} Lena: 1-of-1 badge {%- endcomment -%}
-            <div class="lena-badge-1of1">
-              <span class="dm gold sm"></span> 1 of 1
-            </div>
+            {%- comment -%} Lena: inventory badge — "1 of 1" for unique, "N in stock" for multiples {%- endcomment -%}
+            {%- assign lena_qty = card_product.selected_or_first_available_variant.inventory_quantity | default: 0 -%}
+            {%- if lena_qty > 0 -%}
+              <div class="lena-badge-1of1">
+                <span class="dm gold sm"></span>
+                {%- if lena_qty == 1 -%}
+                  1 of 1
+                {%- else -%}
+                  {{ lena_qty }} in stock
+                {%- endif -%}
+              </div>
+            {%- endif -%}
             {%- comment -%} Lena: New badge (products created within 7 days) {%- endcomment -%}
             {%- assign now_timestamp = 'now' | date: '%s' | plus: 0 -%}
             {%- assign created_timestamp = card_product.created_at | date: '%s' | plus: 0 -%}
