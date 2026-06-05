@@ -119,7 +119,7 @@ Shopify's Storefront Filtering API exposes all product tags under the "Color" fi
 
 | Lines | Feature | Condition |
 |-------|---------|-----------|
-| 108–111 | 1-of-1 badge (`.lena-badge-1of1`) | Always shown |
+| 108–119 | Inventory badge (`.lena-badge-1of1`) | qty > 0: "1 of 1" when qty=1, "N in stock" when qty>1; hidden when sold out |
 | 112–118 | "New" badge (`.lena-badge-new`) | `created_at` < 7 days ago (604800s) |
 | 119–122 | Sold-out overlay (`.lena-sold-overlay`) | `!card_product.available` |
 | 164–167 | Category label (`.lena-card-cat`) | `card_product.type` present |
@@ -131,7 +131,7 @@ Shopify's Storefront Filtering API exposes all product tags under the "Color" fi
 | Lines | Feature | Condition |
 |-------|---------|-----------|
 | 101–104 | Category eyebrow (`.lena-pdp-cat`) | `product.type` present |
-| 106–109 | 1-of-1 badge (`.lena-pdp-badge-1of1`) | Always |
+| 106–117 | Inventory badge (`.lena-pdp-badge-1of1`) | qty > 0: "1 of 1" when qty=1, "N in stock" when qty>1; hidden when sold out |
 | 110–113 | Artisan attribution (`.lena-pdp-artisan`) | Always |
 | 130–134 | Scarcity text (`.lena-pdp-scarcity`) | `product.available` |
 | 135–139 | Sold-out message (`.lena-pdp-sold-msg`) | `!product.available` |
