@@ -57,11 +57,12 @@
 - **No blocks.** Uses `collections[collection_handle]` to detect product count.
 - **Has products:** heading "This Week's Drop", shows "View all →" link
 - **Empty:** heading "New Drop Coming Soon", hides "View all" link
-- **Countdown:** JS countdown to next Friday 8 PM (always visible)
+- **Countdown:** JS countdown to next Friday 6 AM EST (11:00 UTC). Shows "Drop is LIVE!" from Friday 6 AM EST through Sunday midnight EST (Monday 05:00 UTC), then counts down to next Friday. Supports optional `next_drop_date` override.
 
 ### `lena-drop-coming-soon.liquid`
-- **Settings:** `eyebrow`, `heading` (inline_richtext), `description` (textarea), `cta_label`, `cta_link` (url, default `/collections/all`), `color_scheme`
+- **Settings:** `eyebrow`, `heading` (inline_richtext), `description` (textarea), `cta_label`, `cta_link` (url, default `/collections/all`), `next_drop_date` (optional override), `color_scheme`
 - **No blocks.** Entire section wrapped in `{%- if collection.products.size == 0 -%}` — only renders on empty collections.
+- **Countdown:** Same logic as `lena-drop-header.liquid` — "Drop is LIVE!" during drop window, countdown otherwise.
 - **Used in:** `templates/collection.this-weeks-drop.json`
 
 ### `lena-hero.liquid`

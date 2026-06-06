@@ -48,23 +48,41 @@
 (function(){
   var customDate = '{{ section.settings.next_drop_date | escape }}';
   function update(){
+    var el=document.getElementById('lena-countdown');
+    if(!el) return;
     var now=new Date();
-    var target;
+
+    // --- Find drop start (Friday 11:00 UTC = 6 AM EST) ---
+    var dropStart;
     if(customDate && customDate.trim()){
-      target=new Date(customDate.trim());
-      if(isNaN(target.getTime())){target=null;}
+      dropStart=new Date(customDate.trim());
+      if(isNaN(dropStart.getTime())) dropStart=null;
     }
-    if(!target){
-      // Default: next Friday at 6:00 AM EST (11:00 UTC)
-      target=new Date(now);
-      target.setDate(now.getDate()+((5-now.getDay()+7)%7||7));
-      target.setUTCHours(11,0,0,0);
-      if(now.getDay()===5&&now<target){target.setDate(now.getDate());}
+    if(!dropStart){
+      // Most recent Friday at 11:00 UTC
+      var daysSinceFri=(now.getUTCDay()+2)%7; // Fri=0,Sat=1,Sun=2,...
+      dropStart=new Date(now);
+      dropStart.setUTCDate(now.getUTCDate()-daysSinceFri);
+      dropStart.setUTCHours(11,0,0,0);
+      if(dropStart>now) dropStart.setUTCDate(dropStart.getUTCDate()-7);
     }
-    var diff=target-now;
-    if(diff<=0){document.getElementById('lena-countdown').textContent='Drop is LIVE!';return;}
+
+    // --- Drop end: Monday 05:00 UTC (= Sunday midnight EST) ---
+    var dropEnd=new Date(dropStart);
+    dropEnd.setUTCDate(dropStart.getUTCDate()+3);
+    dropEnd.setUTCHours(5,0,0,0);
+
+    if(now>=dropStart && now<dropEnd){
+      el.textContent='Drop is LIVE!';
+      return;
+    }
+
+    // --- Countdown to next Friday 11:00 UTC ---
+    var next=new Date(dropStart);
+    next.setUTCDate(dropStart.getUTCDate()+7);
+    var diff=next-now;
     var d=Math.floor(diff/864e5),h=Math.floor(diff%864e5/36e5),m=Math.floor(diff%36e5/6e4);
-    document.getElementById('lena-countdown').textContent='Next drop in '+d+'d '+h+'h '+m+'m';
+    el.textContent='Next drop in '+d+'d '+h+'h '+m+'m';
   }
   update();setInterval(update,60000);
 })();
