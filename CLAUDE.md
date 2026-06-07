@@ -87,6 +87,34 @@ All Lena changes in stock files are marked: `{%- comment -%} Lena: <description>
 - **Metaobject:** `scheduled_event` (fields: `start_date`, `end_date`, `name`, `time_text`, `description`, `address`, `icon`)
 - **Menu:** `main-menu-gallery`
 
+## Development Rules
+
+### Editing workflow
+1. **Read before editing** — Always read the target file and ARCHITECTURE.md before making changes
+2. **Stock vs custom** — Know which type of file you're editing. Stock files get `Lena:` comment markers; custom files are edited freely.
+3. **CSS in one place** — All custom styles go in `assets/lena-custom.css`. No inline `<style>` tags, no new CSS files.
+4. **Mobile-first verification** — Check 640px and 900px breakpoints after any layout change
+5. **Empty-state handling** — Any section that depends on a collection must handle `products.size == 0` gracefully
+
+### Shopify Liquid patterns
+- **Inventory**: `product.variants.first.inventory_quantity` for stock counts
+- **Tags**: Check for tag before rendering conditional UI (`product.tags contains 'tag-name'`)
+- **Metaobjects**: Use `section.settings.{metaobject}` for dynamic data
+- **Countdown**: UTC-based calculations, never local timezone
+- **Color filter**: Whitelist in `snippets/facets.liquid` — update both desktop and mobile instances
+
+### Post-change checklist
+1. Visual check in `shopify theme dev` (if available)
+2. Check mobile layout at 640px
+3. Verify no Liquid syntax errors (broken pages)
+4. Update CLAUDE.md tables if files were added/modified
+5. Update ARCHITECTURE.md for complex logic changes
+
+## Slash Commands
+
+- `/edit-theme` — Safely edit theme files (handles stock vs custom distinction)
+- `/add-section` — Add a new custom section with proper naming, schema, and CSS
+
 ## Competing Theme
 
 Rise theme at `/Users/vanhoanghai/projects/lena-shopify_theme/` on `website-redesign` branch. Comparing both before deploy.
