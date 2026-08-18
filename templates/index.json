@@ -81,6 +81,8 @@
       "type": "lena-drop-header",
       "settings": {
         "eyebrow": "Fresh From Vietnam",
+        "heading_empty": "New Drop <strong>Every Friday</strong>",
+        "show_countdown": false,
         "collection_handle": "this-weeks-drop",
         "color_scheme": "scheme-2",
         "padding_top": 52,

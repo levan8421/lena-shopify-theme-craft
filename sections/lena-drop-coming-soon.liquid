@@ -17,10 +17,12 @@
       {{ section.settings.description }}
     </p>
 
-    <div class="lena-countdown-pill" style="display:inline-flex;margin-bottom:32px">
-      <span class="dm filled sm" style="animation:dm-pulse 1.5s infinite"></span>
-      <span id="lena-drop-page-countdown">Next drop soon</span>
-    </div>
+    {%- if section.settings.show_countdown -%}
+      <div class="lena-countdown-pill" style="display:inline-flex;margin-bottom:32px">
+        <span class="dm filled sm" style="animation:dm-pulse 1.5s infinite"></span>
+        <span id="lena-drop-page-countdown">Next drop soon</span>
+      </div>
+    {%- endif -%}
 
     <div>
       <a href="{{ section.settings.cta_link }}" class="button" style="min-width:220px">
@@ -30,6 +32,7 @@
   </div>
 </div>
 
+{%- if section.settings.show_countdown -%}
 <script>
 (function(){
   var customDate = '{{ section.settings.next_drop_date | escape }}';
@@ -73,6 +76,7 @@
 })();
 </script>
 {%- endif -%}
+{%- endif -%}
 
 {% schema %}
 {
@@ -96,7 +100,14 @@
       "type": "textarea",
       "id": "description",
       "label": "Description",
-      "default": "We're preparing something special. Every piece is handcrafted by artisans in Vietnam \u2014 one of a kind, made just for you. Check back when the countdown hits zero, or explore what's available now."
+      "default": "We're preparing something special. Every piece is handcrafted by artisans in Vietnam \u2014 one of a kind, made just for you. Check back Friday, or explore what's available now."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_countdown",
+      "label": "Show countdown timer",
+      "default": false,
+      "info": "Turn on when the drop schedule is finalized."
     },
     {
       "type": "text",

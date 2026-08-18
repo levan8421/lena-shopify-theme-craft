@@ -32,18 +32,23 @@
         <div class="lena-section-h">{{ section.settings.heading_empty }}</div>
       {%- endif -%}
     </div>
-    <div style="display:flex;align-items:center;gap:14px">
-      <div class="lena-countdown-pill">
-        <span class="dm filled sm" style="animation:dm-pulse 1.5s infinite"></span>
-        <span id="lena-countdown">Next drop soon</span>
+    {%- if section.settings.show_countdown or has_products -%}
+      <div style="display:flex;align-items:center;gap:14px">
+        {%- if section.settings.show_countdown -%}
+          <div class="lena-countdown-pill">
+            <span class="dm filled sm" style="animation:dm-pulse 1.5s infinite"></span>
+            <span id="lena-countdown">Next drop soon</span>
+          </div>
+        {%- endif -%}
+        {%- if has_products -%}
+          <a class="lena-view-all" href="{{ drop_collection.url }}">View all &rarr;</a>
+        {%- endif -%}
       </div>
-      {%- if has_products -%}
-        <a class="lena-view-all" href="{{ drop_collection.url }}">View all &rarr;</a>
-      {%- endif -%}
-    </div>
+    {%- endif -%}
   </div>
 </div>
 
+{%- if section.settings.show_countdown -%}
 <script>
 (function(){
   var customDate = '{{ section.settings.next_drop_date | escape }}';
@@ -87,6 +92,7 @@
   update();setInterval(update,60000);
 })();
 </script>
+{%- endif -%}
 
 {% schema %}
 {
@@ -110,7 +116,14 @@
       "type": "inline_richtext",
       "id": "heading_empty",
       "label": "Heading (no products)",
-      "default": "New Drop <strong>Coming Soon</strong>"
+      "default": "New Drop <strong>Every Friday</strong>"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_countdown",
+      "label": "Show countdown timer",
+      "default": false,
+      "info": "Turn on when the drop schedule is finalized."
     },
     {
       "type": "text",
