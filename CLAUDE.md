@@ -16,8 +16,8 @@ shopify theme push --unpublished   # Push for review
 | File | Lines | Purpose |
 |------|-------|---------|
 | `sections/lena-hero.liquid` | 170 | Hero with mosaic image grid, dual CTAs |
-| `sections/lena-drop-header.liquid` | 117 | Drop header — adapts heading/CTA based on collection product count |
-| `sections/lena-drop-coming-soon.liquid` | 98 | Empty-state "coming soon" for drop collection page |
+| `sections/lena-drop-header.liquid` | 174 | Drop header — adapts heading/CTA based on collection product count |
+| `sections/lena-drop-coming-soon.liquid` | 138 | Empty-state "coming soon" for drop collection page |
 | `sections/lena-spotlight.liquid` | 174 | Blog-powered artisan rotation (1/2/4 week cycle) |
 | `sections/lena-find-us.liquid` | 240 | Location cards + metaobject scheduled events |
 | `assets/lena-custom.css` | 846 | All custom styles (16 sections, 70+ classes) |
@@ -102,6 +102,7 @@ All Lena changes in stock files are marked: `{%- comment -%} Lena: <description>
 - **Metaobjects**: Use `section.settings.{metaobject}` for dynamic data
 - **Countdown**: UTC-based calculations, never local timezone
 - **Color filter**: Whitelist in `snippets/facets.liquid` — update both desktop and mobile instances
+- **Schema defaults**: Never write `"default": ""` in a `{% schema %}` setting. Shopify rejects the whole file with `Invalid schema: setting with id="x" default can't be blank`, and the GitHub sync then silently skips it — plus any JSON template referencing that section type. Omit `default` entirely for an optional field.
 
 ### Post-change checklist
 1. Visual check in `shopify theme dev` (if available)
