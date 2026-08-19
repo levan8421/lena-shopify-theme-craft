@@ -2,6 +2,24 @@ Edit the Shopify Craft theme. The user will describe what to change.
 
 ## Rules — read before every edit
 
+### Step 0 — route the change (do this before classifying files)
+
+`git pull` first — the admin theme editor commits back to `website-redesign`, so local can be stale.
+
+Then decide where the change belongs:
+
+| Change | Lives in | Do it in |
+|---|---|---|
+| Section setting text, images, colors, padding | `templates/*.json` | Shopify admin |
+| Hiding / showing / reordering sections and blocks | `templates/*.json` (`"disabled": true`) | Shopify admin |
+| Header, footer, menus, global colors and fonts | `sections/*-group.json`, `config/settings_data.json` | Shopify admin |
+| Text with no matching field in the theme editor | `sections/*.liquid` | Code |
+| A *new* setting, markup, conditional logic, styles | `sections/*.liquid`, `assets/lena-custom.css` | Code |
+
+Quick test: does the section's `{% schema %}` already declare a setting for it? Yes means admin. No means code.
+
+If the change is admin-owned, say so and tell the user to make it in the theme editor (Online Store → Themes → Customize) and then `git pull` — do not edit the JSON locally. Shopify strips setting IDs that the section's `{% schema %}` doesn't declare, so a hand-added setting in a JSON template is silently dropped.
+
 ### File classification (CRITICAL — determines how you edit)
 
 **Lena-created files (edit freely):**

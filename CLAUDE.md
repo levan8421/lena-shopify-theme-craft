@@ -89,12 +89,29 @@ All Lena changes in stock files are marked: `{%- comment -%} Lena: <description>
 
 ## Development Rules
 
+### Where to make the change — admin vs code
+
+Decide this before touching a file. The dividing line is which file stores the change.
+
+| Change | Lives in | Do it in |
+|---|---|---|
+| Section setting text, images, colors, padding | `templates/*.json` | Shopify admin → `git pull` |
+| Hiding / showing / reordering sections and blocks | `templates/*.json` (`"disabled": true`) | Shopify admin → `git pull` |
+| Header, footer, menus, global colors and fonts | `sections/*-group.json`, `config/settings_data.json` | Shopify admin → `git pull` |
+| Text with no matching field in the theme editor | `sections/*.liquid` | Code → push |
+| A *new* setting, markup, conditional logic, styles | `sections/*.liquid`, `assets/lena-custom.css` | Code → push |
+
+Quick test: open the section in the theme editor. A field for it means admin. No field means code.
+
+Do not hand-edit `templates/*.json`, `sections/*-group.json`, or `config/settings_data.json` locally unless the matching setting already exists in that section's `{% schema %}` — Shopify strips setting IDs it doesn't recognise when it ingests the file.
+
 ### Editing workflow
-1. **Read before editing** — Always read the target file and ARCHITECTURE.md before making changes
-2. **Stock vs custom** — Know which type of file you're editing. Stock files get `Lena:` comment markers; custom files are edited freely.
-3. **CSS in one place** — All custom styles go in `assets/lena-custom.css`. No inline `<style>` tags, no new CSS files.
-4. **Mobile-first verification** — Check 640px and 900px breakpoints after any layout change
-5. **Empty-state handling** — Any section that depends on a collection must handle `products.size == 0` gracefully
+1. **Pull first** — `git pull` before any local edit. The admin theme editor commits back to `website-redesign`, so local can be behind at any time.
+2. **Read before editing** — Always read the target file and ARCHITECTURE.md before making changes
+3. **Stock vs custom** — Know which type of file you're editing. Stock files get `Lena:` comment markers; custom files are edited freely.
+4. **CSS in one place** — All custom styles go in `assets/lena-custom.css`. No inline `<style>` tags, no new CSS files.
+5. **Mobile-first verification** — Check 640px and 900px breakpoints after any layout change
+6. **Empty-state handling** — Any section that depends on a collection must handle `products.size == 0` gracefully
 
 ### Shopify Liquid patterns
 - **Inventory**: `product.variants.first.inventory_quantity` for stock counts
