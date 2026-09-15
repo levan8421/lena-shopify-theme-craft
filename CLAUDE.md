@@ -102,6 +102,34 @@ All Lena changes in stock files are marked: `{%- comment -%} Lena: <description>
 - **Metaobject:** `scheduled_event` (fields: `start_date`, `end_date`, `name`, `time_text`, `description`, `address`, `icon`)
 - **Menu:** `main-menu-gallery`
 
+## Branches and themes
+
+**Theme name = branch name.** Shopify prints the connected branch under every theme title, so the
+two agreeing makes a rollback unambiguous. This is what the three near-identically-named themes cost
+us once already.
+
+| Branch | Shopify theme | Role |
+|---|---|---|
+| `website-redesign` | `website-redesign` | **LIVE / published.** A push here goes live with no review step |
+| `staging` | `staging` | Draft theme, permanently connected. All review happens here |
+| `main` | — | Stock Craft 15.4.1, initial commit only. Not connected, not used |
+
+**Never rename `website-redesign`.** Renaming a branch Shopify is connected to breaks the link to
+the live theme. Rename the *theme* to match the branch, never the reverse.
+
+### The review loop
+
+1. Work lands on `staging` in code, and is pushed.
+2. The `staging` draft theme picks it up automatically — the owner verifies in a real browser.
+3. The owner makes admin-side changes in the theme editor (move sections, edit text, enable/disable).
+   **Shopify commits those back to `staging` as real commits.**
+4. `git pull` before touching anything locally again.
+5. When it is right, merge `staging` → `website-redesign` to publish.
+
+**Step 4 is not optional.** Any theme-editor save makes local stale, and the conflict lands in a
+generated JSON file where it is painful to resolve. Never hold unpushed local commits while the
+owner is editing in admin.
+
 ## Development Rules
 
 ### Where to make the change — admin vs code
@@ -121,7 +149,7 @@ Quick test: open the section in the theme editor. A field for it means admin. No
 Do not hand-edit `templates/*.json`, `sections/*-group.json`, or `config/settings_data.json` locally unless the matching setting already exists in that section's `{% schema %}` — Shopify strips setting IDs it doesn't recognise when it ingests the file.
 
 ### Editing workflow
-1. **Pull first** — `git pull` before any local edit. The admin theme editor commits back to `website-redesign`, so local can be behind at any time.
+1. **Pull first** — `git pull` before any local edit. The admin theme editor commits back to whichever branch the theme is connected to (`staging` during review, `website-redesign` once live), so local can be behind at any time.
 2. **Read before editing** — Always read the target file and ARCHITECTURE.md before making changes
 3. **Stock vs custom** — Know which type of file you're editing. Stock files get `Lena:` comment markers; custom files are edited freely.
 4. **CSS in one place** — All custom styles go in `assets/lena-custom.css`. No inline `<style>` tags, no new CSS files.
