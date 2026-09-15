@@ -67,6 +67,16 @@
         "padding_bottom": 0
       }
     },
+    "lena-trust": {
+      "type": "custom-liquid",
+      "name": "Trust Strip",
+      "settings": {
+        "custom_liquid": "<div class=\"lena-trust-strip\">\n  <div class=\"lena-marquee\">\n    <div class=\"lena-marquee-track\">\n      <span class=\"lena-marquee-item\"><span class=\"dm filled sm\"></span> <strong>100% Handmade</strong> &middot; Crafted in Vietnam</span>\n      <span class=\"lena-marquee-item\"><span class=\"dm filled sm\"></span> <strong>Every Design Tells a Story</strong> &middot; Handcrafted in Limited Quantities</span>\n      <span class=\"lena-marquee-item\"><span class=\"dm filled sm\"></span> <strong>Women-Owned</strong> &middot; Supporting Artisan Families</span>\n      <span class=\"lena-marquee-item\"><span class=\"dm filled sm\"></span> <strong>100% Handmade</strong> &middot; Crafted in Vietnam</span>\n      <span class=\"lena-marquee-item\"><span class=\"dm filled sm\"></span> <strong>Most Pieces Are One of a Kind</strong> &middot; Handmade in Small Numbers</span>\n      <span class=\"lena-marquee-item\"><span class=\"dm filled sm\"></span> <strong>Women-Owned</strong> &middot; Supporting Artisan Families</span>\n    </div>\n  </div>\n</div>",
+        "color_scheme": "scheme-2",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
     "our-story": {
       "type": "image-with-text",
       "blocks": {
@@ -121,16 +131,6 @@
         "color_scheme": "scheme-1",
         "padding_top": 52,
         "padding_bottom": 52
-      }
-    },
-    "lena-trust": {
-      "type": "custom-liquid",
-      "name": "Trust Strip",
-      "settings": {
-        "custom_liquid": "<div class=\"lena-trust-strip\">\n  <div class=\"lena-marquee\">\n    <div class=\"lena-marquee-track\">\n      <span class=\"lena-marquee-item\"><span class=\"dm filled sm\"></span> <strong>100% Handmade</strong> &middot; Crafted in Vietnam</span>\n      <span class=\"lena-marquee-item\"><span class=\"dm filled sm\"></span> <strong>Most Pieces Are One of a Kind</strong> &middot; Handmade in Small Numbers</span>\n      <span class=\"lena-marquee-item\"><span class=\"dm filled sm\"></span> <strong>Women-Owned</strong> &middot; Supporting Artisan Families</span>\n      <span class=\"lena-marquee-item\"><span class=\"dm filled sm\"></span> <strong>100% Handmade</strong> &middot; Crafted in Vietnam</span>\n      <span class=\"lena-marquee-item\"><span class=\"dm filled sm\"></span> <strong>Most Pieces Are One of a Kind</strong> &middot; Handmade in Small Numbers</span>\n      <span class=\"lena-marquee-item\"><span class=\"dm filled sm\"></span> <strong>Women-Owned</strong> &middot; Supporting Artisan Families</span>\n    </div>\n  </div>\n</div>",
-        "color_scheme": "scheme-2",
-        "padding_top": 0,
-        "padding_bottom": 0
       }
     },
     "lena-drop-header": {
@@ -487,8 +487,8 @@
   },
   "order": [
     "lena-hero",
-    "our-story",
     "lena-trust",
+    "our-story",
     "lena-drop-header",
     "new-arrivals-grid",
     "featured-collection",
