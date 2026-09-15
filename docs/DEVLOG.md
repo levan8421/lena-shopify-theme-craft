@@ -1,0 +1,163 @@
+# Development log
+
+Append-only. One entry per feature or bug, newest at the bottom. **Entries are never edited** — a
+later change gets a later entry. Open work lives in `OPEN_ITEMS.md`, not here.
+
+---
+
+## 2026-09-15 · Feature · Retire the drop cadence; the theme no longer schedules anything
+**Commit:** 3615e17 · **Files:** `sections/lena-drop-header.liquid`, `sections/lena-drop-coming-soon.liquid`, `sections/lena-hero.liquid`, `sections/main-product.liquid`, `sections/main-404.liquid`, `sections/collection-list.liquid`, `snippets/breadcrumbs.liquid` (new), `snippets/header-*.liquid`, `snippets/lena-notify-modal.liquid`, `templates/index.json`, both collection templates, `assets/lena-custom.css`
+
+**What it does / did:** Removes every promise of a weekly rhythm from the theme — the Friday
+countdown, its UTC maths, the `show_countdown` and `next_drop_date` settings, the dead
+`.lena-countdown-pill` / `@keyframes dm-pulse` CSS, and all "New drops every Friday" / "Join the Drop
+List" copy. `lena-drop-header` became a New Arrivals bar (174 → 111 lines) that renders only while
+`collections['new-arrivals'].all_products_count > 0`. `lena-drop-coming-soon` became a generic
+collection empty state. Also in this commit: the PDP quantity stepper is hidden at max-purchasable 1
+and capped at real stock otherwise, breadcrumbs were added, and 30-day returns were surfaced on the
+PDP.
+
+**Why it matters:** The business is supply-driven; gaps between new pieces run from days to a month.
+A countdown to a Friday that may hold nothing trains a customer to stop believing the site. The
+countdown was already disabled (`show_countdown: false`) but was deleted rather than left dormant —
+one checkbox away from making the claim again.
+
+Separately, the homepage had **no product grid at all**: slot 4's `featured-collection` pointed at
+`this-weeks-drop`, which holds zero products, so the section rendered nothing and nobody had noticed.
+It now points at `available-now`, as does the hero's primary CTA.
+
+**Reproduce (before the fix):**
+1. `git show 0109239:templates/index.json | grep -n "drops every Friday"` → hero subheading promises
+   a weekly cadence.
+2. `git show 0109239:sections/lena-drop-header.liquid | grep -c "dropStart"` → 13 hits; the Friday
+   countdown machinery.
+3. `git show 0109239:templates/index.json | grep -A1 '"featured-collection"'` → bound to
+   `this-weeks-drop`, a collection with 0 products, so the homepage grid rendered nothing.
+
+**Verify now:**
+```bash
+# Code-owned files: expect no matches.
+grep -rin "every friday\|drop list\|next drop\|countdown" \
+  sections snippets templates assets --exclude="*-group.json"
+
+# Admin-owned files: expect exactly 2 matches, both still open. These are theme-editor
+# content, deliberately reverted on this branch — see OPEN_ITEMS.md / the admin checklist.
+grep -rin "drop list\|next drop" sections/header-group.json sections/footer-group.json
+#   header-group.json:27  "Next drop: Friday 8 PM ET →"
+#   footer-group.json:20  "Join the Drop List"
+
+grep -n "all_products_count" sections/lena-drop-header.liquid   # → the visibility rule
+shopify theme check --fail-level error                          # → 0 errors, 8 pre-existing warnings
+```
+
+**Still carrying drop copy:** the announcement bar and the footer newsletter heading live in
+`sections/header-group.json` and `sections/footer-group.json`, which are admin-owned — CLAUDE.md
+routes header and footer changes to the theme editor, and deleting an announcement block is
+structural. **The storefront still says "Next drop: Friday 8 PM ET" until that is done in admin.**
+In the app: homepage shows Available Now with products. PDP of a 1-of-1 piece shows no quantity
+stepper, shows breadcrumbs, and shows the 30-day returns line.
+
+**Regression risk:** Re-adding any date arithmetic to a section that describes new pieces. The theme
+must never compute what "new" means — the app owns that via a single `new` tag and the smart
+collection matches it. A future "hide if stale" or "last drop was N days ago" setting would put the
+claim straight back.
+
+---
+
+## 2026-09-15 · Feature · Let shoppers add to cart from the grid, except when sold out
+**Commit:** 6588a73 · **Files:** `snippets/card-product.liquid`, `templates/collection.json`, `templates/index.json`, `templates/collection.new-arrivals.json`, `templates/collection.this-weeks-drop.json`
+
+**What it does / did:** Sets `quick_add` to `standard` on every product grid, and gates the quick-add
+region in `card-product.liquid` on `card_product.available`.
+
+**Why it matters:** Product cards had never carried an add-to-cart control — `quick_add` was `"none"`
+from the initial commit, which is the stock Craft default rather than a decision anyone made. For a
+catalogue of mostly one-of-a-kind pieces at $42–$109, forcing a click through to the product page to
+buy costs a step for no benefit.
+
+The availability gate is the part worth knowing. Stock Craft renders the quick-add button in a
+*disabled* state for an unavailable product. Without the gate, a sold-out card would have shown a
+dead "Sold out" button immediately beneath the Notify Me button already there — two CTAs on a card
+that cannot be bought, one of which does nothing when clicked.
+
+**Reproduce (before the fix):**
+1. `git show 3615e17:templates/collection.json | grep quick_add` → `"none"`; no button on any card.
+2. Set it to `standard` without the gate and load a collection page containing a sold-out piece →
+   the card shows both a disabled "Sold out" button and the Notify Me button.
+
+**Verify now:**
+```bash
+grep -n "quick_add" templates/*.json                              # → "standard" in all four
+grep -n "card_product.available" snippets/card-product.liquid     # → both quick-add branches gated
+```
+In the app, on any collection page: an in-stock card shows "Add to cart" under the price; a sold-out
+card shows the sold overlay and **only** Notify Me.
+
+**Regression risk:** A theme update overwriting `card-product.liquid` drops the gate while leaving
+`quick_add: standard` in the templates — the two dead-CTA cards return silently. The `Lena:` comment
+markers at lines 332–337 and 436–437 are what a merge conflict should catch.
+
+---
+
+## 2026-09-15 · Feature · Show the New Arrivals pieces on the homepage, not just a count
+**Commit:** d24c104 · **Files:** `templates/index.json`, `CLAUDE.md`
+
+**What it does / did:** Adds a `featured-collection` block keyed `new-arrivals-grid`, bound to the
+`new-arrivals` collection, between the New Arrivals bar and Available Now. No title, no view-all
+link, `padding_top: 0` — the bar above supplies the heading and the count link.
+
+**Why it matters:** The bar announced "14 new pieces →" and then required a click to see any of them.
+These are the pieces a returning customer came back for; showing them is the whole job.
+
+No new section file. `featured-collection` is already wrapped in a `products.size > 0` guard, so the
+grid hides itself on the same condition as the bar. Both read the same collection, so they cannot
+fall out of sync — either both render or neither does. This is the drop feature as it now stands:
+Shopify decides what is in the collection, the theme only reflects whether anything is.
+
+**Reproduce (feature — the steps that exercise it):**
+1. With `new-arrivals` empty or non-existent: load the homepage → neither the bar nor the grid
+   appears; Available Now sits directly under the trust strip.
+2. Tag a product `new` so the smart collection picks it up → the bar appears reading "1 new piece →"
+   with a 1-up grid directly beneath it.
+
+**Verify now:**
+```bash
+grep -n "new-arrivals-grid" templates/index.json          # → block definition and order entry
+sed -n '/"order"/,/]/p' templates/index.json              # → bar then grid then featured-collection
+shopify theme check --fail-level error                    # → 0 errors
+```
+
+**Regression risk:** Changing either the bar's `collection_handle` or the grid's `collection` without
+changing the other. They are two settings holding one value; if they ever disagree, a heading will
+render over a grid of different products, or one will appear without the other.
+
+---
+
+## 2026-09-15 · Docs · Archive the drop-model documents
+**Commit:** (this commit) · **Files:** `docs/`
+
+**What it does / did:** Splits `docs/` into current documents, `OPEN_ITEMS.md`, and `archive/`. Six
+files moved to `archive/`, each with a header naming what superseded it and what inside it is now
+false.
+
+**Why it matters:** Five of the seven documents were written against assumptions that no longer hold,
+and two of them were actively dangerous to follow. `TIER0_DEVELOPER_RESPONSE_V4.md` analyses in
+detail a 30-day `published_at` window that was never built — someone implementing from it would add
+date logic the theme deliberately does not have. `lena_website_implementation_plan.md` specifies the
+weekly Friday drop throughout, plus the wrong fonts (Cormorant Garamond + Nunito Sans, against the
+shipped Josefin Sans + Libre Franklin) and a New Arrivals rule ("created within 14 days") that
+contradicts the tag-driven design.
+
+`TIER0_DEVELOPER_RESPONSE.md` (v1) keeps three findings its own author retracted in V2 — most
+importantly that the `#newsletter` anchor is broken, which it is not: `sections/newsletter.liquid:18`
+emits `<div id="newsletter">`.
+
+**Verify now:**
+```bash
+ls docs docs/archive
+head -3 docs/archive/TIER0_DEVELOPER_RESPONSE_V4.md   # → the ARCHIVED header
+grep -c "^" docs/OPEN_ITEMS.md                        # → the open-items sweep exists
+```
+
+**Regression risk:** Acting on an archived document without reading its header. The headers are the
+only thing standing between `archive/` and a reintroduced `new_arrivals_window_days` setting.

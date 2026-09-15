@@ -1,0 +1,1793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lena Handicrafts — Hand-Embroidered in Vietnam</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Nunito+Sans:opsz,wght@6..12,300;6..12,400;6..12,500;6..12,600;6..12,700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════
+   DESIGN TOKENS
+   Warm artisan palette — linen, terracotta, sage, cream
+   ═══════════════════════════════════════════════════════ */
+:root {
+  /* Colors */
+  --cream: #FAF7F2;
+  --linen: #F3EDE4;
+  --warm-white: #FFFCF8;
+  --sand: #E8DFD1;
+  --clay: #C4A882;
+  --terracotta: #C4724E;
+  --terracotta-deep: #A85A3A;
+  --sage: #7A9A7E;
+  --sage-deep: #5B7B5F;
+  --charcoal: #2C2C2C;
+  --ink: #1A1A1A;
+  --stone: #6B6560;
+  --pebble: #8A847D;
+  --rose-mist: #E8D5CE;
+  --gold-soft: #D4A853;
+
+  /* Typography */
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Nunito Sans', -apple-system, sans-serif;
+
+  /* Spacing */
+  --section-pad: clamp(48px, 8vw, 96px);
+  --content-max: 1200px;
+  --card-radius: 6px;
+}
+
+/* ═══════════════════════════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+body {
+  font-family: var(--font-body);
+  color: var(--charcoal);
+  background: var(--cream);
+  line-height: 1.6;
+  font-size: 15px;
+}
+img { max-width: 100%; height: auto; display: block; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+/* ═══════════════════════════════════════════════════════
+   ANNOUNCEMENT BAR
+   ═══════════════════════════════════════════════════════ */
+.announcement-bar {
+  background: var(--ink);
+  color: var(--cream);
+  text-align: center;
+  padding: 10px 20px;
+  font-size: 12.5px;
+  letter-spacing: 0.08em;
+  font-weight: 400;
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.announcement-bar span { opacity: 0.5; }
+.announcement-bar a {
+  border-bottom: 1px solid rgba(255,255,255,0.3);
+  transition: border-color 0.2s;
+}
+.announcement-bar a:hover { border-color: var(--gold-soft); color: var(--gold-soft); }
+
+/* ═══════════════════════════════════════════════════════
+   NAVIGATION
+   ═══════════════════════════════════════════════════════ */
+.nav-wrap {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--cream);
+  border-bottom: 1px solid var(--sand);
+  transition: box-shadow 0.3s;
+}
+.nav-wrap.scrolled { box-shadow: 0 2px 20px rgba(0,0,0,0.06); }
+.nav-inner {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 64px;
+}
+.nav-logo {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+}
+.nav-logo em {
+  font-style: italic;
+  color: var(--terracotta);
+  font-weight: 400;
+}
+.nav-links {
+  display: flex;
+  gap: 32px;
+  list-style: none;
+  align-items: center;
+}
+.nav-links a {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--stone);
+  transition: color 0.2s;
+  position: relative;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 1.5px;
+  background: var(--terracotta);
+  transition: width 0.3s;
+}
+.nav-links a:hover { color: var(--ink); }
+.nav-links a:hover::after { width: 100%; }
+.nav-links .drop-link {
+  color: var(--terracotta-deep);
+  font-weight: 600;
+}
+.nav-links .drop-link::before {
+  content: '●';
+  font-size: 7px;
+  margin-right: 5px;
+  animation: pulse-dot 2s infinite;
+  vertical-align: middle;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+.nav-cart {
+  position: relative;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--stone);
+}
+.nav-cart .count {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  background: var(--terracotta);
+  color: white;
+  font-size: 10px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+/* Mobile nav toggle */
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  width: 24px;
+  cursor: pointer;
+}
+.nav-toggle span {
+  display: block;
+  height: 2px;
+  background: var(--ink);
+  border-radius: 2px;
+  transition: 0.3s;
+}
+
+/* ═══════════════════════════════════════════════════════
+   HERO SECTION
+   ═══════════════════════════════════════════════════════ */
+.hero {
+  position: relative;
+  min-height: 85vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: var(--linen);
+}
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  /* Simulated hero image — in production this would be a real lifestyle photo */
+  background:
+    linear-gradient(135deg, rgba(196,114,78,0.08) 0%, transparent 40%),
+    linear-gradient(225deg, rgba(122,154,126,0.06) 0%, transparent 40%),
+    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c4a882' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background-color: var(--linen);
+}
+.hero-content {
+  position: relative;
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 80px 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+.hero-text { max-width: 520px; }
+.hero-eyebrow {
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--terracotta);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hero-eyebrow::before {
+  content: '';
+  width: 32px;
+  height: 1.5px;
+  background: var(--terracotta);
+}
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 5vw, 56px);
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--ink);
+  margin-bottom: 20px;
+}
+.hero h1 em {
+  font-style: italic;
+  color: var(--terracotta-deep);
+}
+.hero-sub {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--stone);
+  margin-bottom: 32px;
+  max-width: 440px;
+}
+.hero-ctas {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 4px;
+  transition: all 0.3s;
+}
+.btn-primary {
+  background: var(--terracotta);
+  color: white;
+}
+.btn-primary:hover { background: var(--terracotta-deep); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(196,114,78,0.3); }
+.btn-outline {
+  border: 1.5px solid var(--charcoal);
+  color: var(--charcoal);
+  background: transparent;
+}
+.btn-outline:hover { background: var(--ink); color: white; }
+
+/* Hero image area — mosaic of product photos */
+.hero-mosaic {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 200px 160px 200px;
+  gap: 12px;
+}
+.hero-img {
+  border-radius: var(--card-radius);
+  overflow: hidden;
+  position: relative;
+}
+.hero-img-inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-style: italic;
+  color: var(--pebble);
+  text-align: center;
+  padding: 16px;
+  line-height: 1.4;
+}
+.hero-img:nth-child(1) { grid-row: 1 / 3; background: var(--rose-mist); }
+.hero-img:nth-child(2) { background: var(--sand); }
+.hero-img:nth-child(3) { background: #D4CEC5; }
+.hero-img:nth-child(4) { grid-row: 2 / 4; background: #C9D5C5; }
+.hero-img .img-label {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  background: rgba(26,26,26,0.75);
+  color: white;
+  font-family: var(--font-body);
+  font-style: normal;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 3px;
+}
+
+/* ═══════════════════════════════════════════════════════
+   TRUST STRIP
+   ═══════════════════════════════════════════════════════ */
+.trust-strip {
+  background: var(--warm-white);
+  border-top: 1px solid var(--sand);
+  border-bottom: 1px solid var(--sand);
+  padding: 24px;
+}
+.trust-inner {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  gap: clamp(24px, 6vw, 64px);
+  flex-wrap: wrap;
+}
+.trust-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--stone);
+  font-weight: 500;
+}
+.trust-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.trust-icon.hand { background: rgba(196,114,78,0.12); color: var(--terracotta); }
+.trust-icon.one { background: rgba(122,154,126,0.15); color: var(--sage-deep); }
+.trust-icon.woman { background: rgba(212,168,83,0.15); color: #9A7A28; }
+.trust-label strong { display: block; color: var(--ink); font-weight: 600; font-size: 13.5px; }
+.trust-label span { font-size: 11.5px; color: var(--pebble); }
+
+/* ═══════════════════════════════════════════════════════
+   SECTION LAYOUT
+   ═══════════════════════════════════════════════════════ */
+.section {
+  padding: var(--section-pad) 24px;
+  max-width: var(--content-max);
+  margin: 0 auto;
+}
+.section-full {
+  padding: var(--section-pad) 24px;
+}
+.section-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+.section-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--terracotta);
+  margin-bottom: 10px;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1.2;
+}
+.section-sub {
+  font-size: 15px;
+  color: var(--stone);
+  margin-top: 10px;
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.7;
+}
+
+/* ═══════════════════════════════════════════════════════
+   THIS WEEK'S DROP — Product Grid
+   ═══════════════════════════════════════════════════════ */
+.drop-section { background: var(--warm-white); }
+.drop-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 16px;
+  max-width: var(--content-max);
+  margin-left: auto;
+  margin-right: auto;
+}
+.drop-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.countdown {
+  background: var(--ink);
+  color: var(--cream);
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.countdown .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--sage);
+  animation: pulse-dot 1.5s infinite;
+}
+.view-all {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--terracotta);
+  border-bottom: 1px solid var(--terracotta);
+  letter-spacing: 0.04em;
+}
+
+/* Product Cards */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+  max-width: var(--content-max);
+  margin: 0 auto;
+}
+.product-card {
+  background: var(--cream);
+  border-radius: var(--card-radius);
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+  position: relative;
+}
+.product-card:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(0,0,0,0.08); }
+.product-card-img {
+  aspect-ratio: 4/5;
+  position: relative;
+  overflow: hidden;
+}
+.product-card-img-inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-style: italic;
+  color: var(--pebble);
+  text-align: center;
+  padding: 20px;
+  transition: transform 0.6s;
+}
+.product-card:hover .product-card-img-inner { transform: scale(1.03); }
+.product-card-img-inner.mirror { background: var(--rose-mist); }
+.product-card-img-inner.crochet { background: #D5E0D0; }
+.product-card-img-inner.hat { background: var(--sand); }
+.product-card-img-inner.headband { background: #DDD5CB; }
+.product-card-img-inner.purse { background: #C9C0B5; }
+
+/* Badges */
+.badge-1of1 {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(26,26,26,0.8);
+  backdrop-filter: blur(8px);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  border-radius: 3px;
+}
+.badge-new {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--terracotta);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  border-radius: 3px;
+}
+.badge-sold {
+  position: absolute;
+  inset: 0;
+  background: rgba(26,26,26,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.badge-sold span {
+  background: white;
+  color: var(--ink);
+  padding: 8px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border-radius: 3px;
+}
+
+/* Card info */
+.product-card-info {
+  padding: 14px 16px 18px;
+}
+.product-card-category {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--pebble);
+  margin-bottom: 4px;
+}
+.product-card-name {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+.product-card-price {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--terracotta-deep);
+}
+.product-card-scarcity {
+  font-size: 11px;
+  color: var(--sage-deep);
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+/* Sold-out card specifics */
+.product-card.sold-out .product-card-name { color: var(--pebble); }
+.product-card.sold-out .product-card-price { color: var(--pebble); text-decoration: line-through; }
+.notify-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--terracotta);
+  border: 1px solid var(--terracotta);
+  padding: 6px 14px;
+  border-radius: 3px;
+  transition: all 0.2s;
+  letter-spacing: 0.04em;
+}
+.notify-btn:hover { background: var(--terracotta); color: white; }
+
+/* ═══════════════════════════════════════════════════════
+   OUR STORY SECTION
+   ═══════════════════════════════════════════════════════ */
+.story-section {
+  background: var(--cream);
+}
+.story-grid {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+.story-img-wrap {
+  position: relative;
+  border-radius: var(--card-radius);
+  overflow: hidden;
+  aspect-ratio: 4/5;
+}
+.story-img-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(145deg, var(--rose-mist), var(--sand));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--pebble);
+  font-size: 14px;
+  text-align: center;
+  padding: 24px;
+  line-height: 1.5;
+}
+.story-img-accent {
+  position: absolute;
+  bottom: -12px;
+  right: -12px;
+  width: 120px;
+  height: 120px;
+  border: 2px solid var(--terracotta);
+  border-radius: var(--card-radius);
+  opacity: 0.3;
+}
+.story-text h2 {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3.5vw, 38px);
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1.2;
+  margin-bottom: 20px;
+}
+.story-text h2 em { font-style: italic; color: var(--terracotta-deep); }
+.story-text p {
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--stone);
+  margin-bottom: 16px;
+}
+.story-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--terracotta);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-top: 8px;
+  transition: gap 0.3s;
+}
+.story-link:hover { gap: 14px; }
+.story-link::after { content: '→'; font-size: 16px; }
+
+/* ═══════════════════════════════════════════════════════
+   SHOP BY CATEGORY
+   ═══════════════════════════════════════════════════════ */
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  max-width: var(--content-max);
+  margin: 0 auto;
+}
+.category-card {
+  position: relative;
+  border-radius: var(--card-radius);
+  overflow: hidden;
+  cursor: pointer;
+  aspect-ratio: 3/4;
+  transition: transform 0.4s;
+}
+.category-card:hover { transform: translateY(-4px); }
+.category-card-bg {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  padding: 20px;
+  position: relative;
+}
+.category-card-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(26,26,26,0.6) 0%, transparent 50%);
+  transition: opacity 0.3s;
+}
+.category-card:hover .category-card-bg::after { opacity: 0.8; }
+.cc-crochet { background: linear-gradient(145deg, #B8D4B0, #8AB38A); }
+.cc-mirrors { background: linear-gradient(145deg, var(--rose-mist), #C4A89A); }
+.cc-hats { background: linear-gradient(145deg, var(--sand), #B5A48E); }
+.cc-purses { background: linear-gradient(145deg, #C4A882, #9A826A); }
+.category-card-label {
+  position: relative;
+  z-index: 2;
+  color: white;
+}
+.category-card-label h3 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+.category-card-label span {
+  font-size: 12px;
+  opacity: 0.8;
+  letter-spacing: 0.04em;
+}
+
+/* ═══════════════════════════════════════════════════════
+   ARTISAN SPOTLIGHT
+   ═══════════════════════════════════════════════════════ */
+.spotlight-section { background: var(--linen); }
+.spotlight-card {
+  max-width: 800px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 40px;
+  align-items: center;
+  background: var(--warm-white);
+  border-radius: 10px;
+  padding: 40px;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.04);
+}
+.spotlight-photo {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--rose-mist);
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--pebble);
+  font-size: 13px;
+  text-align: center;
+  padding: 16px;
+  flex-shrink: 0;
+}
+.spotlight-text h3 {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+.spotlight-text .role {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--terracotta);
+  margin-bottom: 12px;
+}
+.spotlight-text p {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--stone);
+}
+
+/* ═══════════════════════════════════════════════════════
+   FIND US IN PERSON
+   ═══════════════════════════════════════════════════════ */
+.findus-section { background: var(--warm-white); }
+.findus-grid {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.findus-card {
+  background: var(--cream);
+  border-radius: 10px;
+  padding: 28px;
+  border: 1px solid var(--sand);
+  transition: border-color 0.3s, transform 0.3s;
+}
+.findus-card:hover { border-color: var(--terracotta); transform: translateY(-2px); }
+.findus-card.primary {
+  background: var(--ink);
+  color: var(--cream);
+  border: none;
+}
+.findus-card .fc-icon {
+  font-size: 24px;
+  margin-bottom: 12px;
+}
+.findus-card h3 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+.findus-card .fc-schedule {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--terracotta);
+  margin-bottom: 8px;
+}
+.findus-card.primary .fc-schedule { color: var(--gold-soft); }
+.findus-card p {
+  font-size: 13px;
+  color: var(--pebble);
+  line-height: 1.6;
+}
+.findus-card.primary p { color: rgba(255,255,255,0.6); }
+.fc-directions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--terracotta);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.findus-card.primary .fc-directions { color: var(--gold-soft); }
+
+/* ═══════════════════════════════════════════════════════
+   NEWSLETTER SIGNUP
+   ═══════════════════════════════════════════════════════ */
+.newsletter-section {
+  background: var(--ink);
+  color: var(--cream);
+  text-align: center;
+}
+.newsletter-inner {
+  max-width: 560px;
+  margin: 0 auto;
+}
+.newsletter-inner .section-eyebrow { color: var(--gold-soft); }
+.newsletter-inner .section-title { color: var(--cream); }
+.newsletter-inner .section-sub { color: rgba(255,255,255,0.5); }
+.newsletter-form {
+  display: flex;
+  gap: 0;
+  margin-top: 28px;
+  max-width: 460px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.newsletter-form input {
+  flex: 1;
+  padding: 14px 18px;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-right: none;
+  border-radius: 4px 0 0 4px;
+  background: rgba(255,255,255,0.06);
+  color: white;
+  font-family: var(--font-body);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+.newsletter-form input::placeholder { color: rgba(255,255,255,0.35); }
+.newsletter-form input:focus { border-color: var(--terracotta); }
+.newsletter-form button {
+  padding: 14px 24px;
+  background: var(--terracotta);
+  color: white;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 0 4px 4px 0;
+  transition: background 0.3s;
+  white-space: nowrap;
+}
+.newsletter-form button:hover { background: var(--terracotta-deep); }
+.newsletter-privacy {
+  font-size: 11px;
+  color: rgba(255,255,255,0.3);
+  margin-top: 14px;
+}
+
+/* ═══════════════════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════════════════ */
+.site-footer {
+  background: var(--charcoal);
+  color: rgba(255,255,255,0.5);
+  padding: 56px 24px 32px;
+}
+.footer-inner {
+  max-width: var(--content-max);
+  margin: 0 auto;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+.footer-brand .nav-logo { margin-bottom: 14px; }
+.footer-brand p {
+  font-size: 13px;
+  line-height: 1.7;
+  color: rgba(255,255,255,0.4);
+  max-width: 280px;
+}
+.footer-col h4 {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 16px;
+}
+.footer-col ul { list-style: none; }
+.footer-col li { margin-bottom: 10px; }
+.footer-col a {
+  font-size: 13px;
+  color: rgba(255,255,255,0.45);
+  transition: color 0.2s;
+}
+.footer-col a:hover { color: var(--gold-soft); }
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding-top: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+.footer-payments {
+  display: flex;
+  gap: 8px;
+}
+.footer-payments span {
+  background: rgba(255,255,255,0.1);
+  padding: 4px 10px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.4);
+}
+
+/* ═══════════════════════════════════════════════════════
+   PRODUCT PAGE PREVIEW (inline demo)
+   ═══════════════════════════════════════════════════════ */
+.pdp-preview {
+  background: var(--linen);
+  border: 2px dashed var(--sand);
+  border-radius: 10px;
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 32px;
+  margin-bottom: 24px;
+}
+.pdp-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--pebble);
+  background: var(--sand);
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 3px;
+  margin-bottom: 20px;
+}
+.pdp-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: start;
+}
+.pdp-gallery {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.pdp-thumb {
+  aspect-ratio: 1;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--pebble);
+  text-align: center;
+  padding: 8px;
+}
+.pdp-thumb:first-child { grid-column: 1 / -1; aspect-ratio: 4/5; }
+.pdp-thumb.bg1 { background: var(--rose-mist); }
+.pdp-thumb.bg2 { background: var(--sand); }
+.pdp-thumb.bg3 { background: #D4CEC5; }
+.pdp-info .badge-inline {
+  display: inline-block;
+  background: var(--ink);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 3px;
+  margin-bottom: 12px;
+}
+.pdp-info .pdp-category {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--pebble);
+  margin-bottom: 6px;
+}
+.pdp-info h2 {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+.pdp-info .pdp-price {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--terracotta-deep);
+  margin-bottom: 16px;
+}
+.pdp-info .pdp-artisan {
+  font-size: 13px;
+  color: var(--stone);
+  font-style: italic;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--sand);
+}
+.pdp-info .pdp-desc {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--stone);
+  margin-bottom: 20px;
+}
+.pdp-info .pdp-scarcity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--sage-deep);
+  margin-bottom: 20px;
+}
+.pdp-info .pdp-scarcity .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--sage);
+}
+.btn-atc {
+  width: 100%;
+  padding: 16px;
+  background: var(--ink);
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  transition: background 0.3s;
+}
+.btn-atc:hover { background: var(--terracotta-deep); }
+.pdp-disclaimer {
+  font-size: 11.5px;
+  color: var(--pebble);
+  line-height: 1.6;
+  font-style: italic;
+}
+.pdp-care {
+  margin-top: 20px;
+  border-top: 1px solid var(--sand);
+  padding-top: 16px;
+}
+.pdp-care summary {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.pdp-care summary::after { content: '+'; font-size: 18px; color: var(--pebble); }
+.pdp-care[open] summary::after { content: '−'; }
+.pdp-care p {
+  font-size: 13px;
+  color: var(--stone);
+  margin-top: 10px;
+  line-height: 1.6;
+}
+
+/* ═══════════════════════════════════════════════════════
+   ARCHITECTURE NOTES (for developer handoff)
+   ═══════════════════════════════════════════════════════ */
+.arch-notes {
+  background: #1E1E2E;
+  color: #CDD6F4;
+  padding: 40px 24px;
+}
+.arch-notes-inner {
+  max-width: var(--content-max);
+  margin: 0 auto;
+}
+.arch-notes h2 {
+  font-family: var(--font-body);
+  font-size: 18px;
+  font-weight: 700;
+  color: #F5E0DC;
+  margin-bottom: 20px;
+  letter-spacing: 0.04em;
+}
+.arch-notes h3 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #A6E3A1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 24px;
+  margin-bottom: 10px;
+}
+.arch-notes p, .arch-notes li {
+  font-size: 13px;
+  line-height: 1.7;
+  color: #BAC2DE;
+}
+.arch-notes ul { padding-left: 20px; margin-bottom: 12px; }
+.arch-notes li { margin-bottom: 6px; }
+.arch-notes code {
+  background: rgba(166,227,161,0.1);
+  color: #A6E3A1;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+}
+.arch-notes .note-box {
+  background: rgba(245,224,220,0.08);
+  border-left: 3px solid #F5E0DC;
+  padding: 14px 18px;
+  border-radius: 0 6px 6px 0;
+  margin: 16px 0;
+  font-size: 13px;
+  color: #F5E0DC;
+}
+
+/* ═══════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .hero-content { grid-template-columns: 1fr; gap: 40px; }
+  .hero-mosaic { grid-template-rows: 140px 120px 140px; }
+  .story-grid { grid-template-columns: 1fr; gap: 32px; }
+  .categories-grid { grid-template-columns: 1fr 1fr; }
+  .findus-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .spotlight-card { grid-template-columns: 1fr; text-align: center; justify-items: center; }
+  .pdp-layout { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .nav-links { display: none; }
+  .nav-toggle { display: flex; }
+  .hero { min-height: auto; }
+  .hero-mosaic { display: none; }
+  .product-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .categories-grid { grid-template-columns: 1fr 1fr; }
+  .hero-ctas { flex-direction: column; align-items: stretch; }
+  .hero-ctas .btn { justify-content: center; }
+  .newsletter-form { flex-direction: column; }
+  .newsletter-form input { border-right: 1px solid rgba(255,255,255,0.2); border-radius: 4px; }
+  .newsletter-form button { border-radius: 4px; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+  .announcement-bar { font-size: 11px; gap: 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════
+     ANNOUNCEMENT BAR
+     ═══════════════════════════════════════════════════════ -->
+<div class="announcement-bar">
+  <a href="#">Free shipping on orders over $70</a>
+  <span>|</span>
+  <a href="#">Next drop: Friday at 8 PM ET →</a>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     NAVIGATION
+     ═══════════════════════════════════════════════════════ -->
+<nav class="nav-wrap" id="mainNav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="#">Lena <em>Handicrafts</em></a>
+    <ul class="nav-links">
+      <li><a href="#drop" class="drop-link">This Week's Drop</a></li>
+      <li><a href="#categories">The Gallery</a></li>
+      <li><a href="#story">Our Story</a></li>
+      <li><a href="#findus">Find Us</a></li>
+      <li><a href="#" class="nav-cart">Cart <span class="count">0</span></a></li>
+    </ul>
+    <div class="nav-toggle" onclick="this.classList.toggle('active')">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════
+     HERO
+     ═══════════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-text">
+      <div class="hero-eyebrow">Hand-Embroidered in Vietnam</div>
+      <h1>One piece at a time. <em>Yours alone.</em></h1>
+      <p class="hero-sub">Every mirror, hat, and crochet figure in our shop is a one-of-one — hand-embroidered by artisans in Vietnam. New drops every Friday.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="#drop">Shop This Week's Drop</a>
+        <a class="btn btn-outline" href="#newsletter">Join the Drop List</a>
+      </div>
+    </div>
+    <div class="hero-mosaic">
+      <div class="hero-img">
+        <div class="hero-img-inner">Lifestyle photo:<br>Hands embroidering<br>a compact mirror</div>
+        <span class="img-label">Compact Mirrors</span>
+      </div>
+      <div class="hero-img">
+        <div class="hero-img-inner">Crochet figure<br>on styled surface</div>
+        <span class="img-label">Crochet Figures</span>
+      </div>
+      <div class="hero-img">
+        <div class="hero-img-inner">Ribbon-embroidery hat<br>worn / in-context</div>
+        <span class="img-label">Hats</span>
+      </div>
+      <div class="hero-img">
+        <div class="hero-img-inner">Flat-lay of<br>this week's drop<br>curated set</div>
+        <span class="img-label">New This Week</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     TRUST STRIP
+     ═══════════════════════════════════════════════════════ -->
+<div class="trust-strip">
+  <div class="trust-inner">
+    <div class="trust-item">
+      <div class="trust-icon hand">✋</div>
+      <div class="trust-label">
+        <strong>100% Handmade</strong>
+        <span>Crafted in Vietnam</span>
+      </div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon one">1</div>
+      <div class="trust-label">
+        <strong>Each Piece Is 1 of 1</strong>
+        <span>Once it's gone, it's gone</span>
+      </div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon woman">♀</div>
+      <div class="trust-label">
+        <strong>Women-Owned</strong>
+        <span>Supporting artisan families</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     THIS WEEK'S DROP
+     ═══════════════════════════════════════════════════════ -->
+<section class="section-full drop-section" id="drop">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="drop-header">
+      <div>
+        <div class="section-eyebrow">Fresh From Vietnam</div>
+        <div class="section-title" style="text-align:left">This Week's Drop</div>
+      </div>
+      <div class="drop-meta">
+        <div class="countdown"><span class="dot"></span> Next drop in 3d 14h</div>
+        <a class="view-all" href="#">View all available →</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="padding-top:0">
+    <div class="product-grid">
+
+      <!-- Card 1 — Crochet Figure -->
+      <div class="product-card">
+        <div class="product-card-img">
+          <div class="product-card-img-inner crochet">Crochet figure photo<br><br>Pink Bunny with<br>flower crown</div>
+          <div class="badge-1of1">1 of 1</div>
+          <div class="badge-new">New</div>
+        </div>
+        <div class="product-card-info">
+          <div class="product-card-category">Crochet Figure</div>
+          <div class="product-card-name">Pink Bunny with Flower Crown</div>
+          <div class="product-card-price">$42</div>
+          <div class="product-card-scarcity">✦ Only piece in existence</div>
+        </div>
+      </div>
+
+      <!-- Card 2 — Compact Mirror -->
+      <div class="product-card">
+        <div class="product-card-img">
+          <div class="product-card-img-inner mirror">Mirror photo<br><br>Rose Garden<br>on Ivory</div>
+          <div class="badge-1of1">1 of 1</div>
+          <div class="badge-new">New</div>
+        </div>
+        <div class="product-card-info">
+          <div class="product-card-category">Compact Mirror · Everyday</div>
+          <div class="product-card-name">Rose Garden on Ivory</div>
+          <div class="product-card-price">$32</div>
+          <div class="product-card-scarcity">✦ Only piece in existence</div>
+        </div>
+      </div>
+
+      <!-- Card 3 — Hat -->
+      <div class="product-card">
+        <div class="product-card-img">
+          <div class="product-card-img-inner hat">Hat photo<br><br>Crimson Poppy Fields</div>
+          <div class="badge-1of1">1 of 1</div>
+        </div>
+        <div class="product-card-info">
+          <div class="product-card-category">Ribbon-Embroidery Hat</div>
+          <div class="product-card-name">Crimson Poppy Fields</div>
+          <div class="product-card-price">$48</div>
+          <div class="product-card-scarcity">✦ Only piece in existence</div>
+        </div>
+      </div>
+
+      <!-- Card 4 — SOLD OUT example -->
+      <div class="product-card sold-out">
+        <div class="product-card-img">
+          <div class="product-card-img-inner mirror">Mirror photo<br><br>Fuji Sakura Dusk</div>
+          <div class="badge-sold"><span>This piece found its home</span></div>
+        </div>
+        <div class="product-card-info">
+          <div class="product-card-category">Compact Mirror · Letter</div>
+          <div class="product-card-name">Fuji Sakura Dusk</div>
+          <div class="product-card-price">$38</div>
+          <button class="notify-btn">🔔 Notify me of similar drops</button>
+        </div>
+      </div>
+
+      <!-- Card 5 — Headband -->
+      <div class="product-card">
+        <div class="product-card-img">
+          <div class="product-card-img-inner headband">Headband photo<br><br>Lavender Fields<br>Alice Band</div>
+          <div class="badge-1of1">1 of 1</div>
+          <div class="badge-new">New</div>
+        </div>
+        <div class="product-card-info">
+          <div class="product-card-category">Headband · Alice Band</div>
+          <div class="product-card-name">Lavender Fields</div>
+          <div class="product-card-price">$28</div>
+          <div class="product-card-scarcity">✦ Only piece in existence</div>
+        </div>
+      </div>
+
+      <!-- Card 6 — Crochet Figure -->
+      <div class="product-card">
+        <div class="product-card-img">
+          <div class="product-card-img-inner crochet">Crochet figure photo<br><br>Garden Gnome<br>with Mushroom</div>
+          <div class="badge-1of1">1 of 1</div>
+        </div>
+        <div class="product-card-info">
+          <div class="product-card-category">Crochet Figure</div>
+          <div class="product-card-name">Garden Gnome with Mushroom</div>
+          <div class="product-card-price">$35</div>
+          <div class="product-card-scarcity">✦ Only piece in existence</div>
+        </div>
+      </div>
+
+      <!-- Card 7 — Mirror -->
+      <div class="product-card">
+        <div class="product-card-img">
+          <div class="product-card-img-inner mirror">Mirror photo<br><br>Alpine Meadow<br>Bloom</div>
+          <div class="badge-1of1">1 of 1</div>
+        </div>
+        <div class="product-card-info">
+          <div class="product-card-category">Compact Mirror · Artisan</div>
+          <div class="product-card-name">Alpine Meadow Bloom</div>
+          <div class="product-card-price">$32</div>
+          <div class="product-card-scarcity">✦ Only piece in existence</div>
+        </div>
+      </div>
+
+      <!-- Card 8 — Crochet Figure SOLD -->
+      <div class="product-card sold-out">
+        <div class="product-card-img">
+          <div class="product-card-img-inner crochet">Crochet figure photo<br><br>Sunset Fox</div>
+          <div class="badge-sold"><span>This piece found its home</span></div>
+        </div>
+        <div class="product-card-info">
+          <div class="product-card-category">Crochet Figure</div>
+          <div class="product-card-name">Sunset Fox</div>
+          <div class="product-card-price">$38</div>
+          <button class="notify-btn">🔔 Notify me of similar drops</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     OUR STORY
+     ═══════════════════════════════════════════════════════ -->
+<section class="section-full story-section" id="story">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="story-grid">
+      <div class="story-img-wrap">
+        <div class="story-img-placeholder">Founder photo —<br>at the market booth<br>or holding handmade items<br><br>This is the emotional<br>centerpiece of the page</div>
+        <div class="story-img-accent"></div>
+      </div>
+      <div class="story-text">
+        <div class="section-eyebrow" style="text-align:left">Our Story</div>
+        <h2>From a small village in <em>Vietnam</em> to your hands</h2>
+        <p>Every piece at Lena Handicrafts begins with a story — of artisans in Vietnam who transform thread, fabric, and yarn into one-of-a-kind works of art using techniques passed down through generations.</p>
+        <p>What started as a personal trip back to Vietnam became a mission: to bring the beauty of Vietnamese ribbon embroidery, hand-crocheting, and traditional weaving to the world — one unique piece at a time.</p>
+        <a class="story-link" href="#">Read the full story</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SHOP BY CATEGORY
+     ═══════════════════════════════════════════════════════ -->
+<section class="section-full" style="background:var(--warm-white)" id="categories">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="section-header">
+      <div class="section-eyebrow">The Gallery</div>
+      <div class="section-title">Shop by Category</div>
+      <div class="section-sub">Each category features hand-selected pieces, refreshed every week with new arrivals from Vietnam.</div>
+    </div>
+    <div class="categories-grid">
+      <div class="category-card">
+        <div class="category-card-bg cc-crochet">
+          <div class="category-card-label">
+            <h3>Crochet Figures</h3>
+            <span>From $18 — Our #1 bestseller</span>
+          </div>
+        </div>
+      </div>
+      <div class="category-card">
+        <div class="category-card-bg cc-mirrors">
+          <div class="category-card-label">
+            <h3>Compact Mirrors</h3>
+            <span>From $32 — Perfect gifts</span>
+          </div>
+        </div>
+      </div>
+      <div class="category-card">
+        <div class="category-card-bg cc-hats">
+          <div class="category-card-label">
+            <h3>Hats &amp; Headbands</h3>
+            <span>From $24 — Wearable art</span>
+          </div>
+        </div>
+      </div>
+      <div class="category-card">
+        <div class="category-card-bg cc-purses">
+          <div class="category-card-label">
+            <h3>Signature Purses</h3>
+            <span>From $75 — The collection</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     ARTISAN SPOTLIGHT
+     ═══════════════════════════════════════════════════════ -->
+<section class="section-full spotlight-section">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="section-header">
+      <div class="section-eyebrow">Artisan Spotlight</div>
+      <div class="section-title">Meet the Makers</div>
+    </div>
+    <div class="spotlight-card">
+      <div class="spotlight-photo">Artisan portrait<br>photo</div>
+      <div class="spotlight-text">
+        <div class="role">Featured Artisan · June 2026</div>
+        <h3>The Crochet Artist</h3>
+        <p>Each crochet figure takes 4–8 hours to complete by hand. From selecting yarn colors to shaping tiny details — flower crowns, button eyes, miniature accessories — every piece reflects years of practice and a deep love for the craft. No two are ever quite the same.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     FIND US IN PERSON
+     ═══════════════════════════════════════════════════════ -->
+<section class="section-full findus-section" id="findus">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="section-header">
+      <div class="section-eyebrow">In Person</div>
+      <div class="section-title">Find Us This Weekend</div>
+      <div class="section-sub">See and feel the craftsmanship in person. Every piece you see online is also available at our booth.</div>
+    </div>
+    <div class="findus-grid">
+      <div class="findus-card primary">
+        <div class="fc-icon">📍</div>
+        <h3>West Palm Beach Antique &amp; Flea Market</h3>
+        <div class="fc-schedule">Every Saturday · 8:30 AM – 1:30 PM</div>
+        <p>Our flagship weekly market. Come early for first pick of new drops — many pieces sell out before noon.</p>
+        <a class="fc-directions" href="#">Get directions →</a>
+      </div>
+      <div class="findus-card">
+        <div class="fc-icon">🏪</div>
+        <h3>Kollective — Delray Beach</h3>
+        <div class="fc-schedule">Open daily · Atlantis Ave</div>
+        <p>A curated selection of purses and mirrors, permanently displayed alongside other artisan brands.</p>
+        <a class="fc-directions" href="#">Get directions →</a>
+      </div>
+      <div class="findus-card">
+        <div class="fc-icon">🏪</div>
+        <h3>Kollective — Fort Lauderdale</h3>
+        <div class="fc-schedule">Open daily · Las Olas Blvd</div>
+        <p>Our signature velvet purses and select accessories in the heart of Las Olas Boulevard.</p>
+        <a class="fc-directions" href="#">Get directions →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     NEWSLETTER SIGNUP
+     ═══════════════════════════════════════════════════════ -->
+<section class="section-full newsletter-section" id="newsletter">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="newsletter-inner">
+      <div class="section-eyebrow">Be First</div>
+      <div class="section-title">Join the Drop List</div>
+      <div class="section-sub">Get the email 24 hours before each Friday drop goes live. Pieces sell out fast — the list is how regulars shop first.</div>
+      <div class="newsletter-form">
+        <input type="email" placeholder="Your email address">
+        <button type="submit">Join the List</button>
+      </div>
+      <p class="newsletter-privacy">No spam. One email per week, max. Unsubscribe anytime.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     PRODUCT PAGE PREVIEW (Developer Reference)
+     ═══════════════════════════════════════════════════════ -->
+<section class="section" id="pdp">
+  <div class="section-header">
+    <div class="section-eyebrow">Page Template</div>
+    <div class="section-title">Product Detail Page</div>
+    <div class="section-sub">How individual product pages should look. This template applies to all categories.</div>
+  </div>
+  <div class="pdp-preview">
+    <div class="pdp-label">📐 Product Page Template Preview</div>
+    <div class="pdp-layout">
+      <div class="pdp-gallery">
+        <div class="pdp-thumb bg1">Main product photo<br>(front view, lifestyle)</div>
+        <div class="pdp-thumb bg2">Detail close-up<br>(embroidery texture)</div>
+        <div class="pdp-thumb bg3">Scale / in-hand<br>photo</div>
+      </div>
+      <div class="pdp-info">
+        <div class="badge-inline">1 of 1</div>
+        <div class="pdp-category">Compact Mirror · Everyday</div>
+        <h2>Rose Garden on Ivory</h2>
+        <div class="pdp-price">$32</div>
+        <div class="pdp-artisan">Embroidered by artisans in Huế, Vietnam</div>
+        <div class="pdp-scarcity"><span class="dot"></span> Only piece in existence — once it's gone, it's gone</div>
+        <p class="pdp-desc">A hand-embroidered compact mirror featuring delicate rose motifs on ivory linen. Each stitch is placed by hand using traditional Vietnamese ribbon embroidery techniques. This exact design will never be made again.</p>
+        <button class="btn-atc">Add to Cart — $32</button>
+        <p class="pdp-disclaimer">Each piece is one-of-a-kind and available across our online shop and in-person events. In the rare case your item has just been sold, we'll reach out within 24 hours with a similar design or a full refund.</p>
+        <details class="pdp-care">
+          <summary>Care Instructions</summary>
+          <p>Wipe gently with a soft, dry cloth. Avoid water contact with embroidered surfaces. Store in a cool, dry place — the included pouch protects during travel.</p>
+        </details>
+        <details class="pdp-care">
+          <summary>Shipping & Returns</summary>
+          <p>Free standard shipping on orders over $70. Ships within 1–2 business days from South Florida. Due to the one-of-a-kind nature, all sales are final — but we'll always make it right.</p>
+        </details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOOTER
+     ═══════════════════════════════════════════════════════ -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="nav-logo" style="color:white">Lena <em>Handicrafts</em></div>
+        <p>Hand-embroidered in Vietnam. One piece at a time. Every item is a unique work of art — when it's gone, it's gone.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="#">This Week's Drop</a></li>
+          <li><a href="#">Crochet Figures</a></li>
+          <li><a href="#">Compact Mirrors</a></li>
+          <li><a href="#">Hats & Headbands</a></li>
+          <li><a href="#">Signature Purses</a></li>
+          <li><a href="#">Sale</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>About</h4>
+        <ul>
+          <li><a href="#">Our Story</a></li>
+          <li><a href="#">The Artisans</a></li>
+          <li><a href="#">Markets & Events</a></li>
+          <li><a href="#">Drop Calendar</a></li>
+          <li><a href="#">Care Instructions</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Help</h4>
+        <ul>
+          <li><a href="#">Shipping & Returns</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Contact Us</a></li>
+          <li><a href="#">hello@lenahandicrafts.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Lena Handicrafts. Women-owned. Handmade with ♥ in Vietnam.</span>
+      <div class="footer-payments">
+        <span>Visa</span><span>MC</span><span>Amex</span><span>PayPal</span><span>Apple Pay</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════════════════════════════
+     ARCHITECTURE NOTES (Developer Handoff Reference)
+     ═══════════════════════════════════════════════════════ -->
+<div class="arch-notes">
+  <div class="arch-notes-inner">
+    <h2>🏗 Architecture Notes — Developer Handoff</h2>
+    <p>This prototype represents the recommended website architecture for Lena Handicrafts, based on competitive analysis of 10+ artisan e-commerce sites and the existing business model. Below are implementation notes for Claude Code or a Shopify developer.</p>
+
+    <h3>Shopify Theme</h3>
+    <ul>
+      <li>Recommended base: <code>Craft</code> (free Shopify theme) — includes Lookbook, Story, and Press sections natively</li>
+      <li>Alternative: <code>Studio</code> (free) for gallery-style grid, or <code>Highlight</code> ($300) for asymmetric layouts</li>
+      <li>Custom CSS variables above can be ported directly into Shopify theme <code>base.css</code></li>
+    </ul>
+
+    <h3>Navigation Structure</h3>
+    <ul>
+      <li>5 top-level items max: <code>This Week's Drop</code> | <code>The Gallery</code> | <code>Our Story</code> | <code>Find Us</code> | <code>Cart</code></li>
+      <li><code>The Gallery</code> is a dropdown: Crochet Figures / Compact Mirrors / Hats &amp; Headbands / Purses / Sale</li>
+      <li>Remove all "#MK" suffixes and "Online Collections" vs "Market Collections" distinction</li>
+    </ul>
+
+    <h3>Collections (Shopify)</h3>
+    <ul>
+      <li><code>This Week's Drop</code> — Automated: tag = <code>drop-current</code> OR created within last 7 days + available for sale</li>
+      <li><code>Available Now</code> — Automated: inventory &gt; 0</li>
+      <li><code>Crochet Figures</code> — Tag-based: <code>crochet-figure</code></li>
+      <li><code>Compact Mirrors</code> — Tag-based: <code>compact-mirror</code></li>
+      <li><code>Hats &amp; Headbands</code> — Tag-based: <code>hat</code> OR <code>headband</code></li>
+      <li><code>Signature Purses</code> — Tag-based: <code>purse</code></li>
+      <li><code>Sale</code> — Manual: clearance items</li>
+    </ul>
+
+    <h3>Product Card Requirements</h3>
+    <ul>
+      <li>Always show <code>1 of 1</code> badge (top-left)</li>
+      <li><code>New</code> badge for items created within 7 days</li>
+      <li>Sold-out items stay visible with overlay: "This piece found its home"</li>
+      <li>Sold-out items show "Notify me of similar drops" button (Notify Me app or Klaviyo Back-in-Stock)</li>
+      <li>Card info: category eyebrow → product name → price → scarcity line</li>
+    </ul>
+
+    <h3>Product Page Template</h3>
+    <ul>
+      <li>Gallery: main photo + 2 detail shots (embroidery close-up, scale/in-hand)</li>
+      <li>Above title: <code>1 of 1</code> badge + category eyebrow</li>
+      <li>Below price: artisan attribution line (italic)</li>
+      <li>Scarcity messaging: green dot + "Only piece in existence"</li>
+      <li>Conflict disclaimer below Add to Cart</li>
+      <li>Accordion: Care Instructions, Shipping &amp; Returns</li>
+      <li>Cross-sell: "Other pieces in this week's drop"</li>
+    </ul>
+
+    <h3>Key Apps Needed</h3>
+    <ul>
+      <li><code>Shopify Email</code> (free) or <code>Klaviyo</code> (free tier) — for weekly drop emails</li>
+      <li><code>Notify Me</code> or <code>Back in Stock</code> (free tier) — email capture on sold-out items</li>
+      <li>Optional: <code>Pasilobus Social Proof</code> (free) for "X people viewing" during drops</li>
+    </ul>
+
+    <h3>Email Flow (Klaviyo/Shopify Email)</h3>
+    <ul>
+      <li>Signup confirmation: "Welcome to the drop list"</li>
+      <li>24h before drop: "Tomorrow's drop preview — here's what's coming"</li>
+      <li>Drop moment: "It's live — shop this week's drop now"</li>
+      <li>Weekly: "What sold out this week" (FOMO builder)</li>
+    </ul>
+
+    <div class="note-box">
+      <strong>Key difference from Ganapati Crafts:</strong> Ganapati sells repeatable, multi-unit products. Lena sells true one-of-one pieces. This prototype is designed for the drop/gallery model, not the catalog/restock model. Every product card gets a "1 of 1" badge. Sold-out items remain visible as portfolio proof. The newsletter signup promises "first access" not "discounts."
+    </div>
+
+    <h3>Naming Conventions (for Shopify product titles)</h3>
+    <ul>
+      <li>Crochet Figures: descriptive name → <code>Pink Bunny with Flower Crown</code></li>
+      <li>Mirrors/Hats/Headbands: [Base Color] - [Main Design] → <code>Ivory - Rose Garden</code></li>
+      <li>Photo sells the product; name is a label, not a description</li>
+    </ul>
+
+    <h3>SEO Title Format</h3>
+    <ul>
+      <li><code>[Product Type] — [Design Name] | Handmade by Lena Handicrafts</code></li>
+      <li>Example: <code>Compact Mirror — Rose Garden on Ivory | Handmade by Lena Handicrafts</code></li>
+    </ul>
+
+    <h3>Responsive Breakpoints</h3>
+    <ul>
+      <li>Desktop: 4-column product grid, 2-column story/PDP layout</li>
+      <li>Tablet (≤900px): 2-column product grid, single-column story</li>
+      <li>Mobile (≤640px): 2-column product grid (compact), hamburger nav, stacked newsletter form</li>
+      <li>Mobile product card: image + title + "1 of 1" + price only. No hover effects.</li>
+    </ul>
+
+    <h3>Performance Notes</h3>
+    <ul>
+      <li>Lazy-load all product images below the fold</li>
+      <li>Hero image: serve WebP at 1200px max width</li>
+      <li>Product photos: 800×1000px max, WebP, compressed to &lt;100KB each</li>
+      <li>Target: Lighthouse Performance score ≥ 90</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+// Sticky nav shadow on scroll
+const nav = document.getElementById('mainNav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 10);
+}, { passive: true });
+</script>
+</body>
+</html>

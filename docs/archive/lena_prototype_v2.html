@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lena Handicrafts — Hand-Embroidered in Vietnam</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Libre+Franklin:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue-deep:#1B4F8A; --blue-mid:#2478BD; --blue-bright:#2E8FD9; --blue-sky:#5AAEE6;
+  --blue-ice:#E6F0FA; --blue-frost:#F2F7FC; --blue-tint:rgba(46,143,217,0.07);
+  --navy:#0E2240; --navy-mid:#132E52;
+  --amber:#D4943A; --amber-soft:#E8B867; --amber-pale:#FDF5E8;
+  --white:#FFFFFF; --snow:#FAFBFC; --pearl:#F3F5F7; --silver:#E2E5EA;
+  --slate:#6B7585; --graphite:#3A4250; --ink:#141A24;
+  --success:#1A8A5C; --success-pale:#E6F7EF;
+  --font-display:"Josefin Sans",sans-serif;
+  --font-body:"Libre Franklin",-apple-system,sans-serif;
+  --max-w:1200px; --section-pad:clamp(52px,8vw,100px); --r:8px; --r-sm:4px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{font-family:var(--font-body);color:var(--graphite);background:var(--snow);line-height:1.6;font-size:15px}
+img{max-width:100%;height:auto;display:block}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+
+.dm{display:inline-block;width:7px;height:7px;border:1.5px solid var(--blue-bright);transform:rotate(45deg);flex-shrink:0}
+.dm.filled{background:var(--blue-bright)}.dm.gold{border-color:var(--amber-soft);background:var(--amber-soft)}.dm.sm{width:5px;height:5px;border-width:1px}
+
+.ann-bar{background:var(--navy);color:rgba(255,255,255,0.6);text-align:center;padding:9px 20px;font-family:var(--font-display);font-size:11.5px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;display:flex;justify-content:center;gap:20px;flex-wrap:wrap}
+.ann-bar a{color:var(--amber-soft);transition:opacity 0.2s}.ann-bar a:hover{opacity:0.8}.ann-bar .sep{opacity:0.2;font-size:8px;align-self:center}
+
+.nav-wrap{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--silver);transition:box-shadow 0.3s}
+.nav-wrap.scrolled{box-shadow:0 2px 24px rgba(14,34,64,0.06)}
+.nav-inner{max-width:var(--max-w);margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:66px}
+.nav-logo{height:36px;width:auto}
+.nav-links{display:flex;gap:32px;list-style:none;align-items:center}
+.nav-links a{font-family:var(--font-display);font-size:12.5px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--slate);transition:color 0.2s;position:relative;padding-bottom:2px}
+.nav-links a::after{content:"";position:absolute;bottom:-2px;left:0;width:0;height:2px;background:linear-gradient(90deg,var(--blue-deep),var(--blue-bright));transition:width 0.3s}
+.nav-links a:hover{color:var(--blue-deep)}.nav-links a:hover::after{width:100%}
+.nav-links .drop-link{color:var(--blue-bright);font-weight:600}
+.nav-links .drop-link::before{content:"";display:inline-block;width:6px;height:6px;border:1.5px solid var(--blue-bright);background:var(--blue-bright);transform:rotate(45deg);margin-right:6px;vertical-align:middle;animation:dm-pulse 2s ease-in-out infinite}
+@keyframes dm-pulse{0%,100%{opacity:1}50%{opacity:0.25}}
+.nav-cart{font-family:var(--font-display);font-size:12.5px;font-weight:500;color:var(--slate);letter-spacing:0.06em;position:relative}
+.nav-cart-count{position:absolute;top:-8px;right:-12px;background:var(--blue-bright);color:white;font-size:10px;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700}
+.nav-toggle{display:none;flex-direction:column;gap:5px;width:22px;cursor:pointer}
+.nav-toggle span{display:block;height:1.5px;background:var(--ink);border-radius:1px}
+
+.hero{position:relative;min-height:88vh;display:flex;align-items:center;overflow:hidden;background:var(--navy);color:white}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 50% 60% at 65% 45%,rgba(46,143,217,0.1) 0%,transparent 70%),radial-gradient(ellipse 35% 40% at 25% 75%,rgba(27,79,138,0.08) 0%,transparent 60%),radial-gradient(ellipse 20% 30% at 80% 80%,rgba(212,148,58,0.04) 0%,transparent 50%)}
+.hero-bg::before{content:"";position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='17' y='17' width='26' height='26' transform='rotate(45 30 30)' fill='none' stroke='%232E8FD9' stroke-opacity='0.04' stroke-width='0.6'/%3E%3C/svg%3E")}
+.hero-bg::after{content:"";position:absolute;width:500px;height:500px;border:1px solid rgba(46,143,217,0.06);transform:rotate(45deg);right:-120px;bottom:-200px}
+.hero-content{position:relative;max-width:var(--max-w);margin:0 auto;padding:80px 24px;display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.hero-text{max-width:500px}
+.hero-eyebrow{font-family:var(--font-display);font-size:11.5px;font-weight:400;letter-spacing:0.22em;text-transform:uppercase;color:var(--amber-soft);margin-bottom:22px;display:flex;align-items:center;gap:10px}
+.hero h1{font-family:var(--font-display);font-size:clamp(36px,5vw,58px);font-weight:200;line-height:1.15;letter-spacing:0.03em;margin-bottom:22px}
+.hero h1 strong{font-weight:600;background:linear-gradient(135deg,var(--blue-sky),var(--blue-bright));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:16px;line-height:1.8;color:rgba(255,255,255,0.45);margin-bottom:36px;max-width:400px;font-weight:300}
+.hero-ctas{display:flex;gap:14px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;font-family:var(--font-display);font-size:12.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;border-radius:var(--r-sm);transition:all 0.3s}
+.btn-primary{background:linear-gradient(135deg,var(--blue-mid),var(--blue-bright));color:white;box-shadow:0 2px 12px rgba(46,143,217,0.25)}
+.btn-primary:hover{box-shadow:0 6px 24px rgba(46,143,217,0.35);transform:translateY(-2px)}
+.btn-ghost{border:1.5px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.7)}
+.btn-ghost:hover{border-color:var(--amber-soft);color:var(--amber-soft)}
+.btn-outline{border:1.5px solid var(--blue-bright);color:var(--blue-bright)}
+.btn-outline:hover{background:var(--blue-bright);color:white}
+
+.hero-mosaic{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:175px 140px 175px;gap:10px}
+.hero-img{border-radius:var(--r);overflow:hidden;position:relative;border:1px solid rgba(46,143,217,0.12)}
+.hero-img-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:11.5px;font-weight:300;color:rgba(255,255,255,0.3);text-align:center;padding:16px;line-height:1.5;letter-spacing:0.05em;text-transform:uppercase}
+.hero-img:nth-child(1){grid-row:1/3;background:linear-gradient(160deg,rgba(36,120,189,0.14),rgba(27,79,138,0.2))}
+.hero-img:nth-child(2){background:linear-gradient(160deg,rgba(212,148,58,0.1),rgba(46,143,217,0.08))}
+.hero-img:nth-child(3){background:linear-gradient(160deg,rgba(46,143,217,0.08),rgba(212,148,58,0.06))}
+.hero-img:nth-child(4){grid-row:2/4;background:linear-gradient(160deg,rgba(26,138,92,0.08),rgba(46,143,217,0.1))}
+.hero-img .img-tag{position:absolute;bottom:8px;left:8px;background:rgba(14,34,64,0.75);backdrop-filter:blur(8px);color:var(--amber-soft);font-family:var(--font-display);font-size:9px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;padding:4px 10px;border-radius:var(--r-sm)}
+
+.trust-strip{background:var(--white);border-bottom:1px solid var(--silver);padding:20px 24px}
+.trust-inner{max-width:var(--max-w);margin:0 auto;display:flex;justify-content:center;gap:clamp(20px,5vw,56px);flex-wrap:wrap}
+.trust-item{display:flex;align-items:center;gap:14px}
+.trust-icon{width:36px;height:36px;transform:rotate(45deg);display:flex;align-items:center;justify-content:center;flex-shrink:0;border-radius:2px}
+.trust-icon>span{transform:rotate(-45deg);font-size:15px;line-height:1}
+.trust-icon.ti-hand{background:var(--blue-ice);border:1px solid rgba(46,143,217,0.15)}
+.trust-icon.ti-one{background:var(--success-pale);border:1px solid rgba(26,138,92,0.15)}
+.trust-icon.ti-own{background:var(--amber-pale);border:1px solid rgba(212,148,58,0.15)}
+.trust-text strong{display:block;font-family:var(--font-display);font-size:13px;font-weight:600;color:var(--ink);letter-spacing:0.02em}
+.trust-text span{font-size:11.5px;color:var(--slate)}
+
+.section{padding:var(--section-pad) 24px;max-width:var(--max-w);margin:0 auto}
+.section-full{padding:var(--section-pad) 24px}
+.section-hdr{text-align:center;margin-bottom:40px}
+.section-eye{font-family:var(--font-display);font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:var(--blue-bright);margin-bottom:10px;display:inline-flex;align-items:center;gap:8px}
+.section-h{font-family:var(--font-display);font-size:clamp(26px,3.5vw,38px);font-weight:300;color:var(--ink);line-height:1.2;letter-spacing:0.04em}
+.section-h strong{font-weight:600}
+.section-p{font-size:15px;color:var(--slate);margin-top:10px;max-width:480px;margin-left:auto;margin-right:auto;line-height:1.7;font-weight:300}
+
+.drop-section{background:var(--white)}
+.drop-bar{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px;flex-wrap:wrap;gap:16px;max-width:var(--max-w);margin-left:auto;margin-right:auto}
+.drop-bar-meta{display:flex;align-items:center;gap:14px}
+.countdown-pill{background:var(--navy);color:rgba(255,255,255,0.7);padding:7px 14px;border-radius:var(--r-sm);font-family:var(--font-display);font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.view-all-link{font-family:var(--font-display);font-size:12px;font-weight:600;color:var(--blue-bright);letter-spacing:0.08em;text-transform:uppercase;border-bottom:1.5px solid var(--blue-bright);padding-bottom:1px}
+
+.p-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;max-width:var(--max-w);margin:0 auto}
+.p-card{background:var(--snow);border-radius:var(--r);overflow:hidden;transition:transform 0.35s,box-shadow 0.35s,border-color 0.35s;cursor:pointer;position:relative;border:1px solid var(--silver)}
+.p-card:hover{transform:translateY(-5px);box-shadow:0 16px 48px rgba(14,34,64,0.1);border-color:var(--blue-bright)}
+.p-card-img{aspect-ratio:4/5;position:relative;overflow:hidden}
+.p-card-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:11.5px;font-weight:300;color:var(--slate);text-align:center;padding:20px;letter-spacing:0.04em;transition:transform 0.6s}
+.p-card:hover .p-card-ph{transform:scale(1.03)}
+.p-card-ph.t-mirror{background:linear-gradient(150deg,var(--blue-ice),#F0E8F8)}.p-card-ph.t-crochet{background:linear-gradient(150deg,#E8F4E8,var(--blue-ice))}.p-card-ph.t-hat{background:linear-gradient(150deg,#FFF8ED,#F5EDE6)}.p-card-ph.t-band{background:linear-gradient(150deg,#F5EDE6,var(--blue-ice))}
+.b-1of1{position:absolute;top:12px;left:12px;background:var(--navy);color:var(--amber-soft);font-family:var(--font-display);font-size:9px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;padding:5px 10px;border-radius:var(--r-sm);display:flex;align-items:center;gap:5px}
+.b-new{position:absolute;top:12px;right:12px;background:linear-gradient(135deg,var(--blue-mid),var(--blue-bright));color:white;font-family:var(--font-display);font-size:9px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;padding:5px 10px;border-radius:var(--r-sm)}
+.b-sold{position:absolute;inset:0;background:rgba(14,34,64,0.35);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center}
+.b-sold span{background:var(--white);color:var(--navy);padding:8px 18px;font-family:var(--font-display);font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;border-radius:var(--r-sm)}
+.p-card-info{padding:14px 16px 18px}
+.p-card-cat{font-family:var(--font-display);font-size:9.5px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:var(--slate);margin-bottom:3px}
+.p-card-name{font-family:var(--font-display);font-size:15.5px;font-weight:400;color:var(--ink);line-height:1.3;letter-spacing:0.02em;margin-bottom:5px}
+.p-card-price{font-family:var(--font-display);font-size:15px;font-weight:600;color:var(--blue-deep);letter-spacing:0.02em}
+.p-card-scarcity{font-size:11px;color:var(--success);margin-top:5px;font-weight:500;display:flex;align-items:center;gap:6px}
+.p-card.sold .p-card-name{color:var(--slate)}.p-card.sold .p-card-price{color:var(--slate);text-decoration:line-through}
+.notify-btn{display:inline-flex;align-items:center;gap:5px;margin-top:8px;font-family:var(--font-display);font-size:10px;font-weight:600;color:var(--blue-bright);border:1.5px solid var(--blue-bright);padding:5px 12px;border-radius:var(--r-sm);letter-spacing:0.08em;text-transform:uppercase;transition:all 0.2s}
+.notify-btn:hover{background:var(--blue-bright);color:white}
+
+.story-section{background:var(--snow)}
+.story-grid{max-width:var(--max-w);margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.story-img-wrap{position:relative;border-radius:var(--r);overflow:hidden;aspect-ratio:4/5}
+.story-img-ph{width:100%;height:100%;background:linear-gradient(160deg,var(--navy),var(--navy-mid));display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:300;color:rgba(255,255,255,0.28);font-size:12px;text-align:center;padding:24px;line-height:1.6;letter-spacing:0.05em;text-transform:uppercase}
+.story-img-wrap::after{content:"";position:absolute;top:14px;left:14px;right:14px;bottom:14px;border:1px solid rgba(46,143,217,0.15);border-radius:4px;pointer-events:none}
+.story-text h2{font-family:var(--font-display);font-size:clamp(24px,3vw,34px);font-weight:300;color:var(--ink);line-height:1.25;margin-bottom:18px;letter-spacing:0.03em}
+.story-text h2 strong{font-weight:600;color:var(--blue-deep)}
+.story-text p{font-size:15px;line-height:1.8;color:var(--slate);margin-bottom:12px;font-weight:300}
+.story-link{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-display);font-size:12px;font-weight:600;color:var(--blue-bright);letter-spacing:0.1em;text-transform:uppercase;margin-top:8px;transition:gap 0.3s}
+.story-link:hover{gap:14px}.story-link::after{content:"92";font-size:15px}
+
+.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;max-width:var(--max-w);margin:0 auto}
+.cat-card{position:relative;border-radius:var(--r);overflow:hidden;cursor:pointer;aspect-ratio:3/4;transition:transform 0.4s,box-shadow 0.4s}
+.cat-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(14,34,64,0.12)}
+.cat-card-bg{width:100%;height:100%;display:flex;align-items:flex-end;padding:20px;position:relative}
+.cat-card-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,var(--navy) 0%,rgba(14,34,64,0.25) 40%,transparent 75%)}
+.cc-cr{background:linear-gradient(150deg,#A8D4A0,#78B370)}.cc-mi{background:linear-gradient(150deg,#B8CCE0,#8AA8C8)}.cc-ha{background:linear-gradient(150deg,#E0D0B8,#C0A880)}.cc-pu{background:linear-gradient(150deg,#B0A8C0,#887898)}
+.cat-card-label{position:relative;z-index:2;color:white}
+.cat-card-label h3{font-family:var(--font-display);font-size:19px;font-weight:400;letter-spacing:0.05em}
+.cat-card-label span{font-family:var(--font-display);font-size:11px;font-weight:300;opacity:0.7;letter-spacing:0.06em}
+
+.spot-section{background:var(--navy);color:white}.spot-section .section-eye{color:var(--amber-soft)}.spot-section .section-h{color:white}
+.spot-card{max-width:780px;margin:0 auto;display:grid;grid-template-columns:200px 1fr;gap:36px;align-items:center;background:rgba(46,143,217,0.05);border:1px solid rgba(46,143,217,0.12);border-radius:var(--r);padding:36px}
+.spot-photo{width:160px;height:160px;transform:rotate(45deg);overflow:hidden;border:1.5px solid rgba(46,143,217,0.2);border-radius:3px;flex-shrink:0;justify-self:center}
+.spot-photo-inner{width:226px;height:226px;margin-top:-33px;margin-left:-33px;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;background:rgba(46,143,217,0.08);font-family:var(--font-display);font-weight:300;color:rgba(255,255,255,0.25);font-size:11px;text-align:center;letter-spacing:0.06em;text-transform:uppercase}
+.spot-text .spot-role{font-family:var(--font-display);font-size:10px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:var(--amber-soft);margin-bottom:8px}
+.spot-text h3{font-family:var(--font-display);font-size:22px;font-weight:400;letter-spacing:0.04em;margin-bottom:10px}
+.spot-text p{font-size:14px;line-height:1.8;color:rgba(255,255,255,0.45);font-weight:300}
+
+.find-section{background:var(--white)}
+.find-grid{max-width:var(--max-w);margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.find-card{background:var(--snow);border-radius:var(--r);padding:26px;border:1px solid var(--silver);transition:border-color 0.3s,transform 0.3s}
+.find-card:hover{border-color:var(--blue-bright);transform:translateY(-2px)}
+.find-card.primary{background:var(--navy);color:white;border-color:rgba(46,143,217,0.15)}
+.find-card .fc-i{font-size:20px;margin-bottom:12px}
+.find-card h3{font-family:var(--font-display);font-size:17px;font-weight:400;letter-spacing:0.02em;margin-bottom:5px;line-height:1.3}
+.find-card .fc-sched{font-family:var(--font-display);font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--blue-bright);margin-bottom:8px}
+.find-card.primary .fc-sched{color:var(--amber-soft)}
+.find-card p{font-size:13px;color:var(--slate);line-height:1.65;font-weight:300}
+.find-card.primary p{color:rgba(255,255,255,0.4)}
+.fc-dir{display:inline-flex;align-items:center;gap:5px;margin-top:12px;font-family:var(--font-display);font-size:10.5px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--blue-bright)}
+.find-card.primary .fc-dir{color:var(--amber-soft)}
+
+.nl-section{background:var(--navy-mid);color:white;position:relative;overflow:hidden}
+.nl-section::before{content:"";position:absolute;width:360px;height:360px;border:1px solid rgba(46,143,217,0.07);transform:rotate(45deg);top:-180px;right:-80px}
+.nl-section::after{content:"";position:absolute;width:200px;height:200px;border:1px solid rgba(212,148,58,0.06);transform:rotate(45deg);bottom:-100px;left:-40px}
+.nl-inner{max-width:500px;margin:0 auto;text-align:center;position:relative;z-index:1}
+.nl-inner .section-eye{color:var(--amber-soft)}.nl-inner .section-h{color:white}.nl-inner .section-p{color:rgba(255,255,255,0.4)}
+.nl-form{display:flex;margin-top:24px;max-width:440px;margin-left:auto;margin-right:auto}
+.nl-form input{flex:1;padding:13px 16px;border:1px solid rgba(46,143,217,0.2);border-right:none;border-radius:var(--r-sm) 0 0 var(--r-sm);background:rgba(46,143,217,0.05);color:white;font-family:var(--font-body);font-size:14px;outline:none;transition:border-color 0.3s}
+.nl-form input::placeholder{color:rgba(255,255,255,0.25)}.nl-form input:focus{border-color:var(--blue-bright)}
+.nl-form button{padding:13px 22px;background:linear-gradient(135deg,var(--blue-mid),var(--blue-bright));color:white;font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;border-radius:0 var(--r-sm) var(--r-sm) 0;transition:opacity 0.3s;white-space:nowrap}
+.nl-form button:hover{opacity:0.85}
+.nl-fine{font-size:11px;color:rgba(255,255,255,0.2);margin-top:12px}
+
+.pdp-wrap{background:var(--white);border:1px solid var(--silver);border-radius:var(--r);max-width:var(--max-w);margin:0 auto;padding:32px}
+.pdp-tag{font-family:var(--font-display);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--blue-deep);background:var(--blue-ice);display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:var(--r-sm);margin-bottom:20px}
+.pdp-grid{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:start}
+.pdp-gallery{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pdp-thumb{aspect-ratio:1;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:10.5px;font-weight:300;color:var(--slate);text-align:center;padding:8px;letter-spacing:0.04em;border:1px solid var(--silver)}
+.pdp-thumb:first-child{grid-column:1/-1;aspect-ratio:4/5}
+.pdp-thumb.b1{background:linear-gradient(150deg,var(--blue-ice),#F0E8F8)}.pdp-thumb.b2{background:linear-gradient(150deg,#FFF8ED,var(--blue-ice))}.pdp-thumb.b3{background:linear-gradient(150deg,#EEF5EE,#E8EEF5)}
+.pdp-info .pdp-badge{display:inline-flex;align-items:center;gap:6px;background:var(--navy);color:var(--amber-soft);font-family:var(--font-display);font-size:9.5px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;padding:5px 12px;border-radius:var(--r-sm);margin-bottom:14px}
+.pdp-info .pdp-cat{font-family:var(--font-display);font-size:10px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:var(--slate);margin-bottom:5px}
+.pdp-info h2{font-family:var(--font-display);font-size:26px;font-weight:300;color:var(--ink);letter-spacing:0.03em;margin-bottom:8px}
+.pdp-info .pdp-price{font-family:var(--font-display);font-size:20px;font-weight:600;color:var(--blue-deep);letter-spacing:0.02em;margin-bottom:14px}
+.pdp-info .pdp-artisan{font-size:13px;color:var(--slate);font-style:italic;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--silver)}
+.pdp-info .pdp-desc{font-size:14px;line-height:1.75;color:var(--slate);margin-bottom:18px;font-weight:300}
+.pdp-info .pdp-scarce{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:var(--success);margin-bottom:18px}
+.btn-atc{width:100%;padding:15px;background:var(--navy);color:white;font-family:var(--font-display);font-size:12.5px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;border-radius:var(--r-sm);margin-bottom:12px;transition:background 0.3s}
+.btn-atc:hover{background:var(--blue-deep)}
+.pdp-disc{font-size:11.5px;color:var(--slate);line-height:1.6;font-style:italic}
+.pdp-acc{margin-top:14px;border-top:1px solid var(--silver);padding-top:12px}
+.pdp-acc summary{font-family:var(--font-display);font-size:12.5px;font-weight:500;color:var(--ink);cursor:pointer;list-style:none;display:flex;justify-content:space-between;letter-spacing:0.04em}
+.pdp-acc summary::after{content:"+";font-size:16px;color:var(--slate)}.pdp-acc[open] summary::after{content:"2"}
+.pdp-acc p{font-size:13px;color:var(--slate);margin-top:8px;line-height:1.65;font-weight:300}
+
+.footer{background:var(--ink);color:rgba(255,255,255,0.4);padding:52px 24px 28px}
+.footer-inner{max-width:var(--max-w);margin:0 auto}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:36px;margin-bottom:36px}
+.footer-brand-logo{height:30px;width:auto;margin-bottom:12px;filter:brightness(0) invert(1);opacity:0.5}
+.footer-brand p{font-size:13px;line-height:1.7;color:rgba(255,255,255,0.3);max-width:260px;font-weight:300}
+.footer-col h4{font-family:var(--font-display);font-size:10.5px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.55);margin-bottom:14px}
+.footer-col ul{list-style:none}.footer-col li{margin-bottom:9px}
+.footer-col a{font-size:13px;color:rgba(255,255,255,0.35);font-weight:300;transition:color 0.2s}.footer-col a:hover{color:var(--blue-sky)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,0.06);padding-top:20px;display:flex;justify-content:space-between;align-items:center;font-size:11.5px}
+.footer-pay{display:flex;gap:5px}
+.footer-pay span{background:rgba(255,255,255,0.05);padding:3px 9px;border-radius:var(--r-sm);font-family:var(--font-display);font-size:9.5px;font-weight:600;letter-spacing:0.06em;color:rgba(255,255,255,0.3)}
+
+@media(max-width:900px){.hero-content{grid-template-columns:1fr;gap:36px}.hero-mosaic{grid-template-rows:130px 110px 130px}.story-grid{grid-template-columns:1fr;gap:28px}.cat-grid{grid-template-columns:1fr 1fr}.find-grid{grid-template-columns:1fr}.footer-grid{grid-template-columns:1fr 1fr;gap:28px}.spot-card{grid-template-columns:1fr;text-align:center;justify-items:center}.pdp-grid{grid-template-columns:1fr}}
+@media(max-width:640px){.nav-links{display:none}.nav-toggle{display:flex}.hero{min-height:auto}.hero-mosaic{display:none}.p-grid{grid-template-columns:1fr 1fr;gap:10px}.cat-grid{grid-template-columns:1fr 1fr}.hero-ctas{flex-direction:column;align-items:stretch}.hero-ctas .btn{justify-content:center}.nl-form{flex-direction:column;gap:8px}.nl-form input{border-right:1px solid rgba(46,143,217,0.2);border-radius:var(--r-sm)}.nl-form button{border-radius:var(--r-sm)}.footer-grid{grid-template-columns:1fr}.footer-bottom{flex-direction:column;gap:10px;text-align:center}.ann-bar{font-size:10px;gap:8px;padding:8px 16px}.p-card-name{font-size:13.5px}.p-card-cat{font-size:8.5px}}
+</style>
+</head>
+<body>
+<div class="ann-bar"><a href="#">Free shipping on orders over 0</a><span class="sep">&#9671;</span><a href="#">Next drop: Friday 8 PM ET &rarr;</a></div>
+
+<nav class="nav-wrap" id="mainNav"><div class="nav-inner">
+<a href="#"><img class="nav-logo" src="https://lenahandicrafts.com/cdn/shop/files/Logo_Lena.png?v=1684693607&width=440" alt="Lena Handicrafts"></a>
+<ul class="nav-links"><li><a href="#drop" class="drop-link">This Week's Drop</a></li><li><a href="#categories">The Gallery</a></li><li><a href="#story">Our Story</a></li><li><a href="#findus">Find Us</a></li><li><a href="#" class="nav-cart">Cart <span class="nav-cart-count">0</span></a></li></ul>
+<div class="nav-toggle"><span></span><span></span><span></span></div>
+</div></nav>
+
+<section class="hero"><div class="hero-bg"></div><div class="hero-content">
+<div class="hero-text">
+<div class="hero-eyebrow"><span class="dm gold sm"></span> Hand-Embroidered in Vietnam</div>
+<h1>One piece at a time.<br><strong>Yours alone.</strong></h1>
+<p class="hero-sub">Every mirror, hat, and crochet figure in our gallery is a one-of-one &mdash; hand-embroidered by artisans in Vietnam. New drops every Friday.</p>
+<div class="hero-ctas"><a class="btn btn-primary" href="#drop">Shop This Week's Drop</a><a class="btn btn-ghost" href="#newsletter">Join the Drop List</a></div>
+</div>
+<div class="hero-mosaic">
+<div class="hero-img"><div class="hero-img-ph">Lifestyle photo:<br>Hands embroidering<br>a compact mirror</div><span class="img-tag">Compact Mirrors</span></div>
+<div class="hero-img"><div class="hero-img-ph">Crochet figure<br>on styled surface</div><span class="img-tag">Crochet Figures</span></div>
+<div class="hero-img"><div class="hero-img-ph">Ribbon-embroidery hat<br>worn / in-context</div><span class="img-tag">Hats</span></div>
+<div class="hero-img"><div class="hero-img-ph">Flat-lay of<br>this week's drop<br>curated set</div><span class="img-tag">New This Week</span></div>
+</div>
+</div></section>
+
+<div class="trust-strip"><div class="trust-inner">
+<div class="trust-item"><div class="trust-icon ti-hand"><span>&#9995;</span></div><div class="trust-text"><strong>100% Handmade</strong><span>Crafted in Vietnam</span></div></div>
+<div class="trust-item"><div class="trust-icon ti-one"><span>&#9671;</span></div><div class="trust-text"><strong>Each Piece Is 1 of 1</strong><span>Once it's gone, it's gone</span></div></div>
+<div class="trust-item"><div class="trust-icon ti-own"><span>&#9792;</span></div><div class="trust-text"><strong>Women-Owned</strong><span>Supporting artisan families</span></div></div>
+</div></div>
+
+<section class="section-full drop-section" id="drop">
+<div class="section" style="padding-top:0;padding-bottom:0"><div class="drop-bar"><div><div class="section-eye"><span class="dm filled sm"></span> Fresh From Vietnam</div><div class="section-h">This Week's <strong>Drop</strong></div></div><div class="drop-bar-meta"><div class="countdown-pill"><span class="dm filled sm" style="animation:dm-pulse 1.5s infinite"></span> Next drop in 3d 14h</div><a class="view-all-link" href="#">View all &rarr;</a></div></div></div>
+<div class="section" style="padding-top:0"><div class="p-grid">
+
+<div class="p-card"><div class="p-card-img"><div class="p-card-ph t-crochet">Crochet figure photo<br><br>Pink Bunny with<br>Flower Crown</div><div class="b-1of1"><span class="dm gold sm"></span> 1 of 1</div><div class="b-new">New</div></div><div class="p-card-info"><div class="p-card-cat">Crochet Figure</div><div class="p-card-name">Pink Bunny with Flower Crown</div><div class="p-card-price">2</div><div class="p-card-scarcity"><span class="dm filled sm" style="background:var(--success);border-color:var(--success)"></span> Only piece in existence</div></div></div>
+
+<div class="p-card"><div class="p-card-img"><div class="p-card-ph t-mirror">Mirror photo<br><br>Rose Garden<br>on Ivory</div><div class="b-1of1"><span class="dm gold sm"></span> 1 of 1</div><div class="b-new">New</div></div><div class="p-card-info"><div class="p-card-cat">Compact Mirror &middot; Everyday</div><div class="p-card-name">Rose Garden on Ivory</div><div class="p-card-price">2</div><div class="p-card-scarcity"><span class="dm filled sm" style="background:var(--success);border-color:var(--success)"></span> Only piece in existence</div></div></div>
+
+<div class="p-card"><div class="p-card-img"><div class="p-card-ph t-hat">Hat photo<br><br>Crimson Poppy Fields</div><div class="b-1of1"><span class="dm gold sm"></span> 1 of 1</div></div><div class="p-card-info"><div class="p-card-cat">Ribbon-Embroidery Hat</div><div class="p-card-name">Crimson Poppy Fields</div><div class="p-card-price">8</div><div class="p-card-scarcity"><span class="dm filled sm" style="background:var(--success);border-color:var(--success)"></span> Only piece in existence</div></div></div>
+
+<div class="p-card sold"><div class="p-card-img"><div class="p-card-ph t-mirror">Mirror photo<br><br>Fuji Sakura Dusk</div><div class="b-sold"><span>This piece found its home</span></div></div><div class="p-card-info"><div class="p-card-cat">Compact Mirror &middot; Letter</div><div class="p-card-name">Fuji Sakura Dusk</div><div class="p-card-price">8</div><button class="notify-btn"><span class="dm sm"></span> Notify me of similar drops</button></div></div>
+
+<div class="p-card"><div class="p-card-img"><div class="p-card-ph t-band">Headband photo<br><br>Lavender Fields<br>Alice Band</div><div class="b-1of1"><span class="dm gold sm"></span> 1 of 1</div><div class="b-new">New</div></div><div class="p-card-info"><div class="p-card-cat">Headband &middot; Alice Band</div><div class="p-card-name">Lavender Fields</div><div class="p-card-price">8</div><div class="p-card-scarcity"><span class="dm filled sm" style="background:var(--success);border-color:var(--success)"></span> Only piece in existence</div></div></div>
+
+<div class="p-card"><div class="p-card-img"><div class="p-card-ph t-crochet">Crochet figure photo<br><br>Garden Gnome<br>with Mushroom</div><div class="b-1of1"><span class="dm gold sm"></span> 1 of 1</div></div><div class="p-card-info"><div class="p-card-cat">Crochet Figure</div><div class="p-card-name">Garden Gnome with Mushroom</div><div class="p-card-price">5</div><div class="p-card-scarcity"><span class="dm filled sm" style="background:var(--success);border-color:var(--success)"></span> Only piece in existence</div></div></div>
+
+<div class="p-card"><div class="p-card-img"><div class="p-card-ph t-mirror">Mirror photo<br><br>Alpine Meadow Bloom</div><div class="b-1of1"><span class="dm gold sm"></span> 1 of 1</div></div><div class="p-card-info"><div class="p-card-cat">Compact Mirror &middot; Artisan</div><div class="p-card-name">Alpine Meadow Bloom</div><div class="p-card-price">2</div><div class="p-card-scarcity"><span class="dm filled sm" style="background:var(--success);border-color:var(--success)"></span> Only piece in existence</div></div></div>
+
+<div class="p-card sold"><div class="p-card-img"><div class="p-card-ph t-crochet">Crochet figure photo<br><br>Sunset Fox</div><div class="b-sold"><span>This piece found its home</span></div></div><div class="p-card-info"><div class="p-card-cat">Crochet Figure</div><div class="p-card-name">Sunset Fox</div><div class="p-card-price">8</div><button class="notify-btn"><span class="dm sm"></span> Notify me of similar drops</button></div></div>
+
+</div></div></section>
+
+<section class="section-full story-section" id="story"><div class="section" style="padding-top:0;padding-bottom:0"><div class="story-grid">
+<div class="story-img-wrap"><div class="story-img-ph">Founder photo &mdash;<br>at the market booth<br>or holding handmade items<br><br>This is the emotional<br>centerpiece of the page</div></div>
+<div class="story-text"><div class="section-eye" style="text-align:left"><span class="dm filled sm"></span> Our Story</div><h2>From a small village in <strong>Vietnam</strong> to your hands</h2><p>Every piece at Lena Handicrafts begins with a story &mdash; of artisans in Vietnam who transform thread, fabric, and yarn into one-of-a-kind works of art using techniques passed down through generations.</p><p>What started as a personal trip back to Vietnam became a mission: to bring the beauty of Vietnamese ribbon embroidery, hand-crocheting, and traditional weaving to the world &mdash; one unique piece at a time.</p><a class="story-link" href="#">Read the full story</a></div>
+</div></div></section>
+
+<section class="section-full" style="background:var(--white)" id="categories"><div class="section" style="padding-top:0;padding-bottom:0">
+<div class="section-hdr"><div class="section-eye"><span class="dm filled sm"></span> The Gallery</div><div class="section-h">Shop by <strong>Category</strong></div><div class="section-p">Hand-selected pieces, refreshed every week with new arrivals from Vietnam.</div></div>
+<div class="cat-grid">
+<div class="cat-card"><div class="cat-card-bg cc-cr"><div class="cat-card-label"><h3>Crochet Figures</h3><span>From 8 &middot; #1 bestseller</span></div></div></div>
+<div class="cat-card"><div class="cat-card-bg cc-mi"><div class="cat-card-label"><h3>Compact Mirrors</h3><span>From 2 &middot; Perfect gifts</span></div></div></div>
+<div class="cat-card"><div class="cat-card-bg cc-ha"><div class="cat-card-label"><h3>Hats &amp; Headbands</h3><span>From 4 &middot; Wearable art</span></div></div></div>
+<div class="cat-card"><div class="cat-card-bg cc-pu"><div class="cat-card-label"><h3>Signature Purses</h3><span>From 5 &middot; The collection</span></div></div></div>
+</div></div></section>
+
+<section class="section-full spot-section"><div class="section" style="padding-top:0;padding-bottom:0">
+<div class="section-hdr"><div class="section-eye"><span class="dm gold sm"></span> Artisan Spotlight</div><div class="section-h">Meet the <strong>Makers</strong></div></div>
+<div class="spot-card"><div class="spot-photo"><div class="spot-photo-inner">Artisan<br>portrait<br>photo</div></div><div class="spot-text"><div class="spot-role">Featured Artisan &middot; June 2026</div><h3>The Crochet Artist</h3><p>Each crochet figure takes 4&ndash;8 hours to complete by hand. From selecting yarn colors to shaping tiny details &mdash; flower crowns, button eyes, miniature accessories &mdash; every piece reflects years of practice and a deep love for the craft.</p></div></div>
+</div></section>
+
+<section class="section-full find-section" id="findus"><div class="section" style="padding-top:0;padding-bottom:0">
+<div class="section-hdr"><div class="section-eye"><span class="dm filled sm"></span> In Person</div><div class="section-h">Find Us This <strong>Weekend</strong></div><div class="section-p">See and feel the craftsmanship in person.</div></div>
+<div class="find-grid">
+<div class="find-card primary"><div class="fc-i">&#128205;</div><h3>West Palm Beach Antique &amp; Flea Market</h3><div class="fc-sched">Every Saturday &middot; 8:30 AM &ndash; 1:30 PM</div><p>Our flagship weekly market. Come early for first pick &mdash; many pieces sell out before noon.</p><a class="fc-dir" href="#">Get directions &rarr;</a></div>
+<div class="find-card"><div class="fc-i">&#127978;</div><h3>Kollective &mdash; Delray Beach</h3><div class="fc-sched">Open daily &middot; Atlantis Ave</div><p>Curated purses and mirrors alongside other artisan brands.</p><a class="fc-dir" href="#">Get directions &rarr;</a></div>
+<div class="find-card"><div class="fc-i">&#127978;</div><h3>Kollective &mdash; Fort Lauderdale</h3><div class="fc-sched">Open daily &middot; Las Olas Blvd</div><p>Signature velvet purses and select accessories on Las Olas Boulevard.</p><a class="fc-dir" href="#">Get directions &rarr;</a></div>
+</div></div></section>
+
+<section class="section-full nl-section" id="newsletter"><div class="section" style="padding-top:0;padding-bottom:0"><div class="nl-inner">
+<div class="section-eye"><span class="dm gold sm"></span> Be First</div><div class="section-h">Join the <strong>Drop List</strong></div><div class="section-p">Get the email 24 hours before each Friday drop. Pieces sell out fast &mdash; the list is how regulars shop first.</div>
+<div class="nl-form"><input type="email" placeholder="Your email address"><button type="submit">Join the List</button></div>
+<p class="nl-fine">No spam. One email per week, max. Unsubscribe anytime.</p>
+</div></div></section>
+
+<section class="section" id="pdp"><div class="section-hdr"><div class="section-eye"><span class="dm filled sm"></span> Page Template</div><div class="section-h">Product Detail <strong>Page</strong></div><div class="section-p">How individual product pages will look across all categories.</div></div>
+<div class="pdp-wrap"><div class="pdp-tag"><span class="dm sm"></span> Product Page Template</div><div class="pdp-grid">
+<div class="pdp-gallery"><div class="pdp-thumb b1">Main product photo<br>(front view, lifestyle)</div><div class="pdp-thumb b2">Detail close-up<br>(embroidery texture)</div><div class="pdp-thumb b3">Scale / in-hand photo</div></div>
+<div class="pdp-info"><div class="pdp-badge"><span class="dm gold sm"></span> 1 of 1</div><div class="pdp-cat">Compact Mirror &middot; Everyday</div><h2>Rose Garden on Ivory</h2><div class="pdp-price">2</div><div class="pdp-artisan">Embroidered by artisans in Hu&#7871;, Vietnam</div><div class="pdp-scarce"><span class="dm filled sm" style="background:var(--success);border-color:var(--success)"></span> Only piece in existence &mdash; once it's gone, it's gone</div><p class="pdp-desc">A hand-embroidered compact mirror featuring delicate rose motifs on ivory linen. Each stitch is placed by hand using traditional Vietnamese ribbon embroidery techniques. This exact design will never be made again.</p><button class="btn-atc">Add to Cart &mdash; 2</button><p class="pdp-disc">Each piece is one-of-a-kind and available across our online shop and in-person events. In the rare case your item has just been sold, we'll reach out within 24 hours with a similar design or a full refund.</p><details class="pdp-acc"><summary>Care Instructions</summary><p>Wipe gently with a soft, dry cloth. Avoid water contact with embroidered surfaces. Store in a cool, dry place.</p></details><details class="pdp-acc"><summary>Shipping &amp; Returns</summary><p>Free standard shipping on orders over 0. Ships within 1&ndash;2 business days from South Florida.</p></details></div>
+</div></div></section>
+
+<footer class="footer"><div class="footer-inner"><div class="footer-grid">
+<div class="footer-brand"><img class="footer-brand-logo" src="https://lenahandicrafts.com/cdn/shop/files/Logo_Lena.png?v=1684693607&width=440" alt="Lena Handicrafts"><p>Hand-embroidered in Vietnam. One piece at a time. Every item is a unique work of art &mdash; when it's gone, it's gone.</p></div>
+<div class="footer-col"><h4>Shop</h4><ul><li><a href="#">This Week's Drop</a></li><li><a href="#">Crochet Figures</a></li><li><a href="#">Compact Mirrors</a></li><li><a href="#">Hats &amp; Headbands</a></li><li><a href="#">Signature Purses</a></li><li><a href="#">Sale</a></li></ul></div>
+<div class="footer-col"><h4>About</h4><ul><li><a href="#">Our Story</a></li><li><a href="#">The Artisans</a></li><li><a href="#">Markets &amp; Events</a></li><li><a href="#">Drop Calendar</a></li><li><a href="#">Care Instructions</a></li></ul></div>
+<div class="footer-col"><h4>Help</h4><ul><li><a href="#">Shipping &amp; Returns</a></li><li><a href="#">FAQ</a></li><li><a href="#">Contact Us</a></li><li><a href="#">hello@lenahandicrafts.com</a></li></ul></div>
+</div><div class="footer-bottom"><span>&copy; 2026 Lena Handicrafts &middot; Women-owned &middot; Handmade with &#9829; in Vietnam</span><div class="footer-pay"><span>Visa</span><span>MC</span><span>Amex</span><span>PayPal</span><span>Apple Pay</span></div></div></div></footer>
+
+<script>
+const nav=document.getElementById("mainNav");
+window.addEventListener("scroll",()=>{nav.classList.toggle("scrolled",window.scrollY>10)},{passive:true});
+</script>
+</body></html>
