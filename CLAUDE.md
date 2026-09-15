@@ -117,17 +117,47 @@ us once already.
 **Never rename `website-redesign`.** Renaming a branch Shopify is connected to breaks the link to
 the live theme. Rename the *theme* to match the branch, never the reverse.
 
+**The owner pushes, not Claude.** Claude commits to local `staging` and stops. Pushing is the
+owner's call, because a push is what makes work visible on the store.
+
 ### The review loop
 
-1. Work lands on `staging` in code, and is pushed.
-2. The `staging` draft theme picks it up automatically — the owner verifies in a real browser.
-3. The owner makes admin-side changes in the theme editor (move sections, edit text, enable/disable).
-   **Shopify commits those back to `staging` as real commits.**
-4. `git pull` before touching anything locally again.
-5. When it is right, merge `staging` → `website-redesign` to publish.
+**Sync first — every time, before any local edit.** Unconditional: do not check whether there is
+anything to merge, just run it. It is a no-op when there isn't.
 
-**Step 4 is not optional.** Any theme-editor save makes local stale, and the conflict lands in a
-generated JSON file where it is painful to resolve. Never hold unpushed local commits while the
+```bash
+git fetch origin
+git checkout staging && git pull
+git merge origin/website-redesign     # usually "Already up to date"
+```
+
+Then:
+
+1. Work lands on `staging` in code. Claude commits; **the owner pushes**.
+2. The `staging` draft theme picks the push up automatically — the owner verifies in a real browser.
+3. The owner makes admin-side changes in the theme editor (move sections, edit text,
+   enable/disable). **Shopify commits those back to `staging` as real commits.**
+4. `git pull` before touching anything locally again.
+5. To publish: run the sync block again, then
+   `git checkout website-redesign && git merge staging && git push`.
+
+### Why the sync block matters
+
+Two systems write to these branches, so this is the same hazard as a shared field with no baseline.
+**An accidental edit on the *live* theme commits to `website-redesign` only.** If `staging` never
+absorbs it, the next publish **silently reverts it** — staging's copy of that JSON file wins the
+merge, and nobody gets told.
+
+Merging live → staging first also means `website-redesign` is an ancestor of `staging`, so **the
+publish in step 5 is a fast-forward** — no conflict at the single worst moment to have one. That
+property only holds if the sync is re-run immediately before publishing, which is why step 5 repeats
+it.
+
+An accidental live edit is therefore recoverable, not a disaster: it is a commit, visible in
+`git log origin/website-redesign`, and the sync block is how it gets home.
+
+**Step 4 is not optional either.** Any theme-editor save makes local stale, and the conflict lands in
+a generated JSON file where it is painful to resolve. Never hold unpushed local commits while the
 owner is editing in admin.
 
 ## Development Rules
