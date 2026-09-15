@@ -23,6 +23,7 @@
         },
         "announcement-bar-1": {
           "type": "announcement",
+          "disabled": true,
           "settings": {
             "text": "Next drop: Friday 8 PM ET →",
             "link": ""
