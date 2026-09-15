@@ -175,7 +175,6 @@
     },
     "featured-collection": {
       "type": "featured-collection",
-      "disabled": true,
       "name": "Featured collection-Available",
       "settings": {
         "collection": "available-now",
@@ -183,12 +182,12 @@
         "title": "Available Now",
         "heading_size": "h2",
         "description": "",
-        "show_description": false,
+        "show_description": true,
         "description_style": "body",
         "columns_desktop": 4,
         "enable_desktop_slider": false,
         "full_width": false,
-        "show_view_all": false,
+        "show_view_all": true,
         "view_all_style": "solid",
         "color_scheme": "scheme-2",
         "image_ratio": "portrait",
