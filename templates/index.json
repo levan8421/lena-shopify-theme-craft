@@ -67,6 +67,62 @@
         "padding_bottom": 0
       }
     },
+    "our-story": {
+      "type": "image-with-text",
+      "blocks": {
+        "caption": {
+          "type": "caption",
+          "settings": {
+            "caption": "Our Story",
+            "text_style": "subtitle",
+            "text_size": "small"
+          }
+        },
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "From a small village in <strong>Vietnam</strong> to your hands",
+            "heading_size": "h1"
+          }
+        },
+        "text": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Every piece at Lena Handicrafts begins with a story — of artisans in Vietnam who transform thread, fabric, and yarn into handmade works of art using techniques passed down through generations.</p><p>What started as a personal trip back to Vietnam became a mission: to bring the beauty of Vietnamese ribbon embroidery, hand-crocheting, and traditional weaving to the world — one unique piece at a time.</p>",
+            "text_style": "body"
+          }
+        },
+        "button": {
+          "type": "button",
+          "settings": {
+            "button_label": "Read the full story",
+            "button_link": "shopify://pages/our-story",
+            "button_style_secondary": false
+          }
+        }
+      },
+      "block_order": [
+        "caption",
+        "heading",
+        "text",
+        "button"
+      ],
+      "settings": {
+        "image": "shopify://shop_images/20260228_084654.jpg",
+        "height": "large",
+        "desktop_image_width": "medium",
+        "layout": "image_first",
+        "image_behavior": "none",
+        "content_layout": "no-overlap",
+        "desktop_content_position": "middle",
+        "desktop_content_alignment": "left",
+        "mobile_content_alignment": "left",
+        "section_color_scheme": "",
+        "color_scheme": "scheme-1",
+        "padding_top": 52,
+        "padding_bottom": 52
+      }
+    },
     "lena-trust": {
       "type": "custom-liquid",
       "name": "Trust Strip",
@@ -143,62 +199,6 @@
         "columns_mobile": "1",
         "swipe_on_mobile": true,
         "padding_top": 20,
-        "padding_bottom": 52
-      }
-    },
-    "our-story": {
-      "type": "image-with-text",
-      "blocks": {
-        "caption": {
-          "type": "caption",
-          "settings": {
-            "caption": "Our Story",
-            "text_style": "subtitle",
-            "text_size": "small"
-          }
-        },
-        "heading": {
-          "type": "heading",
-          "settings": {
-            "heading": "From a small village in <strong>Vietnam</strong> to your hands",
-            "heading_size": "h1"
-          }
-        },
-        "text": {
-          "type": "text",
-          "settings": {
-            "text": "<p>Every piece at Lena Handicrafts begins with a story — of artisans in Vietnam who transform thread, fabric, and yarn into handmade works of art using techniques passed down through generations.</p><p>What started as a personal trip back to Vietnam became a mission: to bring the beauty of Vietnamese ribbon embroidery, hand-crocheting, and traditional weaving to the world — one unique piece at a time.</p>",
-            "text_style": "body"
-          }
-        },
-        "button": {
-          "type": "button",
-          "settings": {
-            "button_label": "Read the full story",
-            "button_link": "shopify://pages/our-story",
-            "button_style_secondary": false
-          }
-        }
-      },
-      "block_order": [
-        "caption",
-        "heading",
-        "text",
-        "button"
-      ],
-      "settings": {
-        "image": "shopify://shop_images/20260228_084654.jpg",
-        "height": "large",
-        "desktop_image_width": "medium",
-        "layout": "image_first",
-        "image_behavior": "none",
-        "content_layout": "no-overlap",
-        "desktop_content_position": "middle",
-        "desktop_content_alignment": "left",
-        "mobile_content_alignment": "left",
-        "section_color_scheme": "",
-        "color_scheme": "scheme-1",
-        "padding_top": 52,
         "padding_bottom": 52
       }
     },
@@ -485,11 +485,11 @@
   },
   "order": [
     "lena-hero",
+    "our-story",
     "lena-trust",
     "lena-drop-header",
     "new-arrivals-grid",
     "featured-collection",
-    "our-story",
     "shop-by-category",
     "lena-testimonials",
     "lena-spotlight",
