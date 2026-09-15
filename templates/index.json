@@ -445,7 +445,7 @@
       "blocks": {
         "loc-wpb": {
           "type": "location",
-          "disabled": true,
+          "name": "WPB Market",
           "settings": {
             "name": "West Palm Beach Antique & Flea Market",
             "schedule": "Every Saturday · 8:30 AM – 1:30 PM",
@@ -458,6 +458,7 @@
         },
         "loc-ftl": {
           "type": "location",
+          "name": "Las Olas",
           "settings": {
             "name": "Kollective — Fort Lauderdale",
             "schedule": "Open daily · Las Olas Blvd",
