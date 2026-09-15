@@ -329,7 +329,12 @@
           </div>
         </div>
         {% assign product_form_id = 'quick-add-' | append: section_id | append: card_product.id %}
-        {% if quick_add == 'standard' %}
+        {%- comment -%}
+          Lena: quick add is gated on availability. Stock Craft renders the button disabled
+          for a sold-out piece, which would sit directly under the Notify Me button above —
+          two CTAs on a card that cannot be bought. A sold-out card keeps Notify Me only.
+        {%- endcomment -%}
+        {% if quick_add == 'standard' and card_product.available %}
           <div class="quick-add no-js-hidden">
             {%- liquid
               assign qty_rules = false
@@ -428,7 +433,8 @@
               </product-form>
             {%- endif -%}
           </div>
-        {% elsif quick_add == 'bulk' %}
+        {% elsif quick_add == 'bulk' and card_product.available %}
+          {%- comment -%} Lena: same availability gate as the standard branch above {%- endcomment -%}
           {% if card_product.variants_count == 1 %}
             <quick-add-bulk
               data-min="{{ card_product.selected_or_first_available_variant.quantity_rule.min }}"

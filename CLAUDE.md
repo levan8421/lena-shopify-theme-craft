@@ -22,7 +22,7 @@ shopify theme push --unpublished   # Push for review
 | `sections/lena-testimonials.liquid` | 190 | Customer testimonial cards |
 | `sections/lena-find-us.liquid` | 239 | Location cards + metaobject scheduled events |
 | `sections/lena-email-popup.liquid` | 90 | Newsletter modal (tags `newsletter` only) |
-| `snippets/lena-notify-modal.liquid` | 70 | "Notify me" modal for sold-out pieces |
+| `snippets/lena-notify-modal.liquid` | 70 | "Notify me" modal for sold-out pieces. Tags the contact `newsletter,notify-<category-handle>` |
 | `snippets/breadcrumbs.liquid` | 47 | PDP breadcrumbs — `collection` when arrived through one, menu list as fallback |
 | `assets/lena-custom.css` | 1075 | All custom styles (16 sections, 70+ classes) |
 
@@ -37,7 +37,7 @@ them. Neither has anything to do with drops any more; see their header comments.
 | `sections/main-product.liquid` | 101–139, 303–380, 633–645 | PDP: category eyebrow, inventory badge, artisan line, scarcity/sold msg · quantity stepper hidden at max-purchasable 1 · breadcrumbs · 30-day returns |
 | `sections/main-collection-banner.liquid` | 14–33 | Collection: diamond eyebrow, title class, product count pill |
 | `sections/featured-collection.liquid` | 67, ~215 | Conditional wrapper: hides section when linked collection is empty (**unmarked** — no `Lena:` comment, so grep misses it) |
-| `snippets/card-product.liquid` | 108–122, 164–167, 228–237 | Cards: inventory badge (dynamic), sold overlay, category label, scarcity/notify |
+| `snippets/card-product.liquid` | 108–122, 164–167, 228–237, 332–337, 436–437 | Cards: inventory badge (dynamic), sold overlay, category label, scarcity/notify · quick add gated on `card_product.available` so a sold-out card keeps Notify Me as its only CTA |
 | `snippets/facets.liquid` | 204–220, 592–608 | Color filter whitelist: skips non-color tag values (e.g. "Accessories", "artisan") |
 | `snippets/header-dropdown-menu.liquid` | ~11 | Omits the New Arrivals nav link while that collection is empty |
 | `snippets/header-drawer.liquid` | ~25 | Same rule, mobile drawer. Link list only — panel behaviour untouched |
