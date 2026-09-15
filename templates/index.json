@@ -90,6 +90,7 @@
     },
     "new-arrivals-grid": {
       "type": "featured-collection",
+      "name": "Featured collection-New",
       "settings": {
         "collection": "new-arrivals",
         "products_to_show": 4,
@@ -118,6 +119,7 @@
     },
     "featured-collection": {
       "type": "featured-collection",
+      "name": "Featured collection-Available",
       "settings": {
         "collection": "available-now",
         "products_to_show": 4,
