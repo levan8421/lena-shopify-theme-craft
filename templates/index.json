@@ -205,6 +205,12 @@
     "shop-by-category": {
       "type": "collection-list",
       "blocks": {
+        "featured_collection_eEfXbj": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "velvet-purses"
+          }
+        },
         "cat-crochet": {
           "type": "featured_collection",
           "settings": {
@@ -227,12 +233,6 @@
           "type": "featured_collection",
           "settings": {
             "collection": "motif-compact-mirrors"
-          }
-        },
-        "featured_collection_eEfXbj": {
-          "type": "featured_collection",
-          "settings": {
-            "collection": "velvet-purses"
           }
         },
         "featured_collection_AE3DGi": {
@@ -283,11 +283,11 @@
         }
       },
       "block_order": [
+        "featured_collection_eEfXbj",
         "cat-crochet",
         "cat-hats",
         "cat-mirrors",
         "featured_collection_6XefqJ",
-        "featured_collection_eEfXbj",
         "featured_collection_AE3DGi",
         "featured_collection_8Qe4FN",
         "featured_collection_yzefPm",
