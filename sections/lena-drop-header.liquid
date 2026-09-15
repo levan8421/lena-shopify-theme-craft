@@ -1,102 +1,58 @@
 {%- comment -%}
-  Drop header section — adapts messaging based on whether the
-  linked collection has products or is empty (between drops).
+  New Arrivals bar — a heading plus a linked count, nothing more.
+
+  The section renders only while the linked collection holds products, and is
+  absent entirely otherwise. There is deliberately no empty-state copy: an
+  "arrivals" heading over nothing is the dormant framing this replaced.
+
+  Visibility is the collection's product count and nothing else — no date
+  window, no staleness read, no cap. The app owns what "new" means and how long
+  it lasts, via a single tag; the theme only reflects the result.
 {%- endcomment -%}
 
-{%- style -%}
-  .section-{{ section.id }}-padding {
-    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
-    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
-  }
-  @media screen and (min-width: 750px) {
+{%- liquid
+  assign na_collection = collections[section.settings.collection_handle]
+  comment
+    all_products_count is the collection total. The similarly named products_count
+    reflects the current tag-filtered view, which is not what visibility should
+    hinge on.
+  endcomment
+  assign na_count = 0
+  if na_collection != blank
+    assign na_count = na_collection.all_products_count
+  endif
+-%}
+
+{%- if na_count > 0 -%}
+  {%- style -%}
     .section-{{ section.id }}-padding {
-      padding-top: {{ section.settings.padding_top }}px;
-      padding-bottom: {{ section.settings.padding_bottom }}px;
+      padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+      padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
     }
-  }
-{%- endstyle -%}
+    @media screen and (min-width: 750px) {
+      .section-{{ section.id }}-padding {
+        padding-top: {{ section.settings.padding_top }}px;
+        padding-bottom: {{ section.settings.padding_bottom }}px;
+      }
+    }
+  {%- endstyle -%}
 
-{%- assign drop_collection = collections[section.settings.collection_handle] -%}
-{%- assign has_products = false -%}
-{%- if drop_collection != blank and drop_collection.products.size > 0 -%}
-  {%- assign has_products = true -%}
-{%- endif -%}
-
-<div class="color-{{ section.settings.color_scheme }} gradient section-{{ section.id }}-padding">
-  <div class="lena-drop-bar">
-    <div>
-      <div class="lena-section-eye"><span class="dm filled sm"></span> {{ section.settings.eyebrow }}</div>
-      {%- if has_products -%}
-        <div class="lena-section-h">{{ section.settings.heading_active }}</div>
-      {%- else -%}
-        <div class="lena-section-h">{{ section.settings.heading_empty }}</div>
-      {%- endif -%}
-    </div>
-    {%- if section.settings.show_countdown or has_products -%}
-      <div style="display:flex;align-items:center;gap:14px">
-        {%- if section.settings.show_countdown -%}
-          <div class="lena-countdown-pill">
-            <span class="dm filled sm" style="animation:dm-pulse 1.5s infinite"></span>
-            <span id="lena-countdown">Next drop soon</span>
-          </div>
-        {%- endif -%}
-        {%- if has_products -%}
-          <a class="lena-view-all" href="{{ drop_collection.url }}">View all &rarr;</a>
-        {%- endif -%}
+  <div class="color-{{ section.settings.color_scheme }} gradient section-{{ section.id }}-padding">
+    <div class="lena-drop-bar">
+      <div>
+        <div class="lena-section-eye"><span class="dm filled sm"></span> {{ section.settings.eyebrow }}</div>
+        <div class="lena-section-h">{{ section.settings.heading }}</div>
       </div>
-    {%- endif -%}
+      <a class="lena-view-all" href="{{ na_collection.url }}">
+        {{ na_count }} new {% if na_count == 1 %}piece{% else %}pieces{% endif %} &rarr;
+      </a>
+    </div>
   </div>
-</div>
-
-{%- if section.settings.show_countdown -%}
-<script>
-(function(){
-  var customDate = '{{ section.settings.next_drop_date | escape }}';
-  function update(){
-    var el=document.getElementById('lena-countdown');
-    if(!el) return;
-    var now=new Date();
-
-    // --- Find drop start (Friday 11:00 UTC = 6 AM EST) ---
-    var dropStart;
-    if(customDate && customDate.trim()){
-      dropStart=new Date(customDate.trim());
-      if(isNaN(dropStart.getTime())) dropStart=null;
-    }
-    if(!dropStart){
-      // Most recent Friday at 11:00 UTC
-      var daysSinceFri=(now.getUTCDay()+2)%7; // Fri=0,Sat=1,Sun=2,...
-      dropStart=new Date(now);
-      dropStart.setUTCDate(now.getUTCDate()-daysSinceFri);
-      dropStart.setUTCHours(11,0,0,0);
-      if(dropStart>now) dropStart.setUTCDate(dropStart.getUTCDate()-7);
-    }
-
-    // --- Drop end: Monday 05:00 UTC (= Sunday midnight EST) ---
-    var dropEnd=new Date(dropStart);
-    dropEnd.setUTCDate(dropStart.getUTCDate()+3);
-    dropEnd.setUTCHours(5,0,0,0);
-
-    if(now>=dropStart && now<dropEnd){
-      el.textContent='Drop is LIVE!';
-      return;
-    }
-
-    // --- Countdown to next Friday 11:00 UTC ---
-    var next=new Date(dropStart);
-    next.setUTCDate(dropStart.getUTCDate()+7);
-    var diff=next-now;
-    var d=Math.floor(diff/864e5),h=Math.floor(diff%864e5/36e5),m=Math.floor(diff%36e5/6e4);
-    el.textContent='Next drop in '+d+'d '+h+'h '+m+'m';
-  }
-  update();setInterval(update,60000);
-})();
-</script>
 {%- endif -%}
 
 {% schema %}
 {
-  "name": "Drop Header",
+  "name": "New Arrivals",
   "tag": "section",
   "class": "section",
   "settings": [
@@ -108,35 +64,16 @@
     },
     {
       "type": "inline_richtext",
-      "id": "heading_active",
-      "label": "Heading (has products)",
-      "default": "Latest <strong>Drop</strong>"
-    },
-    {
-      "type": "inline_richtext",
-      "id": "heading_empty",
-      "label": "Heading (no products)",
-      "default": "New Drop <strong>Every Friday</strong>"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_countdown",
-      "label": "Show countdown timer",
-      "default": false,
-      "info": "Turn on when the drop schedule is finalized."
-    },
-    {
-      "type": "text",
-      "id": "next_drop_date",
-      "label": "Next drop date & time",
-      "info": "Format: 2026-06-13 06:00. Leave blank to auto-target next Friday 6 AM EST."
+      "id": "heading",
+      "label": "Heading",
+      "default": "New <strong>Arrivals</strong>"
     },
     {
       "type": "text",
       "id": "collection_handle",
       "label": "Collection handle",
-      "default": "this-weeks-drop",
-      "info": "The handle of the drop collection (from the URL). Used to detect whether products are available."
+      "default": "new-arrivals",
+      "info": "From the collection URL. The whole section is hidden while this collection is empty."
     },
     {
       "type": "color_scheme",
@@ -167,7 +104,7 @@
   ],
   "presets": [
     {
-      "name": "Drop Header"
+      "name": "New Arrivals"
     }
   ]
 }

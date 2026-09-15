@@ -15,23 +15,35 @@ shopify theme push --unpublished   # Push for review
 
 | File | Lines | Purpose |
 |------|-------|---------|
-| `sections/lena-hero.liquid` | 170 | Hero with mosaic image grid, dual CTAs |
-| `sections/lena-drop-header.liquid` | 174 | Drop header — adapts heading/CTA based on collection product count |
-| `sections/lena-drop-coming-soon.liquid` | 138 | Empty-state "coming soon" for drop collection page |
-| `sections/lena-spotlight.liquid` | 174 | Blog-powered artisan rotation (1/2/4 week cycle) |
-| `sections/lena-find-us.liquid` | 240 | Location cards + metaobject scheduled events |
-| `assets/lena-custom.css` | 846 | All custom styles (16 sections, 70+ classes) |
+| `sections/lena-hero.liquid` | 169 | Hero with mosaic image grid, dual CTAs |
+| `sections/lena-drop-header.liquid` | 111 | New Arrivals bar — heading + linked count. Hidden while the collection is empty |
+| `sections/lena-drop-coming-soon.liquid` | 77 | Empty-state section for a collection page (soft landing + onward CTA) |
+| `sections/lena-spotlight.liquid` | 173 | Blog-powered artisan rotation (1/2/4 week cycle) |
+| `sections/lena-testimonials.liquid` | 190 | Customer testimonial cards |
+| `sections/lena-find-us.liquid` | 239 | Location cards + metaobject scheduled events |
+| `sections/lena-email-popup.liquid` | 90 | Newsletter modal (tags `newsletter` only) |
+| `snippets/lena-notify-modal.liquid` | 70 | "Notify me" modal for sold-out pieces |
+| `snippets/breadcrumbs.liquid` | 47 | PDP breadcrumbs — `collection` when arrived through one, menu list as fallback |
+| `assets/lena-custom.css` | 1075 | All custom styles (16 sections, 70+ classes) |
+
+**Filename note:** `lena-drop-header` and `lena-drop-coming-soon` keep their filenames for historical
+reasons — the section `type` string is bound by three JSON templates, so renaming the files breaks
+them. Neither has anything to do with drops any more; see their header comments.
 
 ### Modified stock files (edit ONLY the marked ranges)
 
 | File | Lena lines | What was added |
 |------|-----------|----------------|
-| `sections/main-product.liquid` | 101–139 | PDP: category eyebrow, inventory badge (dynamic), artisan line, scarcity/sold msg |
+| `sections/main-product.liquid` | 101–139, 303–380, 633–645 | PDP: category eyebrow, inventory badge, artisan line, scarcity/sold msg · quantity stepper hidden at max-purchasable 1 · breadcrumbs · 30-day returns |
 | `sections/main-collection-banner.liquid` | 14–33 | Collection: diamond eyebrow, title class, product count pill |
-| `sections/featured-collection.liquid` | 67, ~215 | Conditional wrapper: hides section when linked collection is empty |
+| `sections/featured-collection.liquid` | 67, ~215 | Conditional wrapper: hides section when linked collection is empty (**unmarked** — no `Lena:` comment, so grep misses it) |
 | `snippets/card-product.liquid` | 108–122, 164–167, 228–237 | Cards: inventory badge (dynamic), sold overlay, category label, scarcity/notify |
 | `snippets/facets.liquid` | 204–220, 592–608 | Color filter whitelist: skips non-color tag values (e.g. "Accessories", "artisan") |
+| `snippets/header-dropdown-menu.liquid` | ~11 | Omits the New Arrivals nav link while that collection is empty |
+| `snippets/header-drawer.liquid` | ~25 | Same rule, mobile drawer. Link list only — panel behaviour untouched |
+| `snippets/header-mega-menu.liquid` | ~11 | Same rule. Dormant unless `menu_type_desktop` is set to `mega` |
 | `sections/main-404.liquid` | 1–175 | Full rewrite: branded 404 with search, nav links, diamond motifs |
+| `sections/collection-list.liquid` | ~18, schema | `subtitle` setting rendered under the section title |
 
 ### Comment convention
 
@@ -47,13 +59,14 @@ All Lena changes in stock files are marked: `{%- comment -%} Lena: <description>
 |---|---------|------|-------|
 | 1 | Hero | `lena-hero` | Navy bg, mosaic grid, "One piece at a time" |
 | 2 | Trust Strip | `custom-liquid` | Scrolling diamond marquee (inline HTML, not a section file) |
-| 3 | Drop Header | `lena-drop-header` | Adaptive: "This Week's Drop" or "Coming Soon" + countdown |
-| 4 | Product Grid | `featured-collection` | Collection: `new-arrivals`, 4 columns. Hidden when empty. |
+| 3 | New Arrivals | `lena-drop-header` | Collection `new-arrivals`. Heading + linked count. **Hidden while empty** |
+| 4 | Available Now | `featured-collection` | Collection: `available-now`, 4 columns. Hides itself if empty |
 | 5 | Our Story | `image-with-text` | Founder photo + brand narrative |
-| 6 | The Gallery | `collection-list` | 5 collection tiles |
-| 7 | Artisan Spotlight | `lena-spotlight` | Requires "Artisan Stories" blog |
-| 8 | Q&A | `collapsible-content` | 6 accordion items (handmade, artisans, design, in-person, photo, returns) |
-| 9 | Find Us | `lena-find-us` | Uses `scheduled_event` metaobjects |
+| 6 | Testimonials | `lena-testimonials` | Customer quotes |
+| 7 | Shop by Category | `collection-list` | 12 collection tiles + subtitle |
+| 8 | Artisan Spotlight | `lena-spotlight` | Requires "Artisan Stories" blog |
+| 9 | Q&A | `collapsible-content` | 6 accordion items (handmade, artisans, design, in-person, photo, returns) |
+| 10 | Find Us | `lena-find-us` | Uses `scheduled_event` metaobjects |
 
 **Note:** Trust Strip is custom-liquid HTML inside `templates/index.json`, NOT a standalone section file.
 
@@ -61,7 +74,8 @@ All Lena changes in stock files are marked: `{%- comment -%} Lena: <description>
 
 | Template | Collection | Purpose |
 |----------|-----------|---------|
-| `templates/collection.this-weeks-drop.json` | `this-weeks-drop` | Banner + coming-soon section (when empty) + product grid. Requires manual template assignment in Shopify Admin. |
+| `templates/collection.new-arrivals.json` | `new-arrivals` | Banner + empty-state section (when empty) + product grid. Requires manual template assignment in Shopify Admin. |
+| `templates/collection.this-weeks-drop.json` | `this-weeks-drop` | Legacy. Nothing links here any more; kept in case the URL was printed. |
 
 ## Color Schemes
 
@@ -82,7 +96,7 @@ All Lena changes in stock files are marked: `{%- comment -%} Lena: <description>
 
 ## Required Shopify Admin Objects
 
-- **Collections:** `new-arrivals`, `this-weeks-drop` (needs `this-weeks-drop` template assigned), `crochet-dolls`, `compact-mirrors`, `ribbon-embroidery-hats`, `signature-purses`, `phone-travel-wallet`
+- **Collections:** `available-now` (smart, `inventory > 0 AND tag ≠ POS`), `new-arrivals` (smart, **`Tag is equal to new`** — set once, never edited; the app owns the tag), `crochet-dolls`, `compact-mirrors`, `ribbon-embroidery-hats`, `signature-purses`, `phone-travel-wallet`
 - **Blog:** `Artisan Stories` (for spotlight section)
 - **Metaobject:** `scheduled_event` (fields: `start_date`, `end_date`, `name`, `time_text`, `description`, `address`, `icon`)
 - **Menu:** `main-menu-gallery`
@@ -117,8 +131,21 @@ Do not hand-edit `templates/*.json`, `sections/*-group.json`, or `config/setting
 - **Inventory**: `product.variants.first.inventory_quantity` for stock counts
 - **Tags**: Check for tag before rendering conditional UI (`product.tags contains 'tag-name'`)
 - **Metaobjects**: Use `section.settings.{metaobject}` for dynamic data
-- **Countdown**: UTC-based calculations, never local timezone
+- **No cadence claims**: The business is supply-driven — gaps run from days to a month. No frequency
+  or day-of-week wording anywhere, and no countdown. The Friday countdown was removed for this reason.
+- **New Arrivals**: the theme does not know what "new" means. The app owns a single `new` tag; the
+  smart collection matches it; the section and nav link render only while
+  `collections['new-arrivals'].all_products_count > 0`. Deliberately **no** date filter, staleness
+  read or item cap — those would make the theme second-guess the app.
+- **`all_products_count`, not `products_count`**: the latter reflects the current tag-filtered view.
+  Use `all_products_count` for any visibility decision.
 - **Color filter**: Whitelist in `snippets/facets.liquid` — update both desktop and mobile instances
+- **`url` setting defaults**: Shopify accepts only `/collections` and `/collections/all` as the
+  `default` for a `type: "url"` setting. Any other path — even a valid one like
+  `/collections/available-now` — is rejected with `default must be a string or datasource access
+  path`, and the whole section file fails to upload, taking every JSON template that references it
+  down too. **Omit `default` and handle blank in the markup.** `shopify theme check` does not catch
+  this; only an upload does.
 - **Schema defaults**: Never write `"default": ""` in a `{% schema %}` setting. Shopify rejects the whole file with `Invalid schema: setting with id="x" default can't be blank`, and the GitHub sync then silently skips it — plus any JSON template referencing that section type. Omit `default` entirely for an optional field.
 
 ### Post-change checklist

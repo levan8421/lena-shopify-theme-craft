@@ -98,6 +98,8 @@
                 </p>
               {%- when 'title' -%}
                 <div class="product__title" {{ block.shopify_attributes }}>
+                  {%- comment -%} Lena: breadcrumbs {%- endcomment -%}
+                  {%- render 'breadcrumbs', product: product, collection: collection -%}
                   {%- comment -%} Lena: Category eyebrow {%- endcomment -%}
                   {%- if product.type != blank -%}
                     <div class="lena-pdp-cat">{{ product.type }}</div>
@@ -298,11 +300,78 @@
                 {%- endif -%}
               {%- when 'quantity_selector' -%}
                 {%- if product.available -%}
+                {%- comment -%}
+                  Lena: hide the stepper when only one unit can be bought, so it stops
+                  contradicting the "1 of 1" badge. Items with more stock keep a capped stepper.
+                  The wrapper div must always render: product-info.js dereferences
+                  #Quantity-Form-<section> on variant change and throws if it is missing.
+                {%- endcomment -%}
+                {%- liquid
+                  assign lena_variant = product.selected_or_first_available_variant
+
+                  assign lena_qty_min = lena_variant.quantity_rule.min
+                  if lena_qty_min == nil or lena_qty_min < 1
+                    assign lena_qty_min = 1
+                  endif
+
+                  comment
+                    Effective max for the selected variant = the lower of the merchant's
+                    quantity rule and real stock. quantity_rule.max is merchant-set and usually
+                    nil, so without the inventory term the stepper would let someone ask for 10
+                    of a 3-stock piece and only fail at checkout.
+                  endcomment
+                  assign lena_qty_max = 999999
+                  if lena_variant.quantity_rule.max != nil
+                    assign lena_qty_max = lena_variant.quantity_rule.max
+                  endif
+                  assign lena_check_inventory = true
+                  if lena_variant.inventory_management != 'shopify' or lena_variant.inventory_policy == 'continue'
+                    assign lena_check_inventory = false
+                  endif
+                  if lena_check_inventory
+                    if lena_variant.inventory_quantity < lena_qty_max
+                      assign lena_qty_max = lena_variant.inventory_quantity
+                    endif
+                  endif
+
+                  comment
+                    Show/hide is decided across every variant, not just the selected one. The
+                    theme swaps price/sku/inventory on variant change but never re-renders this
+                    block, so a stepper hidden at load would stay hidden after switching to a
+                    higher-stock variant. Deciding on the best case keeps multi-variant products
+                    buyable; single-variant products (almost the whole catalogue) are unaffected.
+                  endcomment
+                  assign lena_any_max = 0
+                  for lena_v in product.variants
+                    assign lena_v_max = 999999
+                    if lena_v.quantity_rule.max != nil
+                      assign lena_v_max = lena_v.quantity_rule.max
+                    endif
+                    assign lena_v_check = true
+                    if lena_v.inventory_management != 'shopify' or lena_v.inventory_policy == 'continue'
+                      assign lena_v_check = false
+                    endif
+                    if lena_v_check
+                      if lena_v.inventory_quantity < lena_v_max
+                        assign lena_v_max = lena_v.inventory_quantity
+                      endif
+                    endif
+                    if lena_v_max > lena_any_max
+                      assign lena_any_max = lena_v_max
+                    endif
+                  endfor
+
+                  assign lena_show_stepper = true
+                  if lena_any_max <= lena_qty_min
+                    assign lena_show_stepper = false
+                  endif
+                -%}
                 <div
                   id="Quantity-Form-{{ section.id }}"
-                  class="product-form__input product-form__quantity{% if settings.inputs_shadow_vertical_offset != 0 and settings.inputs_shadow_vertical_offset < 0 %} product-form__quantity-top{% endif %}"
+                  class="product-form__input product-form__quantity{% if settings.inputs_shadow_vertical_offset != 0 and settings.inputs_shadow_vertical_offset < 0 %} product-form__quantity-top{% endif %}{% unless lena_show_stepper %} product-form__quantity--single{% endunless %}"
                   {{ block.shopify_attributes }}
                 >
+                  {%- if lena_show_stepper -%}
                   {% comment %} TODO: enable theme-check once `item_count_for_variant` is accepted as valid filter {% endcomment %}
                   {% # theme-check-disable %}
                   {%- assign cart_qty = cart
@@ -349,9 +418,10 @@
                         data-cart-quantity="{{ cart_qty }}"
                         data-min="{{ product.selected_or_first_available_variant.quantity_rule.min }}"
                         min="{{ product.selected_or_first_available_variant.quantity_rule.min }}"
-                        {% if product.selected_or_first_available_variant.quantity_rule.max != null %}
-                          data-max="{{ product.selected_or_first_available_variant.quantity_rule.max }}"
-                          max="{{ product.selected_or_first_available_variant.quantity_rule.max }}"
+                        {%- comment -%} Lena: cap at real stock, not just the merchant rule {%- endcomment -%}
+                        {% if lena_qty_max < 999999 %}
+                          data-max="{{ lena_qty_max }}"
+                          max="{{ lena_qty_max }}"
                         {% endif %}
                         step="{{ product.selected_or_first_available_variant.quantity_rule.increment }}"
                         value="{{ product.selected_or_first_available_variant.quantity_rule.min }}"
@@ -523,6 +593,10 @@
                       {%- endif -%}
                     </volume-pricing>
                   {%- endif -%}
+                  {%- else -%}
+                    {%- comment -%} Lena: single-unit item, post quantity without a control {%- endcomment -%}
+                    <input type="hidden" name="quantity" value="{{ lena_qty_min }}" form="{{ product_form_id }}">
+                  {%- endif -%}
                 </div>
                 {%- endif -%}
               {%- when 'popup' -%}
@@ -556,6 +630,18 @@
                   section_id: section.id,
                   show_pickup_availability: true
                 -%}
+                {%- comment -%}
+                  Lena: return terms surfaced on the PDP. Previously these lived only in the
+                  homepage FAQ, where they do no conversion work at the point of decision.
+                {%- endcomment -%}
+                {%- if product.available -%}
+                  <p class="lena-pdp-returns">
+                    <span class="dm filled sm"></span>
+                    Returns accepted within <strong>30 days of delivery</strong>. Unused and in
+                    original condition; buyer pays return shipping.
+                    <a href="{{ routes.root_url }}policies/refund-policy">Full return policy</a>
+                  </p>
+                {%- endif -%}
               {%- when 'rating' -%}
                 {%- if product.metafields.reviews.rating.value != blank -%}
                   <div class="rating-wrapper">

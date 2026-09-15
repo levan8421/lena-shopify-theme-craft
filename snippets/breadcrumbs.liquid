@@ -1,0 +1,47 @@
+{%- comment -%}
+  Lena: product breadcrumbs — Home > [Category] > [Piece name]
+
+  Category resolution, in order:
+    1. `collection` — populated only when the visitor arrived via
+       /collections/<handle>/products/<handle>. This also covers parent collections
+       that are deliberately not in the menu (e.g. signature-purses), so arriving
+       through one still renders a correct trail.
+    2. The product's first collection matching the menu category list below.
+    3. Neither — fall back to a two-crumb trail.
+
+  Accepts: product (required), collection (optional)
+
+  `collection` is passed in explicitly rather than relied on as a global: {% render %}
+  isolates scope, and a silently-nil object here would downgrade every breadcrumb to
+  the two-crumb fallback without erroring.
+{%- endcomment -%}
+
+{%- liquid
+  assign lena_menu_categories = 'compact-mirrors,crochet-dolls,ribbon-embroidery-hats,velvet-purses,rattan-purses,glass-bead-woven-handbags,phone-travel-wallet' | split: ','
+
+  assign lena_crumb_title = blank
+  assign lena_crumb_url = blank
+
+  if collection != blank and collection.handle != blank and collection.handle != 'all'
+    assign lena_crumb_title = collection.title
+    assign lena_crumb_url = collection.url
+  else
+    for lena_c in product.collections
+      if lena_menu_categories contains lena_c.handle
+        assign lena_crumb_title = lena_c.title
+        assign lena_crumb_url = lena_c.url
+        break
+      endif
+    endfor
+  endif
+-%}
+
+<nav class="lena-breadcrumbs" aria-label="Breadcrumb">
+  <ol>
+    <li><a href="{{ routes.root_url }}">Home</a></li>
+    {%- if lena_crumb_title != blank -%}
+      <li><a href="{{ lena_crumb_url }}">{{ lena_crumb_title | escape }}</a></li>
+    {%- endif -%}
+    <li><span aria-current="page">{{ product.title | escape }}</span></li>
+  </ol>
+</nav>

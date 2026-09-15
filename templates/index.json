@@ -58,10 +58,10 @@
       "settings": {
         "eyebrow": "Artisan-Crafted in Vietnam",
         "heading": "<p>One piece at a time.<br/><strong>Yours alone.</strong></p>",
-        "subheading": "Discover our curated collection of signature purses alongside artisan accessories and keepsakes — from hand-embroidered hats and pocket mirrors to crochet dolls and flowers. Each piece is a one-of-one creation. New drops every Friday.",
-        "button_label_1": "Shop This Week's Drop",
-        "button_link_1": "shopify://collections/this-weeks-drop",
-        "button_label_2": "Join the Drop List",
+        "subheading": "Discover our curated collection of signature purses alongside artisan accessories and keepsakes — from hand-embroidered hats and pocket mirrors to crochet dolls and flowers. Most pieces are one of a kind, handmade in small numbers.",
+        "button_label_1": "Shop Available Pieces",
+        "button_link_1": "shopify://collections/available-now",
+        "button_label_2": "Join the List",
         "button_link_2": "#newsletter",
         "padding_top": 0,
         "padding_bottom": 0
@@ -71,7 +71,7 @@
       "type": "custom-liquid",
       "name": "Trust Strip",
       "settings": {
-        "custom_liquid": "<div class=\"lena-trust-strip\">\n  <div class=\"lena-marquee\">\n    <div class=\"lena-marquee-track\">\n      <span class=\"lena-marquee-item\"><span class=\"dm filled sm\"></span> <strong>100% Handmade</strong> &middot; Crafted in Vietnam</span>\n      <span class=\"lena-marquee-item\"><span class=\"dm filled sm\"></span> <strong>Each Piece Is 1 of 1</strong> &middot; Once It's Gone, It's Gone</span>\n      <span class=\"lena-marquee-item\"><span class=\"dm filled sm\"></span> <strong>Women-Owned</strong> &middot; Supporting Artisan Families</span>\n      <span class=\"lena-marquee-item\"><span class=\"dm filled sm\"></span> <strong>100% Handmade</strong> &middot; Crafted in Vietnam</span>\n      <span class=\"lena-marquee-item\"><span class=\"dm filled sm\"></span> <strong>Each Piece Is 1 of 1</strong> &middot; Once It's Gone, It's Gone</span>\n      <span class=\"lena-marquee-item\"><span class=\"dm filled sm\"></span> <strong>Women-Owned</strong> &middot; Supporting Artisan Families</span>\n    </div>\n  </div>\n</div>",
+        "custom_liquid": "<div class=\"lena-trust-strip\">\n  <div class=\"lena-marquee\">\n    <div class=\"lena-marquee-track\">\n      <span class=\"lena-marquee-item\"><span class=\"dm filled sm\"></span> <strong>100% Handmade</strong> &middot; Crafted in Vietnam</span>\n      <span class=\"lena-marquee-item\"><span class=\"dm filled sm\"></span> <strong>Most Pieces Are One of a Kind</strong> &middot; Handmade in Small Numbers</span>\n      <span class=\"lena-marquee-item\"><span class=\"dm filled sm\"></span> <strong>Women-Owned</strong> &middot; Supporting Artisan Families</span>\n      <span class=\"lena-marquee-item\"><span class=\"dm filled sm\"></span> <strong>100% Handmade</strong> &middot; Crafted in Vietnam</span>\n      <span class=\"lena-marquee-item\"><span class=\"dm filled sm\"></span> <strong>Most Pieces Are One of a Kind</strong> &middot; Handmade in Small Numbers</span>\n      <span class=\"lena-marquee-item\"><span class=\"dm filled sm\"></span> <strong>Women-Owned</strong> &middot; Supporting Artisan Families</span>\n    </div>\n  </div>\n</div>",
         "color_scheme": "scheme-2",
         "padding_top": 0,
         "padding_bottom": 0
@@ -81,9 +81,8 @@
       "type": "lena-drop-header",
       "settings": {
         "eyebrow": "Fresh From Vietnam",
-        "heading_empty": "New Drop <strong>Every Friday</strong>",
-        "show_countdown": false,
-        "collection_handle": "this-weeks-drop",
+        "heading": "New <strong>Arrivals</strong>",
+        "collection_handle": "new-arrivals",
         "color_scheme": "scheme-2",
         "padding_top": 52,
         "padding_bottom": 0
@@ -92,9 +91,9 @@
     "featured-collection": {
       "type": "featured-collection",
       "settings": {
-        "collection": "this-weeks-drop",
+        "collection": "available-now",
         "products_to_show": 4,
-        "title": "",
+        "title": "Available Now",
         "heading_size": "h2",
         "description": "",
         "show_description": false,
@@ -138,7 +137,7 @@
         "text": {
           "type": "text",
           "settings": {
-            "text": "<p>Every piece at Lena Handicrafts begins with a story — of artisans in Vietnam who transform thread, fabric, and yarn into one-of-a-kind works of art using techniques passed down through generations.</p><p>What started as a personal trip back to Vietnam became a mission: to bring the beauty of Vietnamese ribbon embroidery, hand-crocheting, and traditional weaving to the world — one unique piece at a time.</p>",
+            "text": "<p>Every piece at Lena Handicrafts begins with a story — of artisans in Vietnam who transform thread, fabric, and yarn into handmade works of art using techniques passed down through generations.</p><p>What started as a personal trip back to Vietnam became a mission: to bring the beauty of Vietnamese ribbon embroidery, hand-crocheting, and traditional weaving to the world — one unique piece at a time.</p>",
             "text_style": "body"
           }
         },
@@ -312,9 +311,10 @@
         "featured_collection_wePPrf",
         "featured_collection_ngFJAL"
       ],
-      "name": "The Gallery",
+      "name": "Shop by Category",
       "settings": {
-        "title": "The Gallery",
+        "title": "Shop by Category",
+        "subtitle": "Browse the full range \u2014 mirrors, dolls, hats, purses and more, all handmade in Vietnam.",
         "heading_size": "h1",
         "image_ratio": "portrait",
         "columns_desktop": 2,
@@ -374,7 +374,7 @@
           "settings": {
             "heading": "Q: Will my item look exactly like the photo?",
             "icon": "check_mark",
-            "row_content": "<p>Because each piece is handmade, slight variations in color, design, or embroidery make your item truly one of a kind.</p>",
+            "row_content": "<p>Because each piece is handmade, slight variations in color, design, or embroidery make your item distinctly yours.</p>",
             "page": ""
           }
         },
@@ -383,7 +383,7 @@
           "settings": {
             "heading": "Q: How do I start a return?",
             "icon": "check_mark",
-            "row_content": "<p>You have <strong>15 days for purses </strong>or <strong>7 days for accessories</strong> to return your item in its original condition. Just email us at <a href=\"mailto:info@lenahandicrafts.com\" title=\"mailto:info@lenahandicrafts.com\"><strong>info@lenahandicrafts.com</strong></a> to get started. Refunds are processed once we receive your return. <em>Please refer to our </em><a href=\"/policies/refund-policy\" title=\"Refund Policy\"><em>Return Policy</em></a><em> for more details.</em></p>",
+            "row_content": "<p>Returns are accepted within <strong>30 days of delivery</strong> on all items. Items must be unused and in their original condition, and return shipping is paid by the buyer. Just email us at <a href=\"mailto:info@lenahandicrafts.com\" title=\"mailto:info@lenahandicrafts.com\"><strong>info@lenahandicrafts.com</strong></a> to get started. Refunds are processed once we receive your return. <em>Please refer to our </em><a href=\"/policies/refund-policy\" title=\"Refund Policy\"><em>Return Policy</em></a><em> for more details.</em></p>",
             "page": ""
           }
         }

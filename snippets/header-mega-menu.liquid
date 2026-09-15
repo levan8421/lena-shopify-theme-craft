@@ -8,6 +8,15 @@
 <nav class="header__inline-menu">
   <ul class="list-menu list-menu--inline" role="list">
     {%- for link in section.settings.menu.links -%}
+      {%- comment -%}
+        Lena: omit the New Arrivals link while that collection is empty, so the nav
+        never offers a page with nothing on it. Scoped to this one handle on purpose
+        — a general "hide empty collections" rule would erase a newly created
+        category from the nav before its products are loaded.
+      {%- endcomment -%}
+      {%- if link.type == 'collection_link' and link.object.handle == 'new-arrivals' and link.object.all_products_count == 0 -%}
+        {%- continue -%}
+      {%- endif -%}
       <li>
         {%- if link.links != blank -%}
           <header-menu>

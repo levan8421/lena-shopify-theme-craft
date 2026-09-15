@@ -43,11 +43,6 @@ html {
 .dm.gold { border-color: var(--lena-amber-soft); background: var(--lena-amber-soft); }
 .dm.sm { width: 5px; height: 5px; border-width: 1px; }
 
-@keyframes dm-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.25; }
-}
-
 /* --- Announcement Bar --- */
 .announcement-bar {
   letter-spacing: 0.14em;
@@ -236,6 +231,14 @@ a.lena-notify-btn {
 }
 .lena-section-h strong {
   font-weight: 600;
+}
+/* Subtitle under a collection-list heading (Shop by Category) */
+.lena-section-sub {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--lena-slate);
+  max-width: 60ch;
+  margin: -8px 0 28px;
 }
 .lena-section-p {
   font-size: 15px;
@@ -491,19 +494,6 @@ a.lena-notify-btn {
   margin-left: auto;
   margin-right: auto;
   padding: 0 24px;
-}
-.lena-countdown-pill {
-  background: var(--lena-navy);
-  color: rgba(255,255,255,0.7);
-  padding: 7px 14px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  display: flex;
-  align-items: center;
-  gap: 8px;
 }
 .lena-view-all {
   font-size: 12px;
@@ -939,26 +929,32 @@ a.lena-notify-btn {
   .lena-testimonial-grid { grid-template-columns: 1fr; }
   .lena-hero { min-height: auto; }
 
-  /* Hero mosaic: horizontal scroll strip instead of hidden */
+  /* Hero mosaic: 2x2 stack. Replaces a snap-scroll carousel that showed ~1.4 of 4
+     tiles with no affordance signalling it scrolled. All four categories are now
+     visible with zero interaction, which matters because the whole nav is behind a
+     hamburger at this width. Every carousel property is reset explicitly. */
   .lena-hero-mosaic {
-    display: flex;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x mandatory;
-    gap: 12px;
-    padding-bottom: 8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 132px 132px;
+    gap: 10px;
+    overflow: visible;
+    overflow-x: visible;
+    scroll-snap-type: none;
+    padding-bottom: 0;
   }
-  .lena-hero-mosaic::-webkit-scrollbar { display: none; }
-  .lena-hero-mosaic { scrollbar-width: none; }
+  .lena-hero-content { padding: 56px 20px; }
   .lena-hero-img {
-    flex: 0 0 72%;
-    height: 150px;
-    scroll-snap-align: start;
+    flex: none;
+    height: auto;
+    scroll-snap-align: none;
   }
   .lena-hero-img:nth-child(1),
   .lena-hero-img:nth-child(4) {
     grid-row: auto;
   }
+  /* The section declares no max_blocks; only four cells are laid out. */
+  .lena-hero-img:nth-child(n + 5) { display: none; }
   .lena-hero-img .img-tag {
     font-size: 8px;
     padding: 3px 8px;
@@ -1015,4 +1011,65 @@ button.lena-notify-btn { background: none; border: none; cursor: pointer; }
 @media (max-width: 640px) {
   .lena-popup { padding: 32px 20px; }
   .lena-popup-field { flex-direction: column; }
+}
+
+/* --- PDP breadcrumbs --- */
+.lena-breadcrumbs {
+  margin: 0 0 14px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.lena-breadcrumbs ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.lena-breadcrumbs li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--lena-slate);
+}
+.lena-breadcrumbs li + li::before {
+  content: "\203A";
+  color: var(--lena-silver);
+}
+.lena-breadcrumbs a {
+  color: var(--lena-slate);
+  text-decoration: none;
+}
+.lena-breadcrumbs a:hover {
+  color: var(--lena-blue-deep);
+  text-decoration: underline;
+}
+.lena-breadcrumbs [aria-current="page"] {
+  color: var(--lena-ink);
+}
+@media (max-width: 640px) {
+  .lena-breadcrumbs { font-size: 11px; margin-bottom: 10px; }
+}
+
+/* --- PDP return terms --- */
+.lena-pdp-returns {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 14px 0 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--lena-slate);
+}
+.lena-pdp-returns strong { color: var(--lena-ink); font-weight: 600; }
+.lena-pdp-returns a { color: var(--lena-blue-deep); }
+
+/* Single-unit items: wrapper stays in the DOM for product-info.js, but collapses
+   so no empty gap appears above the buy buttons. */
+.product-form__quantity--single {
+  margin: 0;
+  padding: 0;
 }
