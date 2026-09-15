@@ -59,14 +59,15 @@ All Lena changes in stock files are marked: `{%- comment -%} Lena: <description>
 |---|---------|------|-------|
 | 1 | Hero | `lena-hero` | Navy bg, mosaic grid, "One piece at a time" |
 | 2 | Trust Strip | `custom-liquid` | Scrolling diamond marquee (inline HTML, not a section file) |
-| 3 | New Arrivals | `lena-drop-header` | Collection `new-arrivals`. Heading + linked count. **Hidden while empty** |
-| 4 | Available Now | `featured-collection` | Collection: `available-now`, 4 columns. Hides itself if empty |
-| 5 | Our Story | `image-with-text` | Founder photo + brand narrative |
-| 6 | Testimonials | `lena-testimonials` | Customer quotes |
-| 7 | Shop by Category | `collection-list` | 12 collection tiles + subtitle |
-| 8 | Artisan Spotlight | `lena-spotlight` | Requires "Artisan Stories" blog |
-| 9 | Q&A | `collapsible-content` | 6 accordion items (handmade, artisans, design, in-person, photo, returns) |
-| 10 | Find Us | `lena-find-us` | Uses `scheduled_event` metaobjects |
+| 3 | New Arrivals bar | `lena-drop-header` | Collection `new-arrivals`. Heading + linked count. **Hidden while empty** |
+| 4 | New Arrivals grid | `featured-collection` | Section key `new-arrivals-grid`. Collection `new-arrivals`, 4 columns, no title — the bar above is its heading. Hides itself if empty, so the pair appear and disappear together |
+| 5 | Available Now | `featured-collection` | Collection: `available-now`, 4 columns. Hides itself if empty |
+| 6 | Our Story | `image-with-text` | Founder photo + brand narrative |
+| 7 | Testimonials | `lena-testimonials` | Customer quotes |
+| 8 | Shop by Category | `collection-list` | 12 collection tiles + subtitle |
+| 9 | Artisan Spotlight | `lena-spotlight` | Requires "Artisan Stories" blog |
+| 10 | Q&A | `collapsible-content` | 6 accordion items (handmade, artisans, design, in-person, photo, returns) |
+| 11 | Find Us | `lena-find-us` | Uses `scheduled_event` metaobjects |
 
 **Note:** Trust Strip is custom-liquid HTML inside `templates/index.json`, NOT a standalone section file.
 
