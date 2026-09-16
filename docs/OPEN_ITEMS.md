@@ -159,9 +159,9 @@ is never used to mean "unchecked".
 | R3 | Filtering a collection to zero results removes the `<h1>` and shows "we're preparing something special" | Lena in stock | open | not yet |
 | R4 | Email popup and Notify modal report success on a failed submit; the popup also suppresses itself permanently | Lena file | fixed | not yet |
 | R5 | Card "New" badge uses a 7-day `created_at` window — a second definition of "new" competing with the app-owned tag | Lena in stock | fixed | not yet |
-| R6 | Hero's padding sliders are bound to nothing | Lena file | open | not yet |
-| R7 | Hero heading is `richtext`, emitting `<p>` inside `<h1>` | Lena file | open | not yet |
-| R8 | Hero mosaic links have no accessible name when image alt is empty | Lena file | open | not yet |
+| R6 | Hero's padding sliders are bound to nothing | Lena file | fixed | not yet |
+| R7 | Hero heading is `richtext`, emitting `<p>` inside `<h1>` | Lena file | fixed | not yet |
+| R8 | Hero mosaic links have no accessible name when image alt is empty | Lena file | fixed | not yet |
 | R9 | Section eyebrow `#2E8FD9` on snow measures 3.35:1 — fails WCAG AA at 11px | Lena file | open | not yet |
 | R10 | Scarcity green on white measures 4.34:1; card category grey 4.50:1 — both under AA | Lena file | open | not yet |
 | R11 | Every section title is a `<div>`, not a heading — homepage outline jumps h1 → h3 | Lena file | open | not yet |

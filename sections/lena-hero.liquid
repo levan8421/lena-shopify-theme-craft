@@ -1,4 +1,23 @@
-<section class="lena-hero">
+{%- comment -%}
+  Lena: the padding sliders below were declared in the schema but never rendered - no style
+  block, no padding class - so dragging them in the theme editor did nothing at all. Both are
+  stored at 0, which is why nobody noticed. Wired up here in the same shape every other Lena
+  section uses.
+{%- endcomment -%}
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<section class="lena-hero section-{{ section.id }}-padding">
   <div class="lena-hero-bg"></div>
   <div class="lena-hero-content">
     <div class="lena-hero-text">
@@ -6,21 +25,44 @@
       <h1>{{ section.settings.heading }}</h1>
       <p class="lena-hero-sub">{{ section.settings.subheading }}</p>
       <div class="lena-hero-ctas">
-        {% if section.settings.button_label_1 != blank %}
+        {% if section.settings.button_label_1 != blank and section.settings.button_link_1 != blank %}
           <a class="lena-btn lena-btn-primary" href="{{ section.settings.button_link_1 }}">{{ section.settings.button_label_1 }}</a>
         {% endif %}
-        {% if section.settings.button_label_2 != blank %}
+        {% if section.settings.button_label_2 != blank and section.settings.button_link_2 != blank %}
           <a class="lena-btn lena-btn-ghost" href="{{ section.settings.button_link_2 }}">{{ section.settings.button_label_2 }}</a>
         {% endif %}
       </div>
     </div>
     <div class="lena-hero-mosaic">
       {%- for block in section.blocks -%}
+        {%- comment -%}
+          Lena: the link needs a name and the image needs alt text.
+
+          image_tag emits alt="" when the file has no alt set in Shopify Files, which is the
+          default. With nothing else inside the anchor, a screen reader announced four
+          consecutive links as just "link", with no hint of where any of them went. The
+          tag_label that names them visually sits outside the anchor, so it never counted.
+
+          The anchor is also skipped entirely when no collection is chosen, rather than being
+          emitted with no href - which produced an anchor that looked clickable and was not.
+
+          The two inline styles here were removed, not moved: .lena-hero-img a and
+          .lena-hero-img img in lena-custom.css already declare exactly the same rules.
+        {%- endcomment -%}
+        {%- liquid
+          assign lena_dest = block.settings.collection
+          assign lena_label = block.settings.tag_label | default: lena_dest.title
+          assign lena_alt = block.settings.image.alt | default: lena_label
+        -%}
         <div class="lena-hero-img" {{ block.shopify_attributes }}>
           {%- if block.settings.image != blank -%}
-            <a {% if block.settings.collection != blank %}href="{{ block.settings.collection.url }}"{% endif %} style="display:block;width:100%;height:100%">
-              {{ block.settings.image | image_url: width: 800 | image_tag: loading: 'lazy', style: 'width:100%;height:100%;object-fit:cover;' }}
-            </a>
+            {%- if lena_dest != blank -%}
+              <a href="{{ lena_dest.url }}"{% if lena_label != blank %} aria-label="{{ lena_label | escape }}"{% endif %}>
+                {{ block.settings.image | image_url: width: 800 | image_tag: loading: 'lazy', alt: lena_alt }}
+              </a>
+            {%- else -%}
+              {{ block.settings.image | image_url: width: 800 | image_tag: loading: 'lazy', alt: lena_alt }}
+            {%- endif -%}
           {%- else -%}
             <div class="lena-hero-img-ph">{{ block.settings.placeholder_text }}</div>
           {%- endif -%}
@@ -46,10 +88,11 @@
       "default": "Hand-Embroidered in Vietnam"
     },
     {
-      "type": "richtext",
+      "type": "inline_richtext",
       "id": "heading",
       "label": "Heading",
-      "default": "<p>One piece at a time.<br><strong>Yours alone.</strong></p>"
+      "info": "Bold and italic only. This is the page's H1, so it must not contain a paragraph.",
+      "default": "One piece at a time.<br><strong>Yours alone.</strong>"
     },
     {
       "type": "textarea",

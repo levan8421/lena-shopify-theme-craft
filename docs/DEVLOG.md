@@ -704,3 +704,55 @@ In the browser: no badge should appear anywhere while `new-arrivals` is empty. T
 
 **Regression risk:** any future "recently added" affordance computed from a date in Liquid
 rather than read from the tag. The test is whether the theme can disagree with the app.
+
+## 2026-09-16 · Bug · Repair four faults in the hero section
+**Commit:** PENDING · **Files:** sections/lena-hero.liquid, templates/index.json
+
+Four separate faults in one file, fixed together because they are all in the hero and each is
+small on its own.
+
+**1. The padding sliders did nothing (R6).** The schema declared `padding_top` and
+`padding_bottom`, but the section had no `{%- style -%}` block and never emitted
+`section-{{ section.id }}-padding`. Every other Lena section does. A merchant could drag both
+sliders, save, and see no change. Both are stored at `0`, which is why it went unnoticed.
+Wired up in the standard shape.
+
+**2. A paragraph inside the H1 (R7).** `heading` was `"type": "richtext"`, which always wraps
+its output in `<p>`. The page's only `<h1>` therefore contained a block-level paragraph, which
+is invalid and brings its own margins. Every other Lena section uses `inline_richtext` for
+headings. Changed here, **and the stored value in `index.json` was changed too** — changing the
+setting type does not rewrite what is already saved, so without that the `<p>` would have
+survived the fix.
+
+**3. Four links with no name (R8).** `image_tag` emits `alt=""` when the image has no alt text
+in Shopify Files, which is the default. The anchor wrapped only that image, so a screen reader
+announced four consecutive links as "link", "link", "link", "link". The `tag_label` that names
+them visually sits *outside* the anchor and never counted. The link now carries an
+`aria-label`, and the image an `alt`, both falling back `tag_label` → collection title.
+
+The anchor is also skipped entirely when no collection is chosen. It used to be emitted with no
+`href` at all, which looks clickable and is not.
+
+**4. Inline styles removed, not moved (R23, in part).** `style="display:block;width:100%;
+height:100%"` on the anchor and `width:100%;height:100%;object-fit:cover` on the image were
+**exactly duplicated** by `.lena-hero-img a` and `.lena-hero-img img` in `lena-custom.css`
+(lines 420-429). Deleting them changes nothing visually.
+
+Also guarded both CTA buttons on their link being set, not just their label. Both are filled in
+`index.json` today, so this was latent — but a label with no link renders `href=""`, which
+silently links to the current page.
+
+**Verify now:**
+```bash
+grep -c "section-{{ section.id }}-padding" sections/lena-hero.liquid   # 3
+grep -n '"type": "inline_richtext"' sections/lena-hero.liquid          # the heading
+grep -n 'style="display:block\|object-fit:cover' sections/lena-hero.liquid || echo "no inline styles"
+python3 -c "import json,re;s=open('templates/index.json').read();s=re.sub(r'/\*.*?\*/','',s,flags=re.S);print(json.loads(s)['sections']['lena-hero']['settings']['heading'])"
+#   One piece at a time.<br/><strong>Yours alone.</strong>     <- no <p>
+```
+In the browser: the hero must look unchanged. Check the `<h1>` in view-source contains no
+`<p>`. In the theme editor, drag the hero's top padding to 100 and confirm it now moves. Put it
+back to 0.
+
+**Regression risk:** a heading setting typed `richtext`; a schema block copied without its
+style block; an image-in-link written without an explicit `alt:`.
