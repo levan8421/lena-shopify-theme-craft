@@ -1350,3 +1350,46 @@ confirmed present in the same tag query.
 grep -c "color-clear" docs/OPEN_ITEMS.md    # 0
 grep -n "A6" docs/OPEN_ITEMS.md             # only the pointer line to this entry
 ```
+
+## 2026-09-16 · Bug · New Arrivals bar takes a collection picker, not a typed handle
+**Commit:** PENDING · **Files:** sections/lena-drop-header.liquid
+
+**What it does / did:** The section's collection setting is a picker. It was a free-text field
+holding a handle, looked up with `collections[section.settings.collection_handle]`.
+
+**Why it matters:** a typo, a collection renamed in admin, or a pasted URL instead of a handle
+all produced a blank collection. `na_count` stayed 0 and the section hid itself — which is
+**exactly** what it does when the collection is legitimately empty. Two very different
+situations, one indistinguishable outcome, and no feedback to the merchant either way.
+
+R1 was this same failure in Featured Piece, reached differently: a handle stored as `artisan`
+that no collection matched, so the section rendered nothing while looking deliberate. A picker
+does not make that impossible — R1 happened *with* a picker — but it removes the typo route and
+makes the stored value a reference that survives a title change.
+
+**The setting id is unchanged on purpose.** A `collection` setting stores its handle as a plain
+string, which is exactly what was already saved in `index.json` (`"collection_handle":
+"new-arrivals"`). Keeping the id means the existing value survives the type change; renaming it
+to something tidier would have discarded it and left the section blank until someone noticed.
+
+`"default"` was removed because a `collection` setting cannot carry one. The help text says so,
+rather than leaving the merchant to wonder why the field is empty on a fresh install.
+
+**Unchanged and load-bearing:** visibility is still `all_products_count` and nothing else — no
+date window, no staleness read, no cap. The app owns what "new" means.
+
+**Verify now:**
+```bash
+grep -n "collections\[" sections/lena-drop-header.liquid    # only inside the comment
+python3 -c "
+import json,re;s=open('templates/index.json').read();s=re.sub(r'/\*.*?\*/','',s,flags=re.S)
+print(json.loads(s)['sections']['lena-drop-header']['settings']['collection_handle'])"
+#   new-arrivals   <- the stored value must survive
+```
+In the theme editor: open the New Arrivals section. The field must now be a dropdown showing
+"New", not a text box. **The section is currently hidden because `new-arrivals` is empty** — to
+test it, point it at `available-now` temporarily, confirm the bar appears with the right count,
+then set it back.
+
+**Regression risk:** any collection addressed by a typed string. `lena-drop-coming-soon` takes a
+`url` rather than a collection, which is a different shape and was left alone.

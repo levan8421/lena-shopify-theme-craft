@@ -11,7 +11,21 @@
 {%- endcomment -%}
 
 {%- liquid
-  assign na_collection = collections[section.settings.collection_handle]
+  comment
+    Lena: a collection picker, not a typed handle.
+
+    This setting used to be type: "text" and was looked up with
+    collections[section.settings.collection_handle]. A typo, a renamed collection, or a
+    pasted URL instead of a handle all produced a blank collection, na_count stayed 0, and
+    the section hid itself - the same visible outcome as "the collection is legitimately
+    empty", with nothing to tell the two apart. R1 was this exact failure in the Featured
+    Piece section, reached by a different route.
+
+    The setting id is deliberately unchanged. A collection setting stores its handle as a
+    string, which is what was already saved, so the existing value survives the change;
+    renaming the id would have discarded it.
+  endcomment
+  assign na_collection = section.settings.collection_handle
   comment
     all_products_count is the collection total. The similarly named products_count
     reflects the current tag-filtered view, which is not what visibility should
@@ -72,11 +86,10 @@
       "default": "New <strong>Arrivals</strong>"
     },
     {
-      "type": "text",
+      "type": "collection",
       "id": "collection_handle",
-      "label": "Collection handle",
-      "default": "new-arrivals",
-      "info": "From the collection URL. The whole section is hidden while this collection is empty."
+      "label": "Collection",
+      "info": "The whole section is hidden while this collection holds no products. No default is possible on a collection setting, so pick one here."
     },
     {
       "type": "color_scheme",
