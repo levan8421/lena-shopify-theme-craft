@@ -100,10 +100,6 @@
                 <div class="product__title" {{ block.shopify_attributes }}>
                   {%- comment -%} Lena: breadcrumbs {%- endcomment -%}
                   {%- render 'breadcrumbs', product: product, collection: collection -%}
-                  {%- comment -%} Lena: Category eyebrow {%- endcomment -%}
-                  {%- if product.type != blank -%}
-                    <div class="lena-pdp-cat">{{ product.type }}</div>
-                  {%- endif -%}
                   <h1>{{ product.title | escape }}</h1>
                   {%- comment -%} Lena: inventory badge — "1 of 1" for unique, "N in stock" for multiples {%- endcomment -%}
                   {%- assign lena_qty = product.selected_or_first_available_variant.inventory_quantity | default: 0 -%}

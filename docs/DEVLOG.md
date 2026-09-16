@@ -278,3 +278,35 @@ in the Add-section list offered inside the Header or Footer groups.
 **Regression risk:** Any future Lena section that ships a `presets` block and belongs in the page
 body. Without `disabled_on` it is addable to the header and footer groups, and the resulting "why
 won't this move" is not obviously a theme problem.
+
+---
+
+## 2026-09-15 · Feature · Trim the PDP header to one navigating line
+**Commit:** (see `git log --grep "Trim the PDP header"`) · **Files:** `snippets/breadcrumbs.liquid`, `sections/main-product.liquid`, `assets/lena-custom.css`, `CLAUDE.md`
+
+**What it does / did:** Drops the category eyebrow from the PDP entirely, and drops the trailing
+crumb from the breadcrumb trail. What remains above the `<h1>` is `Home › Velvet Purses` — one line
+that still links back to the category.
+
+**Why it matters:** Three lines above the title carried two facts. The breadcrumb ended with the full
+product title, repeating the `<h1>` directly beneath it and wrapping the trail onto a second line on
+these long titles; the eyebrow then repeated the middle crumb. The eyebrow was the redundant one —
+it was plain text, so removing it costs nothing. The breadcrumb was kept because it is the **only**
+path back to the category from a product page; a visitor arriving from search or a shared link would
+otherwise have the menu and nothing else.
+
+**Reproduce (before the fix):** open any PDP with a long title → `Home › Velvet Purses › Midi Velvet
+Clutch - Black Noir with Mixed Rose Garden` wrapping to two lines, then `VELVET PURSES`, then the
+same title again as the heading.
+
+**Verify now:**
+```bash
+grep -rn "lena-pdp-cat" sections snippets assets    # → no matches, markup and CSS both gone
+grep -n "aria-current" snippets/breadcrumbs.liquid  # → no matches, no trailing crumb
+```
+In the app: one breadcrumb line, no eyebrow, and the category in it is clickable.
+
+**Regression risk:** Re-adding a category line to the PDP "for SEO". The trail already names the
+category; a second copy is what was just removed. Note the breadcrumb carries **no** schema.org
+markup, so if structured data is ever wanted, that is the change to make — not more visible text.
+

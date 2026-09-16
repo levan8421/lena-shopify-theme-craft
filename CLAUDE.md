@@ -24,8 +24,8 @@ shopify theme push --unpublished   # Push for review
 | `sections/lena-find-us.liquid` | 239 | Location cards + metaobject scheduled events |
 | `sections/lena-email-popup.liquid` | 90 | Newsletter modal (tags `newsletter` only) |
 | `snippets/lena-notify-modal.liquid` | 70 | "Notify me" modal for sold-out pieces. Tags the contact `newsletter,notify-<category-handle>` |
-| `snippets/breadcrumbs.liquid` | 47 | PDP breadcrumbs — `collection` when arrived through one, menu list as fallback |
-| `assets/lena-custom.css` | 1212 | All custom styles (17 sections, 80+ classes) |
+| `snippets/breadcrumbs.liquid` | 50 | PDP breadcrumbs — `collection` when arrived through one, menu list as fallback. **No trailing crumb**: it would repeat the `<h1>` beneath it |
+| `assets/lena-custom.css` | 1203 | All custom styles (17 sections, 80+ classes) |
 
 **Filename note:** `lena-drop-header` and `lena-drop-coming-soon` keep their filenames for historical
 reasons — the section `type` string is bound by three JSON templates, so renaming the files breaks
@@ -35,7 +35,7 @@ them. Neither has anything to do with drops any more; see their header comments.
 
 | File | Lena lines | What was added |
 |------|-----------|----------------|
-| `sections/main-product.liquid` | 101–139, 303–380, 633–645 | PDP: category eyebrow, inventory badge, artisan line, scarcity/sold msg · quantity stepper hidden at max-purchasable 1 · breadcrumbs · 30-day returns |
+| `sections/main-product.liquid` | 101–140, 300–420, 593, 630–645 | PDP: breadcrumbs, inventory badge, artisan line, scarcity/sold msg · quantity stepper hidden at max-purchasable 1 · 30-day returns. **No category eyebrow** — it duplicated the breadcrumb |
 | `sections/main-collection-banner.liquid` | 14–33 | Collection: diamond eyebrow, title class, product count pill |
 | `sections/featured-collection.liquid` | 67, ~215 | Conditional wrapper: hides section when linked collection is empty (**unmarked** — no `Lena:` comment, so grep misses it) |
 | `snippets/card-product.liquid` | 108–122, 164–167, 228–237, 332–337, 436–437 | Cards: inventory badge (dynamic), sold overlay, category label, scarcity/notify · quick add gated on `card_product.available` so a sold-out card keeps Notify Me as its only CTA |

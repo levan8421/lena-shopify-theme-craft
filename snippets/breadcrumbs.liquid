@@ -39,9 +39,15 @@
 <nav class="lena-breadcrumbs" aria-label="Breadcrumb">
   <ol>
     <li><a href="{{ routes.root_url }}">Home</a></li>
+    {%- comment -%}
+      The current page is deliberately NOT a crumb. It would repeat the <h1>
+      immediately beneath it word for word, and on these product titles that
+      wraps the trail onto a second line for no added information. The point of
+      this nav is the way back to the category, not a restatement of where you
+      already are.
+    {%- endcomment -%}
     {%- if lena_crumb_title != blank -%}
       <li><a href="{{ lena_crumb_url }}">{{ lena_crumb_title | escape }}</a></li>
     {%- endif -%}
-    <li><span aria-current="page">{{ product.title | escape }}</span></li>
   </ol>
 </nav>

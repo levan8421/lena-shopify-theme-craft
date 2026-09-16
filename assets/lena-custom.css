@@ -726,14 +726,6 @@ a.lena-notify-btn {
 /* --- Product Detail Page (PDP) Lena Branding --- */
 .product__title > a.product__title { display: none; }
 
-.lena-pdp-cat {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--lena-blue-bright);
-  margin-bottom: 8px;
-}
 
 .lena-pdp-badge-1of1 {
   display: inline-flex;
@@ -1207,6 +1199,5 @@ button.lena-notify-btn { background: none; border: none; cursor: pointer; }
   margin: 0 0 14px;
 }
 .product__title > .lena-breadcrumbs { margin-bottom: 14px; }
-.product__title > .lena-pdp-cat { margin-bottom: 8px; }
 .product__title > .lena-pdp-badge-1of1 { margin-bottom: 14px; }
 .product__title > .lena-pdp-artisan { margin-bottom: 0; }
