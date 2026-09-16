@@ -173,7 +173,7 @@ is never used to mean "unchecked".
 | R17 | Both modals declare `aria-modal` but never move, trap, or restore focus | Lena file | open | not yet |
 | R18 | Testimonial star ratings have no text alternative | Lena file | fixed | not yet |
 | R19 | PDP `lena_qty` depends on block order — moving the title block kills the badge and scarcity line | Lena in stock | fixed | not yet |
-| R20 | Five sections with `presets` lack the `disabled_on` header/footer guard | Lena file | open | not yet |
+| R20 | Six sections with `presets` lack the `disabled_on` header/footer guard | Lena file | fixed | not yet |
 | R21 | Colour-filter logic is written six times, with two different conditions | Lena in stock | open | not yet |
 | R22 | `main-404.liquid` carries a 175-line inline `<style>` block | Lena file | open | not yet |
 | R23 | Inline styles across five Lena files | Lena file | open | not yet |

@@ -917,3 +917,38 @@ confirm the paragraph is now readable on navy. Set it back to scheme-1.
 
 **Regression risk:** any hardcoded colour inside a section that offers a colour scheme. The
 test is whether the section still reads correctly on `scheme-4`.
+
+## 2026-09-16 · Bug · Six sections could be dropped into the header or footer group
+**Commit:** PENDING · **Files:** sections/lena-hero.liquid, sections/lena-drop-header.liquid, sections/lena-testimonials.liquid, sections/lena-spotlight.liquid, sections/lena-email-popup.liquid, sections/lena-find-us.liquid
+
+**What it does / did:** Every Lena section with a `presets` block now carries
+`"disabled_on": { "groups": ["header", "footer"] }`. Only `lena-featured-piece` had it.
+
+**Why it matters:** CLAUDE.md records the trap — the theme editor shows an "Add section"
+button inside the Header group as well as the template area, and a section added there lands in
+`sections/header-group.json`, **pinned above the template and undraggable**. Getting it out
+means hand-editing a generated JSON file.
+
+`lena-email-popup` is the sharpest case: it is already rendered unconditionally from
+`layout/theme.liquid:319`. Adding it a second time from the editor produced two overlays, two
+elements sharing `id="lena-popup-overlay"`, and a `querySelector` that binds to whichever came
+first — so the close button could control the other copy.
+
+**Correction to the original finding.** R30's list named five sections and said
+`lena-find-us` had no `presets`. It has them, at line 209. The check written to confirm the fix
+found it — comparing `presets` count against `disabled_on` count per file, rather than trusting
+the list. Six sections, not five.
+
+**Verify now:**
+```bash
+for f in sections/lena-*.liquid; do
+  p=$(grep -c '"presets"' "$f"); d=$(grep -c 'disabled_on' "$f")
+  [ "$p" != "0" ] && [ "$d" = "0" ] && echo "GAP: $f"
+done
+#   no output = every section offering itself in the editor is guarded
+```
+In the theme editor: open the Header group, click Add section, and confirm none of the Lena
+sections are listed. They must still be available in the template area.
+
+**Regression risk:** every new section that ships a `presets` block. The loop above is the
+check; it is cheap enough to run on any section change.
