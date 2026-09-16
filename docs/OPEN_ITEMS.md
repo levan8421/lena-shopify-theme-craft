@@ -1181,8 +1181,8 @@ what it returns — three symptoms of one cause on Shopify's side, most likely a
 damaged search index for this shop.
 
 **Earlier idea, now weaker:** that filtering on the search page
-(`"enable_titles": true`… i.e. `"enable_filtering": true` in `templates/search.json`) makes
-the count and the results disagree. It is still worth testing because it is free, but it
+(`"enable_filtering": true` in `templates/search.json`) makes the count and the results
+disagree. It is still worth testing because it is free, but it
 cannot explain a wrong product or a result set that changes between two identical requests.
 
 **3. How to fix**
