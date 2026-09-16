@@ -182,7 +182,7 @@ is never used to mean "unchecked".
 | R26 | `lena-drop-header` takes a typed collection handle instead of a picker | Lena file | open | not yet |
 | R27 | `.product__title > a` display rule is duplicated between stock and custom CSS | Lena file | open | not yet |
 | R28 | A6 (`color-clear`) is stale — the tag no longer exists | store data | open | not yet |
-| R29 | Search results mix in pages and blog posts — "Our Story" appears among the products | Lena in stock | open | not yet |
+| R29 | Search results mix in pages and blog posts — "Our Story" appears among the products | Lena in stock | fixed | not yet |
 | R30 | Search says "167 results" but most result pages are nearly or completely empty | Shopify search | open | not yet |
 | R31 | An empty search page says "Use fewer filters" even when no filter is applied | Lena in stock | open | not yet |
 

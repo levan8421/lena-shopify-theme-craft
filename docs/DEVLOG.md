@@ -486,3 +486,41 @@ a **sold-out** card still shows only "Notify Me" and no disabled Add to cart but
 default. The class is "the code shipped but the setting was never turned on", which no build
 or lint step can see — only a rendered page shows it. Predictive search (the dropdown while
 typing) is deliberately left without the button; it is a preview list, not a shop grid.
+
+## 2026-09-16 · Bug · Search only products, so pages stop appearing in the product grid
+**Commit:** PENDING · **Files:** sections/main-search.liquid, snippets/header-search.liquid, sections/main-404.liquid
+
+**What it does / did:** All three search forms now send `type=product`, so Shopify searches
+products only. Before, none of them said what to search, and Shopify's default is to search
+products, pages and blog posts together.
+
+**Why it matters:** A customer searching `mirror` got the "Our Story" page as a card in the
+middle of the product grid — no photo, no price, no button. It reads as a product that failed
+to load, not as a page. It also inflated the result count, which made R30 harder to reason
+about: some of the 167 were not products at all.
+
+Three forms, not one. Fixing only the search page would have left the header box — the one a
+customer actually uses — still returning pages. The 404 page carries a third copy.
+
+**Reproduce (before the fix):**
+1. Search `mirror` from the header box.
+2. Page 1 of the results → a card labelled "Page" reading "Our Story", among the mirrors.
+
+**Verify now:**
+```bash
+grep -rn 'name="type" value="product"' sections/ snippets/
+#   sections/main-404.liquid
+#   sections/main-search.liquid
+#   snippets/header-search.liquid      <- all three
+```
+In the browser: search `mirror` from the header, from the search page, and from a 404 page.
+No "Page" or "Article" card should appear in any of them. The result count will drop below
+167; that is correct, not a regression.
+
+**Regression risk:** A fourth search form added later without the hidden field. There is no
+shared snippet for these forms — Craft repeats the markup — so the next one will have to be
+remembered. This does **not** change the predictive dropdown while typing: that uses a
+separate Shopify endpoint and keeps its own product/suggestion split.
+
+**Does NOT fix:** R30. The empty result pages and the unstable ordering are a Shopify-side
+search fault and are unaffected by this change.

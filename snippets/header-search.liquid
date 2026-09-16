@@ -64,6 +64,11 @@
             >
             <label class="field__label" for="{{ input_id }}">{{ 'general.search.search' | t }}</label>
             <input type="hidden" name="options[prefix]" value="last">
+            {%- comment -%} Lena: search products only. Without this Shopify also searches pages
+                 and blog posts, and they render as cards in the product grid with no photo,
+                 price or button - which reads as a broken product. {%- endcomment -%}
+            <input type="hidden" name="type" value="product">
+
             <button
               type="reset"
               class="reset__button field__button{% if search.terms == blank %} hidden{% endif %}"
