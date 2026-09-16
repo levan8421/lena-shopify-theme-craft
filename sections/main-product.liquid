@@ -156,8 +156,13 @@
                   <div class="lena-pdp-sold-msg">
                     <span class="dm gold sm"></span> This piece found its home
                   </div>
+                  {%- comment -%} Lena: file the signup under the product's real category, not its
+                       product.type - the two disagree for five of the seven live categories.
+                       See snippets/lena-notify-target.liquid. {%- endcomment -%}
+                  {%- capture lena_pdp_notify -%}{%- render 'lena-notify-target', product: product -%}{%- endcapture -%}
+                  {%- assign lena_pdp_notify_parts = lena_pdp_notify | strip | split: '|' -%}
                   <button class="lena-pdp-notify-btn" type="button"
-                    onclick="window.lenaNotify('{{ product.type | escape }}','{{ product.type | handleize }}')">
+                    onclick="window.lenaNotify('{{ lena_pdp_notify_parts[1] | escape }}','{{ lena_pdp_notify_parts[0] | escape }}')">
                     <span class="dm sm"></span> Notify me of similar items
                   </button>
                 {%- endunless -%}

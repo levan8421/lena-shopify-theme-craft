@@ -259,8 +259,13 @@
               </div>
             {%- endif -%}
             {%- unless card_product.available -%}
+              {%- comment -%} Lena: file the signup under the product's real category, not its
+                   product.type - the two disagree for five of the seven live categories.
+                   See snippets/lena-notify-target.liquid. {%- endcomment -%}
+              {%- capture lena_card_notify -%}{%- render 'lena-notify-target', product: card_product -%}{%- endcapture -%}
+              {%- assign lena_card_notify_parts = lena_card_notify | strip | split: '|' -%}
               <button class="lena-notify-btn" type="button"
-                onclick="window.lenaNotify('{{ card_product.type | escape }}','{{ card_product.type | handleize }}')">
+                onclick="window.lenaNotify('{{ lena_card_notify_parts[1] | escape }}','{{ lena_card_notify_parts[0] | escape }}')">
                 <span class="dm sm"></span> Notify Me
               </button>
             {%- endunless -%}

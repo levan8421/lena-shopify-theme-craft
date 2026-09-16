@@ -1,0 +1,63 @@
+{%- comment -%}
+  What should a "Notify me" signup be filed under, for this product?
+
+  Outputs "<handle>|<label>" - the handle becomes the contact tag `notify-<handle>`, the
+  label is the wording shown in the modal.
+
+  Accepts: product (required)
+
+  Why this exists. Both Notify Me buttons used to pass `product.type` for both values, so a
+  signup was tagged `notify-<type handleized>`. CLAUDE.md warns that product.type is not the
+  collection title, and measured against the live store on 2026-09-15 five of the seven live
+  categories disagree:
+
+    product.type        tag it produced           canonical handle
+    Beaded Purses       notify-beaded-purses      glass-bead-woven-handbags
+    Crochet Figures     notify-crochet-figures    crochet-dolls
+    Rattan Bags         notify-rattan-bags        rattan-purses
+    Hats                notify-hats               ribbon-embroidery-hats
+    Phone Wallet        notify-phone-wallet       phone-travel-wallet
+
+  Only Compact Mirrors and Velvet Purses lined up. So a segment built to email everyone
+  waiting on a Glass Bead Woven Handbag would not find those contacts, and the tags could
+  not be joined back to a collection without a translation table that exists nowhere.
+
+  This resolves the product's own category collection instead, from the same canonical list
+  breadcrumbs and related-products already use - so all three answer this question the same
+  way.
+
+  Fallback. A product in none of the canonical collections falls back to product.type, which
+  is better than nothing and keeps the old behaviour for those. That set is real - see R13 in
+  docs/OPEN_ITEMS.md - and is deferred while those types are not published.
+{%- endcomment -%}
+{%- liquid
+  capture nt_csv
+    render 'lena-category-handles'
+  endcapture
+  assign nt_categories = nt_csv | strip | split: ','
+
+  assign nt_handle = blank
+  assign nt_label = blank
+
+  for nt_c in product.collections
+    if nt_categories contains nt_c.handle
+      assign nt_handle = nt_c.handle
+      assign nt_label = nt_c.title
+      break
+    endif
+  endfor
+
+  if nt_handle == blank
+    assign nt_handle = product.type | handleize
+    assign nt_label = product.type
+  endif
+
+  if nt_handle == blank
+    assign nt_handle = 'general'
+    assign nt_label = 'items'
+  endif
+
+  echo nt_handle
+  echo '|'
+  echo nt_label
+-%}

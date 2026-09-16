@@ -167,7 +167,7 @@ is never used to mean "unchecked".
 | R11 | Every section title is a `<div>`, not a heading — homepage outline jumps h1 → h3 | Lena file | fixed | not yet |
 | R12 | Related products filters sold-out pieces out of the top-up pass but not the recommendations pass | Lena in stock | fixed | not yet |
 | R13 | Breadcrumbs and related-products top-up both fail for products outside the 7 canonical collections | Lena file | open | not yet |
-| R14 | Notify Me tags by `product.type`, not the canonical collection handle | Lena in stock | open | not yet |
+| R14 | Notify Me tags by `product.type`, not the canonical collection handle | Lena in stock | fixed | not yet |
 | R15 | Featured Piece pool is capped at 50 by `collection.products` — no Liquid fix exists; now documented in the section and its help text | Lena file | open | not yet |
 | R16 | Featured Piece monthly rotation can only ever surface 12 items | Lena file | fixed | not yet |
 | R17 | Both modals declare `aria-modal` but never move, trap, or restore focus | Lena file | fixed | not yet |

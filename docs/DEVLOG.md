@@ -1156,3 +1156,50 @@ you started from. Repeat for the newsletter popup.
 **Regression risk:** any new dialog built by copying these two. The helper block is duplicated
 in both files rather than shared, because they are a snippet and a section with separate
 `<script>` bodies — a third copy should become a shared asset instead.
+
+## 2026-09-16 · Bug · Notify Me files signups under the real category, not the product type
+**Commit:** PENDING · **Files:** snippets/lena-notify-target.liquid (new), sections/main-product.liquid, snippets/card-product.liquid
+
+**What it does / did:** Both Notify Me buttons resolve the product's category collection and
+tag the contact `notify-<collection handle>`. They used to pass `product.type` for both the tag
+and the label.
+
+**Why it matters:** CLAUDE.md warns that `product.type` is not the collection title. Measured
+against the live store, five of the seven live categories disagree:
+
+| `product.type` | tag it produced | canonical handle |
+|---|---|---|
+| Beaded Purses | `notify-beaded-purses` | `glass-bead-woven-handbags` |
+| Crochet Figures | `notify-crochet-figures` | `crochet-dolls` |
+| Rattan Bags | `notify-rattan-bags` | `rattan-purses` |
+| Hats | `notify-hats` | `ribbon-embroidery-hats` |
+| Phone Wallet | `notify-phone-wallet` | `phone-travel-wallet` |
+
+Only Compact Mirrors and Velvet Purses lined up. So a segment built to email everyone waiting
+on a Glass Bead Woven Handbag would not find those contacts, and the tags could not be joined
+back to a collection without a translation table that exists nowhere. The list was being
+collected and was not usable for the thing it was collected for.
+
+`lena-category-handles.liquid` was created as the single source of truth for exactly this
+question and is already consulted by `breadcrumbs` and `related-products` — but not here. All
+three now answer it the same way.
+
+**Existing tags are not migrated.** Contacts already tagged `notify-beaded-purses` keep that
+tag. If those signups matter, they need renaming in admin; this only changes what is written
+from now on.
+
+**Fallback kept.** A product in none of the canonical collections falls back to `product.type`,
+so those behave exactly as before rather than losing the button. That set is real — R13 — and
+stays deferred while those product types are unpublished.
+
+**Verify now:**
+```bash
+grep -rn "lenaNotify" sections/ snippets/ | grep -c "\.type"   # 0
+grep -rn "lena-notify-target" sections/ snippets/              # the snippet and its two callers
+```
+In the browser: open a sold-out beaded purse, click Notify Me, and check the modal says "Glass
+Bead Woven Handbags", not "Beaded Purses". Submit, then read the contact's tags in admin —
+expect `notify-glass-bead-woven-handbags`.
+
+**Regression risk:** a third caller of `window.lenaNotify` written with `product.type`. The
+snippet exists so there is one obvious place to look.
