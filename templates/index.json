@@ -180,7 +180,7 @@
         "collection": "artisan",
         "rotation": "daily",
         "eyebrow": "Piece of the Day",
-        "heading": "Today's <strong>Find</strong>",
+        "heading": "<em><strong>Today's Feature</strong></em>",
         "description": "",
         "cta_label": "View this piece",
         "color_scheme": "scheme-1",
