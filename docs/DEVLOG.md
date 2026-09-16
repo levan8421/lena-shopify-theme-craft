@@ -1312,7 +1312,7 @@ heading on navy. Check the PDP scarcity line still shows a green diamond.
 grep above is the check.
 
 ## 2026-09-16 · Bug · Close three older open items: A6, the duplicated whitelist, Notify Me failures
-**Commit:** PENDING · **Files:** docs/OPEN_ITEMS.md
+**Commit:** 1074965 · **Files:** docs/OPEN_ITEMS.md
 
 `OPEN_ITEMS.md` holds only what is open — closing an item removes its row and records the fact
 here instead, so the same thing is never written down twice. Three items from the Tier 0 tail
