@@ -666,7 +666,7 @@ Put the order back afterwards.
 not to remember the order, it is to assign before the loop.
 
 ## 2026-09-16 · Bug · The New badge reads the app's tag instead of inventing its own rule
-**Commit:** PENDING · **Files:** snippets/card-product.liquid
+**Commit:** eb4b34e · **Files:** snippets/card-product.liquid
 
 **What it does / did:** The "New" badge on a product card now shows when the product carries
 the `new` tag. It used to show when the product was created less than 7 days ago.
