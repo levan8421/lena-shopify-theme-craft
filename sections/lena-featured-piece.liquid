@@ -1,0 +1,228 @@
+{%- comment -%}
+  Featured Piece — spotlights a single product from a collection, rotating on a date seed.
+
+  Shopify Liquid has no random filter, so "pick one" has to come from somewhere
+  deterministic. This reuses the rotation already proven in lena-spotlight.liquid:
+  seed an integer off the current date, modulo the pool size, pick by index. Every
+  visitor sees the same piece for the whole period, which reads as curation rather
+  than chance and costs no JavaScript.
+
+  Two rules the section enforces on its own:
+
+    - Sold-out pieces are excluded from the pool. Most of the catalogue is one of a
+      kind, so featuring a piece that has already sold is worse than showing nothing.
+    - The section is absent entirely when the collection is blank or holds nothing
+      available, rather than rendering an empty frame.
+{%- endcomment -%}
+
+{%- liquid
+  assign fp_collection = section.settings.collection
+
+  comment
+    where: 'available' is the single-argument truthy form. The two-argument
+    form compares against a string and does not reliably match a boolean.
+  endcomment
+  assign fp_pool = fp_collection.products | where: 'available'
+  assign fp_pool_size = fp_pool.size
+-%}
+
+{%- if fp_collection != blank and fp_pool_size > 0 -%}
+  {%- liquid
+    case section.settings.rotation
+      when 'weekly'
+        assign fp_seed = 'now' | date: '%W' | plus: 0
+      when 'monthly'
+        assign fp_seed = 'now' | date: '%m' | plus: 0
+      else
+        assign fp_seed = 'now' | date: '%j' | plus: 0
+    endcase
+
+    assign fp_index = fp_seed | modulo: fp_pool_size
+
+    assign fp_i = 0
+    for fp_product in fp_pool
+      if fp_i == fp_index
+        assign featured = fp_product
+        break
+      endif
+      assign fp_i = fp_i | plus: 1
+    endfor
+
+    assign fp_qty = featured.selected_or_first_available_variant.inventory_quantity | default: 0
+  -%}
+
+  {%- style -%}
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+      padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+    }
+    @media screen and (min-width: 750px) {
+      .section-{{ section.id }}-padding {
+        padding-top: {{ section.settings.padding_top }}px;
+        padding-bottom: {{ section.settings.padding_bottom }}px;
+      }
+    }
+  {%- endstyle -%}
+
+  <div class="color-{{ section.settings.color_scheme }} gradient section-{{ section.id }}-padding">
+    <div class="page-width">
+      <div class="lena-fp">
+        <a class="lena-fp-media" href="{{ featured.url }}" tabindex="-1" aria-hidden="true">
+          {%- if featured.featured_media -%}
+            <img
+              src="{{ featured.featured_media | image_url: width: 1100 }}"
+              srcset="
+                {{ featured.featured_media | image_url: width: 550 }} 550w,
+                {{ featured.featured_media | image_url: width: 1100 }} 1100w,
+                {{ featured.featured_media | image_url: width: 1600 }} 1600w
+              "
+              sizes="(min-width: 750px) 50vw, 100vw"
+              alt="{{ featured.featured_media.alt | default: featured.title | escape }}"
+              width="{{ featured.featured_media.width }}"
+              height="{{ featured.featured_media.height }}"
+              loading="lazy"
+            >
+          {%- else -%}
+            <div class="lena-fp-placeholder">Photo coming soon</div>
+          {%- endif -%}
+        </a>
+
+        <div class="lena-fp-body">
+          {%- if section.settings.eyebrow != blank -%}
+            <div class="lena-section-eye">
+              <span class="dm gold sm"></span> {{ section.settings.eyebrow }}
+            </div>
+          {%- endif -%}
+
+          {%- if section.settings.heading != blank -%}
+            <div class="lena-fp-heading">{{ section.settings.heading }}</div>
+          {%- endif -%}
+
+          {%- if featured.type != blank -%}
+            <div class="lena-fp-cat">{{ featured.type }}</div>
+          {%- endif -%}
+
+          <h3 class="lena-fp-title">
+            <a href="{{ featured.url }}">{{ featured.title | escape }}</a>
+          </h3>
+
+          {%- if fp_qty > 0 -%}
+            <div class="lena-fp-badge">
+              <span class="dm gold sm"></span>
+              {%- if fp_qty == 1 -%}
+                1 of 1
+              {%- else -%}
+                {{ fp_qty }} in stock
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+
+          <div class="lena-fp-price">
+            {%- render 'price', product: featured, price_class: '', show_compare_at_price: true -%}
+          </div>
+
+          {%- if fp_qty == 1 -%}
+            <div class="lena-fp-scarcity">
+              <span class="dm filled sm"></span> Only piece in existence
+            </div>
+          {%- endif -%}
+
+          {%- if section.settings.description != blank -%}
+            <p class="lena-fp-desc">{{ section.settings.description }}</p>
+          {%- endif -%}
+
+          <a href="{{ featured.url }}" class="lena-btn lena-btn-primary lena-fp-cta">
+            {{ section.settings.cta_label | default: 'View this piece' }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Featured Piece",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection to feature from",
+      "info": "One available piece is chosen from this collection. Sold-out pieces are skipped, and the section hides itself while nothing is available."
+    },
+    {
+      "type": "select",
+      "id": "rotation",
+      "label": "Change the featured piece",
+      "default": "daily",
+      "options": [
+        { "value": "daily", "label": "Every day" },
+        { "value": "weekly", "label": "Every week" },
+        { "value": "monthly", "label": "Every month" }
+      ],
+      "info": "Everyone sees the same piece for the whole period."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Piece of the Day"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Today's <strong>Find</strong>"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Supporting text",
+      "info": "Optional. Shown under the price."
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button label",
+      "default": "View this piece"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 52
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 52
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Piece"
+    }
+  ]
+}
+{% endschema %}

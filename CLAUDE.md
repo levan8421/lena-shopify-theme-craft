@@ -19,12 +19,13 @@ shopify theme push --unpublished   # Push for review
 | `sections/lena-drop-header.liquid` | 111 | New Arrivals bar — heading + linked count. Hidden while the collection is empty |
 | `sections/lena-drop-coming-soon.liquid` | 77 | Empty-state section for a collection page (soft landing + onward CTA) |
 | `sections/lena-spotlight.liquid` | 173 | Blog-powered artisan rotation (1/2/4 week cycle) |
+| `sections/lena-featured-piece.liquid` | 228 | Spotlights one available product from a collection, rotating on a date seed (daily/weekly/monthly). Skips sold-out pieces; hides itself when none are available. Has a `presets` block — add it from the theme editor |
 | `sections/lena-testimonials.liquid` | 190 | Customer testimonial cards |
 | `sections/lena-find-us.liquid` | 239 | Location cards + metaobject scheduled events |
 | `sections/lena-email-popup.liquid` | 90 | Newsletter modal (tags `newsletter` only) |
 | `snippets/lena-notify-modal.liquid` | 70 | "Notify me" modal for sold-out pieces. Tags the contact `newsletter,notify-<category-handle>` |
 | `snippets/breadcrumbs.liquid` | 47 | PDP breadcrumbs — `collection` when arrived through one, menu list as fallback |
-| `assets/lena-custom.css` | 1099 | All custom styles (16 sections, 70+ classes) |
+| `assets/lena-custom.css` | 1212 | All custom styles (17 sections, 80+ classes) |
 
 **Filename note:** `lena-drop-header` and `lena-drop-coming-soon` keep their filenames for historical
 reasons — the section `type` string is bound by three JSON templates, so renaming the files breaks
@@ -205,6 +206,9 @@ Do not hand-edit `templates/*.json`, `sections/*-group.json`, or `config/setting
   in `section-main-product.css` silently zeroed the margins on every Lena element inside the PDP
   title block. **When styling inside a stock component, add one more class to the selector** —
   `.product__title > .lena-breadcrumbs`, not `.lena-breadcrumbs`.
+- **No random filter in Liquid.** To pick one item pseudo-randomly, seed an integer off `'now'`
+  and modulo the collection size. `lena-spotlight` and `lena-featured-piece` both do this; reuse
+  the pattern rather than adding JavaScript.
 - **`url` setting defaults**: Shopify accepts only `/collections` and `/collections/all` as the
   `default` for a `type: "url"` setting. Any other path — even a valid one like
   `/collections/available-now` — is rejected with `default must be a string or datasource access

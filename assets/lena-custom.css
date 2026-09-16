@@ -1074,6 +1074,119 @@ button.lena-notify-btn { background: none; border: none; cursor: pointer; }
   padding: 0;
 }
 
+/* --- Featured Piece (lena-featured-piece) --- */
+.lena-fp {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px;
+  align-items: center;
+}
+@media screen and (min-width: 750px) {
+  .lena-fp {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 48px;
+  }
+}
+.lena-fp-media {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  border-radius: 6px;
+  background: var(--lena-blue-ice);
+  aspect-ratio: 4 / 5;
+}
+.lena-fp-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s ease;
+}
+.lena-fp-media:hover img {
+  transform: scale(1.03);
+}
+.lena-fp-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--lena-slate);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.lena-fp-heading {
+  font-size: clamp(26px, 3.5vw, 38px);
+  font-weight: 300;
+  color: var(--lena-ink);
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+  margin-bottom: 20px;
+}
+.lena-fp-cat {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--lena-blue-bright);
+  margin-bottom: 6px;
+}
+.lena-fp-title {
+  font-size: clamp(20px, 2.4vw, 27px);
+  font-weight: 300;
+  line-height: 1.25;
+  letter-spacing: 0.02em;
+  margin: 0 0 14px;
+}
+.lena-fp-title a {
+  color: var(--lena-ink);
+  text-decoration: none;
+}
+.lena-fp-title a:hover {
+  color: var(--lena-blue-bright);
+}
+.lena-fp-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--lena-navy);
+  color: var(--lena-amber-soft);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 7px 14px;
+  border-radius: 4px;
+  margin-bottom: 14px;
+}
+.lena-fp-price {
+  font-size: 20px;
+  color: var(--lena-ink);
+  margin-bottom: 10px;
+}
+.lena-fp-scarcity {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+  color: var(--lena-success);
+  margin-bottom: 16px;
+}
+.lena-fp-desc {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--lena-graphite);
+  margin: 0 0 22px;
+  max-width: 46ch;
+}
+.lena-fp-cta {
+  margin-top: 4px;
+}
+@media screen and (max-width: 749px) {
+  .lena-fp-heading { margin-bottom: 14px; }
+  .lena-fp-media { aspect-ratio: 1 / 1; }
+}
+
 /* --- PDP title block: restore spacing and size ---------------------------
    Stock section-main-product.css sets `.product__title > * { margin: 0 }` and
    loads from inside the section body, i.e. AFTER lena-custom.css in the head.
