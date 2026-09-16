@@ -849,3 +849,32 @@ says "3 out of 5 stars".
 
 **Regression risk:** a new section copying `lena-section-h` onto a `<div>`; any icon-only state
 indicator without a text alternative.
+
+## 2026-09-16 · Bug · "You may also like" no longer recommends sold-out pieces from one source only
+**Commit:** PENDING · **Files:** sections/related-products.liquid
+
+**What it does / did:** The recommendations pass now skips sold-out pieces, which the category
+top-up pass already did.
+
+**Why it matters:** the row is filled in two passes — Shopify's suggestions first, then a
+top-up from the product's own category. Pass 2 tested `rp_p.available`; pass 1 tested only id
+and type. So whether a sold-out piece appeared depended entirely on which pass filled the slot,
+which is invisible from the outside and varies per product.
+
+On this catalogue most pieces are one of a kind and sell permanently, so pass 1 surfaced gone
+pieces often — every one a click into a dead end, on the row whose whole purpose is to keep a
+visit alive after the piece someone came for is unavailable.
+
+Nothing in the section's comment block treated availability as a difference between the passes,
+and pass 2 treated it as obviously required, so the asymmetry reads as an oversight rather than
+a decision.
+
+**Verify now:**
+```bash
+grep -c "available" sections/related-products.liquid   # 2 - one per pass
+```
+In the browser: open a product whose type has recent sales and confirm every card in "You may
+also like" can actually be bought. A sold-out piece should not appear at all.
+
+**Regression risk:** a third source added to the row without the same test. The row is built by
+two independent loops rather than one filtered list, so each one has to carry the rule.

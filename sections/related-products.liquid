@@ -71,7 +71,16 @@
       {%- if product.type != blank and recommendations.performed -%}
         {%- for rp_rec in recommendations.products -%}
           {%- if rp_shown >= rp_limit -%}{%- break -%}{%- endif -%}
-          {%- if rp_rec.id != product.id and rp_rec.type == product.type -%}
+          {%- comment -%}
+            Lena: availability is tested here as well as in pass 2.
+
+            Pass 2 already skipped sold-out pieces; this pass did not, so whether a sold-out
+            piece could appear under "You may also like" depended purely on which pass
+            happened to fill the slot. On a catalogue where most pieces are one of a kind and
+            sell permanently, that put dead ends on the one row whose job is to recover the
+            visit.
+          {%- endcomment -%}
+          {%- if rp_rec.id != product.id and rp_rec.type == product.type and rp_rec.available -%}
             <li class="grid__item">
               {% render 'card-product',
                 card_product: rp_rec,
