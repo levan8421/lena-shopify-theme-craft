@@ -1073,3 +1073,27 @@ button.lena-notify-btn { background: none; border: none; cursor: pointer; }
   margin: 0;
   padding: 0;
 }
+
+/* --- PDP title block: restore spacing and size ---------------------------
+   Stock section-main-product.css sets `.product__title > * { margin: 0 }` and
+   loads from inside the section body, i.e. AFTER lena-custom.css in the head.
+   At equal specificity the stock rule wins, so every element Lena puts inside
+   .product__title (breadcrumbs, category eyebrow, badge, artisan line) had its
+   margins zeroed and the block rendered as one cramped stack. These selectors
+   are one class more specific, so they win regardless of load order.
+
+   The <h1> also had no Lena sizing at all: it inherited stock
+   `calc(var(--font-heading-scale) * 4rem)`, which at scale 110 is ~70px and
+   dwarfed the 11px eyebrow and the price beneath it.
+   ----------------------------------------------------------------------- */
+.product__title > h1 {
+  font-size: clamp(26px, 3.5vw, 38px);
+  font-weight: 300;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  margin: 0 0 14px;
+}
+.product__title > .lena-breadcrumbs { margin-bottom: 14px; }
+.product__title > .lena-pdp-cat { margin-bottom: 8px; }
+.product__title > .lena-pdp-badge-1of1 { margin-bottom: 14px; }
+.product__title > .lena-pdp-artisan { margin-bottom: 0; }

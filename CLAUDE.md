@@ -24,7 +24,7 @@ shopify theme push --unpublished   # Push for review
 | `sections/lena-email-popup.liquid` | 90 | Newsletter modal (tags `newsletter` only) |
 | `snippets/lena-notify-modal.liquid` | 70 | "Notify me" modal for sold-out pieces. Tags the contact `newsletter,notify-<category-handle>` |
 | `snippets/breadcrumbs.liquid` | 47 | PDP breadcrumbs — `collection` when arrived through one, menu list as fallback |
-| `assets/lena-custom.css` | 1075 | All custom styles (16 sections, 70+ classes) |
+| `assets/lena-custom.css` | 1099 | All custom styles (16 sections, 70+ classes) |
 
 **Filename note:** `lena-drop-header` and `lena-drop-coming-soon` keep their filenames for historical
 reasons — the section `type` string is bound by three JSON templates, so renaming the files breaks
@@ -199,6 +199,12 @@ Do not hand-edit `templates/*.json`, `sections/*-group.json`, or `config/setting
 - **`all_products_count`, not `products_count`**: the latter reflects the current tag-filtered view.
   Use `all_products_count` for any visibility decision.
 - **Color filter**: Whitelist in `snippets/facets.liquid` — update both desktop and mobile instances
+- **Section CSS beats `lena-custom.css` at equal specificity.** `lena-custom.css` loads in the
+  `<head>` (`theme.liquid:259`); a section's own stylesheet loads from inside the section body, so
+  it comes *later* in the cascade and wins any tie. This is why `.product__title > * { margin: 0 }`
+  in `section-main-product.css` silently zeroed the margins on every Lena element inside the PDP
+  title block. **When styling inside a stock component, add one more class to the selector** —
+  `.product__title > .lena-breadcrumbs`, not `.lena-breadcrumbs`.
 - **`url` setting defaults**: Shopify accepts only `/collections` and `/collections/all` as the
   `default` for a `type: "url"` setting. Any other path — even a valid one like
   `/collections/available-now` — is rejected with `default must be a string or datasource access
