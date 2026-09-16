@@ -1158,7 +1158,7 @@ in both files rather than shared, because they are a snippet and a section with 
 `<script>` bodies — a third copy should become a shared asset instead.
 
 ## 2026-09-16 · Bug · Notify Me files signups under the real category, not the product type
-**Commit:** PENDING · **Files:** snippets/lena-notify-target.liquid (new), sections/main-product.liquid, snippets/card-product.liquid
+**Commit:** 5d56833 · **Files:** snippets/lena-notify-target.liquid (new), sections/main-product.liquid, snippets/card-product.liquid
 
 **What it does / did:** Both Notify Me buttons resolve the product's category collection and
 tag the contact `notify-<collection handle>`. They used to pass `product.type` for both the tag
