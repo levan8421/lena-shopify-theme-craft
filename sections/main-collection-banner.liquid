@@ -9,8 +9,20 @@
   }
 {%- endstyle -%}
 
-{%- comment -%} Lena: Hide entire banner when collection is empty — coming-soon section handles it {%- endcomment -%}
-{%- if collection.products_count > 0 -%}
+{%- comment -%}
+  Lena: hide the banner when the collection is empty - the empty-state section handles that
+  case. Gated on all_products_count, NOT products_count.
+
+  products_count reflects the current filtered view. Gating on it meant that filtering a
+  collection down to no matches removed the whole banner: the eyebrow, the <h1>, the
+  description and the count pill. The visitor was left on a page with no heading at all,
+  with their filter chips still on screen above nothing, and - on the New Arrivals
+  templates - the "we're preparing something special" empty state underneath, which says
+  the collection is empty when the truth is that their filter matched nothing.
+
+  all_products_count is the collection total and is what a visibility decision should ask.
+{%- endcomment -%}
+{%- if collection.all_products_count > 0 -%}
 <div class="collection-hero{% if section.settings.show_collection_image and collection.image %} collection-hero--with-image{% endif %} color-{{ section.settings.color_scheme }} gradient">
   <div class="collection-hero__inner page-width {% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}">
     <div class="collection-hero__text-wrapper lena-collection-banner">
@@ -23,11 +35,15 @@
         {{- collection.title | escape -}}
       </h1>
 
-      {%- if section.settings.show_collection_description and collection.products_count > 0 -%}
+      {%- if section.settings.show_collection_description and collection.all_products_count > 0 -%}
         <div class="collection-hero__description rte">{{ collection.description }}</div>
       {%- endif -%}
 
-      {%- comment -%} Lena: Product count pill (hidden when empty — coming-soon section handles messaging) {%- endcomment -%}
+      {%- comment -%}
+        Lena: the count pill deliberately keeps products_count, unlike the gates above.
+        It reports what the visitor is currently looking at, so under an active filter it
+        should say how many matched - and it should disappear rather than say "0 pieces".
+      {%- endcomment -%}
       {%- if collection.products_count > 0 -%}
       <div class="lena-collection-count">
         <span class="dm filled sm"></span>

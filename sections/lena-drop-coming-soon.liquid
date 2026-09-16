@@ -7,7 +7,16 @@
   which hides the link. It always offers an onward CTA, never a dead end.
 {%- endcomment -%}
 
-{%- if collection.products.size == 0 -%}
+{%- comment -%}
+  Lena: all_products_count, not products.size.
+
+  products.size is the current filtered view, so filtering a collection down to no matches
+  made this section appear and announce "We're preparing something special" - telling the
+  visitor the collection is empty when in fact their own filter matched nothing. The
+  collection page has its own "no products match" message for that case; this section is
+  only for a collection that genuinely holds nothing.
+{%- endcomment -%}
+{%- if collection.all_products_count == 0 -%}
 <div class="color-{{ section.settings.color_scheme }} gradient">
   <div class="lena-coming-soon page-width">
     <div class="lena-section-eye">

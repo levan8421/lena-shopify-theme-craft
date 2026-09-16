@@ -1073,3 +1073,50 @@ since it never exceeded 12.
 
 **Regression risk:** reusing a calendar component as a seed for any pool larger than that
 component's range. The test is whether the seed can exceed the pool size.
+
+## 2026-09-16 · Bug · A filter that matches nothing no longer erases the collection page
+**Commit:** PENDING · **Files:** sections/main-collection-banner.liquid, sections/lena-drop-coming-soon.liquid
+
+**What it does / did:** Two visibility gates moved from the filtered product count to the
+collection total.
+
+**Why it matters:** CLAUDE.md states the rule — *"`all_products_count`, not `products_count`:
+the latter reflects the current tag-filtered view. Use `all_products_count` for any visibility
+decision."* Both gates asked the wrong one.
+
+A visitor who filtered a collection down to no matches got:
+
+- **No heading at all.** `main-collection-banner.liquid` wrapped the eyebrow, the `<h1>`, the
+  description and the count pill in `{%- if collection.products_count > 0 -%}`, so the entire
+  banner disappeared.
+- **The wrong explanation.** On the New Arrivals templates, `lena-drop-coming-soon.liquid`
+  keyed on `collection.products.size == 0` and appeared, announcing "We're preparing something
+  special" — the collection is empty — when the truth was that their own filter matched
+  nothing.
+
+Their filter chips stayed on screen above all of it, contradicting the copy, and the control
+that would have cleared the filter was inside the banner that had just been removed.
+
+**The count pill deliberately keeps `products_count`.** It reports what the visitor is looking
+at now, so under an active filter it should say how many matched. It hides at zero rather than
+reading "0 pieces". That distinction is commented in place, since the whole point here is that
+the two counts answer different questions.
+
+**Reproduce (before the fix):** open `/collections/compact-mirrors`, apply a colour filter
+showing `(0)`, and look at the page. Expect no title.
+
+**Verify now:**
+```bash
+grep -n "all_products_count" sections/main-collection-banner.liquid sections/lena-drop-coming-soon.liquid
+#   banner: the section gate and the description gate
+#   coming-soon: its only gate
+grep -n "products_count" sections/main-collection-banner.liquid | grep -v comment
+#   only the count pill
+```
+In the browser: filter a collection to zero matches. The title and the filter controls must
+survive, and the page must not claim the collection is empty. Then open the genuinely empty New
+Arrivals collection and confirm the "preparing something special" section still appears there.
+
+**Regression risk:** any new gate written as `products_count` or `products.size`. The test is
+whether the question is "does this collection hold anything" or "how many is the visitor
+seeing" — they need different counts.
