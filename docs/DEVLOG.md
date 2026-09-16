@@ -1032,7 +1032,7 @@ both the cards and the column layout change together, then put it back.
 the snippet is that the next person has somewhere obvious to look.
 
 ## 2026-09-16 · Bug · Featured Piece rotation can now reach every piece in its pool
-**Commit:** PENDING · **Files:** sections/lena-featured-piece.liquid
+**Commit:** d3bd5e9 · **Files:** sections/lena-featured-piece.liquid
 
 **What it does / did:** The rotation seed counts days since the epoch. It used to read a
 calendar field directly.
