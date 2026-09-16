@@ -28,7 +28,7 @@
 <div class="color-{{ section.settings.color_scheme }} gradient section-{{ section.id }}-padding">
   <div style="text-align:center;margin-bottom:40px">
     <div class="lena-section-eye"><span class="dm filled sm"></span> {{ section.settings.eyebrow }}</div>
-    <div class="lena-section-h">{{ section.settings.heading }}</div>
+    <h2 class="lena-section-h">{{ section.settings.heading }}</h2>
     {%- if section.settings.subheading != blank -%}
       <div class="lena-section-p">{{ section.settings.subheading }}</div>
     {%- endif -%}
@@ -39,12 +39,23 @@
       {%- if block.type == 'testimonial' and block.settings.quote != blank -%}
         <div class="lena-testimonial-card" {{ block.shopify_attributes }}>
           {%- if block.settings.rating > 0 -%}
-            <div class="lena-testimonial-stars">
+            {%- comment -%}
+              Lena: the filled and empty stars are the same character and differ only by CSS
+              class, so a screen reader read "black star" five times whatever the rating was -
+              a 3-star review was indistinguishable from a 5-star one. The rating is stated
+              once on the wrapper and the stars themselves are hidden from assistive tech.
+              Same pattern stock Craft uses for product ratings in card-product.liquid.
+            {%- endcomment -%}
+            <div
+              class="lena-testimonial-stars"
+              role="img"
+              aria-label="{{ block.settings.rating }} out of 5 stars"
+            >
               {%- for i in (1..5) -%}
                 {%- if i <= block.settings.rating -%}
-                  <span class="lena-star filled">&#9733;</span>
+                  <span class="lena-star filled" aria-hidden="true">&#9733;</span>
                 {%- else -%}
-                  <span class="lena-star">&#9733;</span>
+                  <span class="lena-star" aria-hidden="true">&#9733;</span>
                 {%- endif -%}
               {%- endfor -%}
             </div>

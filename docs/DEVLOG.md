@@ -803,3 +803,49 @@ a collection page and a product card.
 
 **Regression risk:** a new colour picked to look right against white without being measured.
 The snippet above is the check; run it with one colour that must pass and one that must fail.
+
+## 2026-09-16 · Bug · Section titles are headings, and star ratings say their rating
+**Commit:** PENDING · **Files:** assets/lena-custom.css, sections/lena-drop-header.liquid, sections/lena-find-us.liquid, sections/lena-testimonials.liquid, sections/lena-spotlight.liquid, sections/lena-featured-piece.liquid
+
+**What it does / did:** Five section titles were `<div>` elements styled to look like headings.
+They are now `<h2>`. Testimonial star ratings now state the rating.
+
+**Why it matters (headings):** the homepage outline ran `<h1>` (hero) straight to `<h3>`
+(testimonial cards, Find Us cards, the featured piece title) with nothing at level 2 between.
+Navigating a long page by heading is the normal way a screen-reader user skims it, and doing so
+here skipped "New Arrivals", "Loved by Collectors", "Today's Feature" and "Find Us" entirely —
+the four largest pieces of text on the page. Only `lena-drop-coming-soon` had it right.
+
+With a real `<h2>` above them, the existing `<h3>` card titles become correct rather than
+orphaned.
+
+**Spacing had to move with it.** `.lena-section-h` declared no margin, so a `<div>` sat at
+margin 0 while an `<h2>` would inherit the browser's default heading margin and push every
+section title down. `margin: 0` added to `.lena-section-h`, and `.lena-fp-heading`'s
+`margin-bottom: 20px` changed to the `margin: 0 0 20px` shorthand so it kills the top margin
+too. **The layout should look unchanged** — that is the test.
+
+One small deliberate change: `lena-drop-coming-soon` was already an `<h2>` and therefore
+already carried a default top margin. It now sits at 0 like the rest, so that section tightens
+slightly.
+
+**Why it matters (stars):** filled and empty stars were the same character `&#9733;`, differing
+only by CSS class. A screen reader read "black star" five times regardless of the rating, so a
+3-star review was indistinguishable from a 5-star one. The wrapper now carries
+`role="img"` and an `aria-label` stating the rating, and the individual stars are
+`aria-hidden`. This is the pattern stock Craft already uses for product ratings in
+`card-product.liquid`.
+
+**Verify now:**
+```bash
+grep -rn 'class="lena-section-h"\|class="lena-fp-heading"' sections/ | grep -c "<div"   # 0
+grep -n "margin: 0;" assets/lena-custom.css | head -3
+grep -n 'role="img"' sections/lena-testimonials.liquid
+```
+In the browser: the homepage must look the same. Compare section-title spacing against a
+screenshot before the change. Then run the page's heading outline — it should read h1, then h2
+for each section, then h3 for cards. Set a testimonial to 3 stars and confirm a screen reader
+says "3 out of 5 stars".
+
+**Regression risk:** a new section copying `lena-section-h` onto a `<div>`; any icon-only state
+indicator without a text alternative.

@@ -248,6 +248,9 @@ a.lena-notify-btn {
   color: var(--lena-ink);
   line-height: 1.2;
   letter-spacing: 0.04em;
+  /* These are <h2> now, not <div>. Without this the browser's default heading
+     margin would appear and push every section title down. */
+  margin: 0;
 }
 .lena-section-h strong {
   font-weight: 600;
@@ -1134,7 +1137,8 @@ button.lena-notify-btn { background: none; border: none; cursor: pointer; }
   color: var(--lena-ink);
   line-height: 1.2;
   letter-spacing: 0.04em;
-  margin-bottom: 20px;
+  /* <h2> now: the shorthand kills the default top margin too. */
+  margin: 0 0 20px;
 }
 .lena-fp-cat {
   font-size: 11px;
