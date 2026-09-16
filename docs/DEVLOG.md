@@ -758,7 +758,7 @@ back to 0.
 style block; an image-in-link written without an explicit `alt:`.
 
 ## 2026-09-16 · Bug · Three text colours were below the readable-contrast minimum
-**Commit:** PENDING · **Files:** assets/lena-custom.css
+**Commit:** 1ed4eed · **Files:** assets/lena-custom.css
 
 **What it does / did:** Three colours were darkened so small text meets WCAG AA (4.5:1). All
 three were measured, not judged by eye.
