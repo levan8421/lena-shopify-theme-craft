@@ -161,7 +161,10 @@ html {
   align-items: center;
   gap: 6px;
 }
-.lena-scarcity .dm {
+/* The PDP uses .lena-pdp-scarcity for the same thing. This rule covered only the card
+   version, which is why main-product.liquid carried an inline style saying exactly this. */
+.lena-scarcity .dm,
+.lena-pdp-scarcity .dm {
   background: var(--lena-success);
   border-color: var(--lena-success);
 }
@@ -277,6 +280,24 @@ a.lena-notify-btn {
   margin-bottom: 28px;
 }
 .lena-coming-soon .button { min-width: 220px; }
+
+/* Centred section header. Testimonials, Artisan Spotlight and Find Us each repeated
+   `text-align:center;margin-bottom:40px` inline - the same two declarations in three
+   files, which is three places to change and three chances to disagree. */
+.lena-section-head {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+/* Artisan Spotlight sits on a navy colour scheme, so its header text is inverted.
+   These were inline `color:` attributes on the eyebrow and the heading. */
+.lena-spotlight-head .lena-section-eye { color: var(--lena-amber-soft); }
+.lena-spotlight-head .lena-section-h { color: #fff; }
+.lena-spot-photo-inner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
 /* Subtitle under a collection-list heading (Shop by Category) */
 .lena-section-sub {
@@ -1254,3 +1275,140 @@ button.lena-notify-btn { background: none; border: none; cursor: pointer; }
 .product__title > .lena-breadcrumbs { margin-bottom: 14px; }
 .product__title > .lena-pdp-badge-1of1 { margin-bottom: 14px; }
 .product__title > .lena-pdp-artisan { margin-bottom: 0; }
+
+
+/* --- 404 page ------------------------------------------------------------
+   Moved out of sections/main-404.liquid, where these lived inline at the top
+   of the file. Unchanged except for being here. */
+  .lena-404 {
+    padding: 6rem 2rem 4rem;
+    text-align: center;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .lena-404__diamond {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 2rem;
+  }
+
+  .lena-404__code {
+    font-size: 5rem;
+    font-weight: 700;
+    color: var(--lena-blue-bright, #2E8FD9);
+    line-height: 1;
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  .lena-404__title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--lena-ink, #141A24);
+    margin: 0 0 1rem;
+  }
+
+  .lena-404__text {
+    font-size: 1.1rem;
+    color: var(--lena-slate, #6B7585);
+    margin: 0 0 2rem;
+    line-height: 1.6;
+  }
+
+  .lena-404__search {
+    max-width: 420px;
+    margin: 0 auto 2rem;
+  }
+
+  .lena-404__search form {
+    display: flex;
+    border: 1.5px solid var(--lena-silver, #E2E5EA);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .lena-404__search form:focus-within {
+    border-color: var(--lena-blue-bright, #2E8FD9);
+  }
+
+  .lena-404__search input[type="search"] {
+    flex: 1;
+    border: none;
+    padding: 0.9rem 1.2rem;
+    font-size: 1rem;
+    background: transparent;
+    outline: none;
+    color: var(--lena-ink, #141A24);
+  }
+
+  .lena-404__search button {
+    background: var(--lena-blue-bright, #2E8FD9);
+    color: #fff;
+    border: none;
+    padding: 0.9rem 1.4rem;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.2s;
+  }
+
+  .lena-404__search button:hover {
+    background: var(--lena-blue-deep, #1B4F8A);
+  }
+
+  .lena-404__links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .lena-404__link {
+    display: inline-block;
+    padding: 0.6rem 1.4rem;
+    border: 1.5px solid var(--lena-silver, #E2E5EA);
+    border-radius: 6px;
+    color: var(--lena-graphite, #3A4250);
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .lena-404__link:hover {
+    border-color: var(--lena-blue-bright, #2E8FD9);
+    color: var(--lena-blue-bright, #2E8FD9);
+  }
+
+  .lena-404__home {
+    display: inline-block;
+    background: var(--lena-blue-bright, #2E8FD9);
+    color: #fff;
+    padding: 0.8rem 2rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background 0.2s;
+  }
+
+  .lena-404__home:hover {
+    background: var(--lena-blue-deep, #1B4F8A);
+    color: #fff;
+  }
+
+  @media screen and (max-width: 640px) {
+    .lena-404 {
+      padding: 4rem 1.5rem 3rem;
+    }
+
+    .lena-404__code {
+      font-size: 3.5rem;
+    }
+
+    .lena-404__title {
+      font-size: 1.4rem;
+    }
+  }

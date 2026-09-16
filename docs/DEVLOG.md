@@ -1254,3 +1254,59 @@ is the second copy, and the one most likely to have drifted.
 
 **Regression risk:** a seventh reader of the same question. The snippet exists so there is one
 obvious place to add it.
+
+## 2026-09-16 · Bug · All custom styles now live in lena-custom.css
+**Commit:** PENDING · **Files:** sections/main-404.liquid, sections/lena-spotlight.liquid, sections/lena-testimonials.liquid, sections/lena-find-us.liquid, sections/main-product.liquid, assets/lena-custom.css
+
+**What it does / did:** The 404 page's 132-line inline stylesheet and every remaining Lena
+inline `style` attribute moved into `assets/lena-custom.css`. CLAUDE.md rule 4: *"All custom
+styles go in `assets/lena-custom.css`. No inline `<style>` tags, no new CSS files."*
+
+**R22 — the 404 stylesheet.** `main-404.liquid` opened with 132 lines of CSS. Beyond the rule,
+that meant the rules re-downloaded on every 404 instead of being cached with the rest of the
+theme; they were invisible to anyone grepping `lena-custom.css` for a `.lena-404__` class; and
+they sat outside the cascade order the rest of the theme is reasoned about in — the thing
+CLAUDE.md warns about for `section-main-product.css`. The section went from 4,563 to 2,335
+bytes. The CSS is unchanged apart from its location.
+
+**R23 — the inline attributes.** Three of them were the same two declarations:
+
+```
+text-align:center; margin-bottom:40px
+```
+
+repeated in `lena-testimonials`, `lena-spotlight` and `lena-find-us` — three files to change,
+three chances to disagree. Now `.lena-section-head`.
+
+The spotlight's `color:var(--lena-amber-soft)` and `color:white` became
+`.lena-spotlight-head` rules, since that section sits on a navy scheme and genuinely needs
+inverted header text.
+
+`main-product.liquid` carried
+`style="background:var(--lena-success);border-color:var(--lena-success)"` on the scarcity
+diamond. `lena-custom.css` already declared exactly that for `.lena-scarcity .dm` — the card
+version. The PDP uses `.lena-pdp-scarcity`, which the rule did not cover, which is *why* the
+inline copy existed. The selector now covers both and the inline style is gone.
+
+**Deliberately left inline:** `style="display:none"` on the two modal overlays and their
+success and error states. Those are JavaScript-controlled state, flipped by
+`element.style.display`, not styling — moving them to a class would mean rewriting the show
+and hide logic to toggle classes instead, which is a different change.
+
+**Also left alone:** `main-product.liquid` lines 209-240 and 679. Those are stock Craft — the
+inventory status icons and the `--rating` custom properties — and the custom-property form is
+the legitimate pattern.
+
+**Verify now:**
+```bash
+grep -rn 'style="' sections/lena-*.liquid snippets/lena-*.liquid | grep -v shopify_attributes | grep -v 'display:none'
+#   no output
+grep -c "<style type=" sections/main-404.liquid   # 0
+grep -c "lena-404" assets/lena-custom.css         # 19 rules
+```
+In the browser, both pages must look **unchanged**: visit a URL that does not exist and check
+the 404 page, then check the Artisan Spotlight section still has amber eyebrow and white
+heading on navy. Check the PDP scarcity line still shows a green diamond.
+
+**Regression risk:** a new section written as a self-contained file with its own styles. The
+grep above is the check.

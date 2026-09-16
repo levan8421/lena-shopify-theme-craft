@@ -175,8 +175,8 @@ is never used to mean "unchecked".
 | R19 | PDP `lena_qty` depends on block order — moving the title block kills the badge and scarcity line | Lena in stock | fixed | not yet |
 | R20 | Six sections with `presets` lack the `disabled_on` header/footer guard | Lena file | fixed | not yet |
 | R21 | Colour-filter logic is written six times, with two different conditions | Lena in stock | fixed | not yet |
-| R22 | `main-404.liquid` carries a 175-line inline `<style>` block | Lena file | open | not yet |
-| R23 | Inline styles across five Lena files | Lena file | open | not yet |
+| R22 | `main-404.liquid` carries a 175-line inline `<style>` block | Lena file | fixed | not yet |
+| R23 | Inline styles across five Lena files | Lena file | fixed | not yet |
 | R24 | Empty-state paragraph hardcodes navy text, ignoring `color_scheme` | Lena file | fixed | not yet |
 | R25 | Find Us computes its 14-day event window twice | Lena file | fixed | not yet |
 | R26 | `lena-drop-header` takes a typed collection handle instead of a picker | Lena file | open | not yet |

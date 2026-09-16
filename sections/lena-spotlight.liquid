@@ -20,11 +20,11 @@
 {%- assign blog = section.settings.blog -%}
 
 <div class="color-{{ section.settings.color_scheme }} gradient section-{{ section.id }}-padding">
-  <div style="text-align:center;margin-bottom:40px">
-    <div class="lena-section-eye" style="color:var(--lena-amber-soft)">
+  <div class="lena-section-head lena-spotlight-head">
+    <div class="lena-section-eye">
       <span class="dm gold sm"></span> {{ section.settings.eyebrow }}
     </div>
-    <h2 class="lena-section-h" style="color:white">{{ section.settings.heading }}</h2>
+    <h2 class="lena-section-h">{{ section.settings.heading }}</h2>
   </div>
 
   {%- if blog != blank and blog.articles_count > 0 -%}
@@ -54,7 +54,6 @@
                 width="230"
                 height="230"
                 loading="lazy"
-                style="width:100%;height:100%;object-fit:cover;"
               >
             </div>
           {%- else -%}
