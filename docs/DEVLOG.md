@@ -805,7 +805,7 @@ a collection page and a product card.
 The snippet above is the check; run it with one colour that must pass and one that must fail.
 
 ## 2026-09-16 · Bug · Section titles are headings, and star ratings say their rating
-**Commit:** PENDING · **Files:** assets/lena-custom.css, sections/lena-drop-header.liquid, sections/lena-find-us.liquid, sections/lena-testimonials.liquid, sections/lena-spotlight.liquid, sections/lena-featured-piece.liquid
+**Commit:** 66a7c13 · **Files:** assets/lena-custom.css, sections/lena-drop-header.liquid, sections/lena-find-us.liquid, sections/lena-testimonials.liquid, sections/lena-spotlight.liquid, sections/lena-featured-piece.liquid
 
 **What it does / did:** Five section titles were `<div>` elements styled to look like headings.
 They are now `<h2>`. Testimonial star ratings now state the rating.
