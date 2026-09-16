@@ -579,3 +579,61 @@ nothing → expect the filter wording, and check the "remove all" link keeps pro
 **Regression risk:** Any new empty-state condition written as `search.filters != empty` or
 `collection.filters != empty`. The same mistake is open as R3 on the collection banner: asking
 whether filters exist when the question is whether one was used.
+
+## 2026-09-16 · Bug · Signup forms no longer report success when the submit failed
+**Commit:** PENDING · **Files:** snippets/lena-notify-modal.liquid, sections/lena-email-popup.liquid, assets/lena-custom.css
+
+**What it does / did:** Both signup forms now check the response and show an error if the
+submit failed. Before, every outcome reached the success branch.
+
+**Why it matters:** `fetch(...).then(...)` runs its callback on *any* completed request,
+including a 404, a 500 or a rejected submission, and `.catch` was absent so a network failure
+was unhandled. A visitor whose signup failed was told "You'll be the first to know!" and never
+heard from the shop again.
+
+The email popup was worse, because it wrote its state before knowing the outcome:
+
+```js
+.then(function() {
+  localStorage.setItem(SK, '1');   // ran even when the request failed
+```
+
+`SK` is checked on load and returns early, so a **failed** signup was reported as success
+**and** suppressed the popup permanently on that device. The visitor could not retry even if
+they wanted to. The notify modal had no such latch, so retrying there was at least possible.
+
+On failure the form is now left in place with the address still typed, so retrying is one
+click. The success and error states reset each time the modal opens.
+
+**Also fixed here:** `localStorage` was read at the top of the popup script with no `try`.
+In browsers where storage access throws rather than returning null — private modes, some
+embedded webviews — that exception killed the whole script and the popup never appeared at
+all. Reads and writes now go through two small guarded helpers.
+
+**New colour:** `--lena-danger: #B3261E`. Measured 6.54:1 on white and 6.31:1 on snow, against
+the 4.5:1 that WCAG AA needs for small text. The check was run with a control that must fail
+(`#E8B867`, 1.83) and one that must pass (`#0E2240`, 15.89).
+
+**Reproduce (before the fix):**
+1. DevTools → Network → Offline.
+2. Open the newsletter popup, enter an address, submit.
+3. → "Welcome! You're on the list." No request ever left the browser.
+4. Go back online and reload → the popup never appears again.
+
+**Verify now:**
+```bash
+grep -c "catch(function" snippets/lena-notify-modal.liquid sections/lena-email-popup.liquid
+#   1 each
+grep -n "localStorage" sections/lena-email-popup.liquid
+#   only inside remember() / seen(), both wrapped in try
+```
+In the browser, offline: submit both forms → expect the red error line, the form still on
+screen with the address kept. Then online: submit → expect the success message. Reload → the
+popup should stay away only after a **successful** signup.
+
+**Still open:** if Shopify accepts the request but rejects the address with a 200 response,
+that still reads as success. Distinguishing it needs a look at what `/contact` actually
+returns for a bad address, which needs a browser. Filed as part of R4.
+
+**Regression risk:** any new `fetch` to `/contact` written by copying these two. Both now carry
+the check; a third copy would not.

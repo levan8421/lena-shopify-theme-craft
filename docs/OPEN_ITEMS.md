@@ -157,7 +157,7 @@ is never used to mean "unchecked".
 | R1 | Featured Piece points at collection handle `artisan`, which does not exist — section renders nothing, and the homepage has no products at all | admin setting | open | not yet |
 | R2 | Quick add on search is inert: schema default is `none` and `search.json` never sets it | admin setting | fixed | not yet |
 | R3 | Filtering a collection to zero results removes the `<h1>` and shows "we're preparing something special" | Lena in stock | open | not yet |
-| R4 | Email popup and Notify modal report success on a failed submit; the popup also suppresses itself permanently | Lena file | open | not yet |
+| R4 | Email popup and Notify modal report success on a failed submit; the popup also suppresses itself permanently | Lena file | fixed | not yet |
 | R5 | Card "New" badge uses a 7-day `created_at` window — a second definition of "new" competing with the app-owned tag | Lena in stock | open | not yet |
 | R6 | Hero's padding sliders are bound to nothing | Lena file | open | not yet |
 | R7 | Hero heading is `richtext`, emitting `<p>` inside `<h1>` | Lena file | open | not yet |

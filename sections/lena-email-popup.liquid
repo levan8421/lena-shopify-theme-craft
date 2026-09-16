@@ -23,6 +23,9 @@
       <div class="lena-popup-success" style="display:none">
         <span class="dm gold sm"></span> {{ section.settings.success_message }}
       </div>
+      <div class="lena-popup-error" style="display:none" role="alert">
+        That didn't go through. Please check your connection and try again.
+      </div>
     </div>
   </div>
 </div>
@@ -30,7 +33,14 @@
 <script>
 (function(){
   var DK = 'lena-popup-dismissed', SK = 'lena-popup-subscribed';
-  if (localStorage.getItem(DK) || localStorage.getItem(SK)) return;
+
+  // localStorage throws rather than returning null in some browsers (private
+  // modes, embedded webviews). Unguarded, that killed this whole script and the
+  // popup never appeared at all.
+  function remember(k) { try { localStorage.setItem(k, '1'); } catch (e) {} }
+  function seen(k) { try { return !!localStorage.getItem(k); } catch (e) { return false; } }
+
+  if (seen(DK) || seen(SK)) return;
 
   var overlay = document.getElementById('lena-popup-overlay');
   var shown = false;
@@ -44,7 +54,7 @@
   function hide() {
     overlay.style.display = 'none';
     document.body.style.overflow = '';
-    localStorage.setItem(DK, '1');
+    remember(DK);
   }
 
   setTimeout(show, {{ section.settings.delay_seconds | default: 10 | times: 1000 }});
@@ -58,14 +68,23 @@
   document.addEventListener('keyup', function(e) { if (e.key === 'Escape' && shown) hide(); });
 
   var form = overlay.querySelector('form');
+  var errorBox = overlay.querySelector('.lena-popup-error');
   form.addEventListener('submit', function(e) {
     e.preventDefault();
+    errorBox.style.display = 'none';
     fetch(form.action || '/contact', { method: 'POST', body: new FormData(form) })
-      .then(function() {
-        localStorage.setItem(SK, '1');
+      .then(function(response) {
+        if (!response.ok) { throw new Error('HTTP ' + response.status); }
+        // Only remember the signup once it actually succeeded. This used to run on
+        // every outcome, so a failed signup was reported as success AND suppressed
+        // the popup permanently - the visitor could never try again on that device.
+        remember(SK);
         overlay.querySelector('.lena-popup-form').style.display = 'none';
         overlay.querySelector('.lena-popup-success').style.display = '';
         setTimeout(hide, 2000);
+      })
+      .catch(function() {
+        errorBox.style.display = '';
       });
   });
 })();
