@@ -526,7 +526,7 @@ separate Shopify endpoint and keeps its own product/suggestion split.
 search fault and are unaffected by this change.
 
 ## 2026-09-16 · Bug · Stop blaming filters the visitor never used
-**Commit:** PENDING · **Files:** sections/main-search.liquid
+**Commit:** 3dd6093 · **Files:** sections/main-search.liquid
 
 **What it does / did:** An empty search page used to say "No products found — use fewer
 filters or remove all", whether or not the visitor had applied a filter. It now tests whether
