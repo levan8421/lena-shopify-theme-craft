@@ -991,7 +991,7 @@ underlined copy of the title appears beneath the `<h1>`, this was wrong — reve
 `section-main-product.css`.
 
 ## 2026-09-16 · Bug · One definition of the Find Us event window
-**Commit:** PENDING · **Files:** snippets/lena-event-window.liquid (new), sections/lena-find-us.liquid
+**Commit:** 07d0fdc · **Files:** snippets/lena-event-window.liquid (new), sections/lena-find-us.liquid
 
 **What it does / did:** The 14-day event window now lives in one snippet. It used to be written
 out in full twice in the same file.
