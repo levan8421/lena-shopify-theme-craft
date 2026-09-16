@@ -1075,7 +1075,7 @@ since it never exceeded 12.
 component's range. The test is whether the seed can exceed the pool size.
 
 ## 2026-09-16 · Bug · A filter that matches nothing no longer erases the collection page
-**Commit:** PENDING · **Files:** sections/main-collection-banner.liquid, sections/lena-drop-coming-soon.liquid
+**Commit:** 0e249fe · **Files:** sections/main-collection-banner.liquid, sections/lena-drop-coming-soon.liquid
 
 **What it does / did:** Two visibility gates moved from the filtered product count to the
 collection total.
