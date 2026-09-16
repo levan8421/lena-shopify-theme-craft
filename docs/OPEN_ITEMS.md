@@ -1159,20 +1159,46 @@ hands back for each page are far fewer than 24. The total and the contents disag
 The cause is inside Shopify's search, not in our theme. The pagination code here is stock
 Craft and has not been modified.
 
-**Leading idea, not yet proven:** the search page has filtering switched on
-(`"enable_filtering": true` in `templates/search.json`). On a search page, turning filters on
-changes how Shopify builds the results, and the total count and the returned results can stop
-agreeing. This has not been tested.
+**Two further measurements, both pointing away from the theme:**
+
+*The same URL returns different products on different requests.* Hai saw "Grande Glass Bead
+Woven Handbag - Ruby Red" on page 3. Minutes later the same page 3 returned five Motif
+Compact Mirrors and no handbag. Neither of us changed anything. A page that is stable cannot
+do this; the theme code is identical on both requests.
+
+*Search returns a product that does not match the word.* That handbag contains no occurrence
+of "mirror" anywhere Shopify indexes:
+
+```
+title        Grande Glass Bead Woven Handbag - Ruby Red
+productType  Beaded Purses
+tags         artisan, chain, color-red, glass bead, size_1
+description  ...no occurrence of "mirror"...
+```
+
+So the search is returning wrong products, an unstable set, and a total that does not match
+what it returns — three symptoms of one cause on Shopify's side, most likely a stale or
+damaged search index for this shop.
+
+**Earlier idea, now weaker:** that filtering on the search page
+(`"enable_titles": true`… i.e. `"enable_filtering": true` in `templates/search.json`) makes
+the count and the results disagree. It is still worth testing because it is free, but it
+cannot explain a wrong product or a result set that changes between two identical requests.
 
 **3. How to fix**
 
 Not yet known. Test in this order, cheapest first:
 
-1. **Turn filtering off on the search page** (admin setting) and re-check pages 1 to 7. If the
-   pages fill up, that is the cause, and the choice becomes filters-or-working-pagination.
-2. **Apply R29** (products only). Fewer result types may make the count and the contents agree.
-3. If neither works, this is a Shopify platform problem and needs a support ticket. Include
-   the table above — it is the evidence.
+1. **Open the Search & Discovery app** and look for synonyms, product boosts or rules that
+   could pull unrelated products into a search. A rule naming "mirror" would explain the
+   handbag. This is free to check and is the only cause we could fix ourselves.
+2. **Turn filtering off on the search page** (admin setting) and re-check pages 1 to 7. Cheap,
+   and rules the idea out either way.
+3. **Apply R29** (products only), which at least removes one source of noise from the count.
+4. **Contact Shopify support.** This is the likely ending. Send them three things: the page
+   table above, the fact that one URL returns different products on different requests, and
+   the handbag that matches no occurrence of the search word. Ask them to rebuild the search
+   index for the shop. Those three facts together are far stronger than "search looks wrong".
 
 Do **not** change the `by 24` number. That is not the cause and changing it will hide the
 symptom without fixing anything.
