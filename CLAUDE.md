@@ -40,6 +40,7 @@ them. Neither has anything to do with drops any more; see their header comments.
 | `sections/main-collection-banner.liquid` | 14–33 | Collection: diamond eyebrow, title class, product count pill |
 | `sections/featured-collection.liquid` | 67, ~215 | Conditional wrapper: hides section when linked collection is empty (**unmarked** — no `Lena:` comment, so grep misses it) |
 | `snippets/card-product.liquid` | 108–122, 164–167, 228–237, 332–337, 436–437 | Cards: inventory badge (dynamic), sold overlay, category label, scarcity/notify · quick add gated on `card_product.available` so a sold-out card keeps Notify Me as its only CTA |
+| `sections/main-search.liquid` | 5–27, ~300 | `quick_add` support: schema setting, conditional asset loading, and the param passed to `card-product`. Stock Craft's search section had none, so search cards could never show Add to cart |
 | `snippets/facets.liquid` | 204–220, 592–608 | Color filter whitelist: skips non-color tag values (e.g. "Accessories", "artisan") |
 | `snippets/header-dropdown-menu.liquid` | ~11 | Omits the New Arrivals nav link while that collection is empty |
 | `snippets/header-drawer.liquid` | ~25 | Same rule, mobile drawer. Link list only — panel behaviour untouched |

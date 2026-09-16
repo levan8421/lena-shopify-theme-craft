@@ -350,3 +350,50 @@ and the row should hold a full `products_to_show` wherever the category has that
 once already. And swapping `rp_has_fallback` back to a `!= nil` check: `assign x = nil` and `x != nil`
 are not dependable in Liquid, and a silently-false guard drops the top-up with no symptom but a short
 row.
+
+---
+
+## 2026-09-15 · Bug · Search result cards did not match collection cards
+**Commit:** (see `git log --grep "quick add to search"`) · **Files:** `sections/main-search.liquid`, `CLAUDE.md`
+
+**What it does / did:** Adds `quick_add` to the search section — schema setting, conditional
+`quick-add.css` / `quick-add.js` loading, and the parameter passed through to `card-product`.
+
+**Why it matters:** Both grids render the *same* `card-product.liquid` with the same global
+`card_style`, so the markup is identical. The cards still looked different, and three settings
+explain it — measured 2026-09-15 by diffing `templates/collection.json` against
+`templates/search.json`:
+
+| Setting | Collection | Search |
+|---|---|---|
+| `image_ratio` | `portrait` | `square` |
+| `show_rating` | true | false |
+| `quick_add` | `standard` | **not supported at all** |
+
+The first two are template settings and belong in the theme editor. The third was a **code gap**:
+stock Craft's search section has no `quick_add` in its schema and never passed one to the snippet, so
+no template value could have turned the button on.
+
+**Unresolved:** search cards also render a *shortened* title — "Marigold Rose Medley" where the
+product is **"Ribbon-Embroidery Hat - Marigold Rose Medley"** (confirmed via the Admin API). Every
+observed case is the tail of the real title, which points at vertical clipping inside the card's
+ratio box rather than any text filter. **This is audit finding A1/T0-09, previously closed as "does
+not reproduce."** That investigation was right that there is no `truncate`, `truncatewords` or
+`line-clamp` anywhere in the card path — and wrong to conclude from that that the symptom was not
+real. Re-open it. The first thing to try is aligning `image_ratio`, since `--ratio-percent` is the
+one value that differs between a page that shows full titles and one that does not.
+
+**Reproduce:** search "ribbon embroidery hat" → cards are square-cropped, have no Add to cart, and
+show only the tail of each product title. Open `/collections/velvet-purses` → portrait crops, Add to
+cart present, full titles.
+
+**Verify now:**
+```bash
+grep -n "quick_add" sections/main-search.liquid          # → asset loading, render param, schema
+shopify theme check --fail-level error                   # → 0 errors, 8 warnings
+```
+
+**Regression risk:** Putting a `{%- comment -%}` inside a `{% render %}` argument list. Doing exactly
+that here broke the tag silently — the page still rendered, and the only signal was theme check
+reporting `skip_card_product_styles` as an unused variable, because the malformed tag no longer
+counted as a use. Nine warnings instead of eight was the whole tell.
