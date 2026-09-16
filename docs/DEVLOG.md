@@ -664,3 +664,43 @@ Put the order back afterwards.
 
 **Regression risk:** any variable assigned inside one block and read from another. The fix is
 not to remember the order, it is to assign before the loop.
+
+## 2026-09-16 · Bug · The New badge reads the app's tag instead of inventing its own rule
+**Commit:** PENDING · **Files:** snippets/card-product.liquid
+
+**What it does / did:** The "New" badge on a product card now shows when the product carries
+the `new` tag. It used to show when the product was created less than 7 days ago.
+
+**Why it matters:** CLAUDE.md states the rule this broke — *"the theme does not know what 'new'
+means. The app owns a single `new` tag ... Deliberately no date filter, staleness read or item
+cap."* Every other surface obeys it: the New Arrivals bar, the grid, and all three nav snippets
+gate on `all_products_count` of the tag-driven smart collection. This one card badge did not,
+so there were two definitions of "new" and they disagreed in both directions:
+
+- Tagged `new` but created 10 days ago (photographed late, or imported) → in New Arrivals, **no
+  badge**.
+- Created 3 days ago, never tagged → **badge**, while absent from New Arrivals and the nav.
+
+The second case is live today: `new-arrivals` holds 0 products, so the nav link and both
+homepage sections are hidden, yet any recently created product still wore a New badge on every
+grid it appeared in.
+
+**Matched case-insensitively.** Shopify's smart-collection rule `Tag is equal to new` ignores
+case, so a tag written `New` joins the collection. A plain `tags contains 'new'` would miss it
+and reopen the same disagreement from the other side.
+
+**Reproduce (before the fix):** open `/collections/available-now` sorted newest first. Any
+product created in the last 7 days shows a New badge, while the New Arrivals collection in
+admin is empty and the nav link is hidden.
+
+**Verify now:**
+```bash
+grep -n "604800\|age_seconds\|created_at" snippets/card-product.liquid
+#   only inside the explanatory comment - no arithmetic remains
+grep -n "lena_is_new" snippets/card-product.liquid   # 4 hits
+```
+In the browser: no badge should appear anywhere while `new-arrivals` is empty. Tag one product
+`new` in admin, and the badge and the New Arrivals section should appear together.
+
+**Regression risk:** any future "recently added" affordance computed from a date in Liquid
+rather than read from the tag. The test is whether the theme can disagree with the app.

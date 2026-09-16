@@ -117,11 +117,30 @@
                 {%- endif -%}
               </div>
             {%- endif -%}
-            {%- comment -%} Lena: New badge (products created within 7 days) {%- endcomment -%}
-            {%- assign now_timestamp = 'now' | date: '%s' | plus: 0 -%}
-            {%- assign created_timestamp = card_product.created_at | date: '%s' | plus: 0 -%}
-            {%- assign age_seconds = now_timestamp | minus: created_timestamp -%}
-            {%- if age_seconds < 604800 -%}
+            {%- comment -%}
+              Lena: New badge, read from the app-owned `new` tag.
+
+              This used to compute a 7-day window from created_at. That is the date filter
+              CLAUDE.md forbids the theme from having: the app owns what "new" means and how
+              long it lasts, and the new-arrivals smart collection matches the same tag. Two
+              definitions gave two answers - a piece tagged new but photographed late wore no
+              badge, and a piece created three days ago and never tagged wore one while being
+              absent from New Arrivals and from the nav.
+
+              Matched case-insensitively on purpose. Shopify's smart-collection rule
+              "Tag is equal to new" ignores case, so a tag written `New` would join the
+              collection; a plain `tags contains 'new'` would miss it and reopen the same
+              disagreement from the other side.
+            {%- endcomment -%}
+            {%- assign lena_is_new = false -%}
+            {%- for lena_tag in card_product.tags -%}
+              {%- assign lena_tag_lower = lena_tag | downcase -%}
+              {%- if lena_tag_lower == 'new' -%}
+                {%- assign lena_is_new = true -%}
+                {%- break -%}
+              {%- endif -%}
+            {%- endfor -%}
+            {%- if lena_is_new -%}
               <div class="lena-badge-new">New</div>
             {%- endif -%}
             {%- comment -%} Lena: Sold-out overlay {%- endcomment -%}
