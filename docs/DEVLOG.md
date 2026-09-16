@@ -450,7 +450,7 @@ box, driven by a setting a merchant can see — and a second one in CSS will not
 should be a different shape, change `image_ratio` on the sections, not the stylesheet.
 
 ## 2026-09-16 · Bug · Turn on the Add to cart button in search results
-**Commit:** a6fa36c · **Files:** templates/search.json
+**Commit:** a29d5a2 · **Files:** templates/search.json
 
 **What it does / did:** The search results page now shows an "Add to cart" button on each
 product card, the same as a collection page. Before, it showed no button.
