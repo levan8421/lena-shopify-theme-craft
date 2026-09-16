@@ -154,7 +154,7 @@ is never used to mean "unchecked".
 
 | # | Bug | Origin | Status | Review |
 |---|---|---|---|---|
-| R1 | Featured Piece points at collection handle `artisan`, which does not exist — section renders nothing, and the homepage has no products at all | admin setting | open | not yet |
+| R1 | Featured Piece points at collection handle `artisan`, which does not exist — section renders nothing, and the homepage has no products at all | admin setting | fixed | not yet |
 | R2 | Quick add on search is inert: schema default is `none` and `search.json` never sets it | admin setting | fixed | not yet |
 | R3 | Filtering a collection to zero results removes the `<h1>` and shows "we're preparing something special" | Lena in stock | open | not yet |
 | R4 | Email popup and Notify modal report success on a failed submit; the popup also suppresses itself permanently | Lena file | fixed | not yet |
@@ -172,7 +172,7 @@ is never used to mean "unchecked".
 | R16 | Featured Piece monthly rotation can only ever surface 12 items | Lena file | open | not yet |
 | R17 | Both modals declare `aria-modal` but never move, trap, or restore focus | Lena file | open | not yet |
 | R18 | Testimonial star ratings have no text alternative | Lena file | open | not yet |
-| R19 | PDP `lena_qty` depends on block order — moving the title block kills the badge and scarcity line | Lena in stock | open | not yet |
+| R19 | PDP `lena_qty` depends on block order — moving the title block kills the badge and scarcity line | Lena in stock | fixed | not yet |
 | R20 | Five sections with `presets` lack the `disabled_on` header/footer guard | Lena file | open | not yet |
 | R21 | Colour-filter logic is written six times, with two different conditions | Lena in stock | open | not yet |
 | R22 | `main-404.liquid` carries a 175-line inline `<style>` block | Lena file | open | not yet |

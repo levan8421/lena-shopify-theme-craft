@@ -637,3 +637,30 @@ returns for a bad address, which needs a browser. Filed as part of R4.
 
 **Regression risk:** any new `fetch` to `/contact` written by copying these two. Both now carry
 the check; a third copy would not.
+
+## 2026-09-16 · Bug · PDP stock count no longer depends on block order
+**Commit:** PENDING · **Files:** sections/main-product.liquid
+
+**What it does / did:** `lena_qty` is now assigned once, above the block loop. It used to be
+assigned inside the `title` block and read from three later blocks.
+
+**Why it matters:** blocks render in `block_order`, which the merchant controls from the theme
+editor — CLAUDE.md routes reordering there as the normal way to work. `templates/product.json`
+happens to list `title` before `price`, so this worked. Move Price above Title, or delete the
+Title block, and `lena_qty` is empty for every later block: the "1 of 1" badge and the "Only
+piece in existence" line both disappear. No error, no warning, and the sold-out message keeps
+working because it tests `product.available` instead — so the page looks fine.
+
+**Reproduce (before the fix):** theme editor → Product → drag Price above Title → save. The
+badge and the scarcity line are gone from every product page.
+
+**Verify now:**
+```bash
+grep -n "assign lena_qty = product" sections/main-product.liquid   # exactly one, line ~100
+grep -n "for block in section.blocks" sections/main-product.liquid # the loop, after it
+```
+In the theme editor, drag Price above Title and confirm the badge and scarcity line survive.
+Put the order back afterwards.
+
+**Regression risk:** any variable assigned inside one block and read from another. The fix is
+not to remember the order, it is to assign before the loop.
