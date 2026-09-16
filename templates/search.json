@@ -4,7 +4,7 @@
       "type": "main-search",
       "settings": {
         "columns_desktop": 4,
-        "image_ratio": "square",
+        "image_ratio": "portrait",
         "image_shape": "default",
         "show_secondary_image": true,
         "show_vendor": false,

@@ -397,3 +397,54 @@ shopify theme check --fail-level error                   # → 0 errors, 8 warni
 that here broke the tag silently — the page still rendered, and the only signal was theme check
 reporting `skip_card_product_styles` as an unused variable, because the malformed tag no longer
 counted as a use. Nine warnings instead of eight was the whole tell.
+
+---
+
+## 2026-09-15 · Bug · A1/T0-09 solved — card images overflowed their box and hid the title's first line
+**Commit:** (see `git log --grep "overriding every section"`) · **Files:** `assets/lena-custom.css`, `templates/search.json`, `templates/product.json`
+
+**What it does / did:** Removes `.card__media { aspect-ratio: 4/5; }` from `lena-custom.css`, and
+sets `image_ratio` to `portrait` on the two sections that were `square`.
+
+**Why it matters:** This is the audit's A1 / T0-09 "truncated related-product titles", raised twice
+and closed as **"does not reproduce"**. It reproduces. The titles were never truncated — they were
+**occluded**. The card image was rendering taller than the box meant to contain it and spilling down
+over the text, so the first line of every two-line title sat behind the photo.
+
+`.card__inner` takes its height from `::before { padding-bottom: var(--ratio-percent) }`, and
+`--ratio-percent` comes from the section's `image_ratio` setting. The Lena rule pinned `.card__media`
+to 4/5 = 125% regardless:
+
+| Section | `image_ratio` | ratio box | forced media | result |
+|---|---|---|---|---|
+| `main-collection-product-grid` | portrait | 125% | 125% | matches — looked fine |
+| `featured-collection`, `collection-list`, `main-list-collections` | portrait | 125% | 125% | matches |
+| `main-search` | **square** | **100%** | 125% | **25% overflow → title occluded** |
+| `related-products` | **square** | **100%** | 125% | **25% overflow → title occluded** |
+
+That table is the whole bug. It also explains why two investigations missed it: both searched for
+`truncate`, `truncatewords`, `line-clamp` and `text-overflow`, correctly found none, and concluded
+the symptom was not real. **No text was ever being cut. A box was the wrong height.**
+
+The rule was redundant on all seven sections where it agreed with the setting, and wrong on the two
+where it did not — the worst shape a CSS override can have, because it looks harmless everywhere you
+check first.
+
+**Reproduce (before the fix):** open any product whose title wraps to two lines, e.g.
+*"Crochet Doll - Beige Dress Crimson Bow Amigurumi"*. In "You may also like" or in search results,
+line one is hidden behind the image and only *"Crimson Bow Amigurumi"* is legible. The same product
+on `/collections/crochet-dolls` shows the full title.
+
+**Verify now:**
+```bash
+grep -n "aspect-ratio" assets/lena-custom.css          # → none on .card__media
+grep -h '"image_ratio"' templates/*.json | sort | uniq -c
+#   → 9 portrait, 1 adapt, 0 square
+```
+In the app: a two-line title is fully readable on the collection grid, in search, and in
+"You may also like" — all three identical.
+
+**Regression risk:** Any CSS that sets a height or aspect on `.card__media`, `.card__inner` or
+`.media` in `lena-custom.css`. The theme already has one mechanism for card proportions — the `ratio`
+box, driven by a setting a merchant can see — and a second one in CSS will not track it. If the cards
+should be a different shape, change `image_ratio` on the sections, not the stylesheet.

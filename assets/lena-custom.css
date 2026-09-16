@@ -86,9 +86,17 @@ html {
   box-shadow: 0 16px 48px rgba(14, 34, 64, 0.1);
   border-color: var(--lena-blue-bright);
 }
-.card__media {
-  aspect-ratio: 4/5;
-}
+/* .card__media has NO aspect-ratio here on purpose.
+
+   It used to carry `aspect-ratio: 4/5`, which silently overrode each section's
+   own `image_ratio` setting. Where the two agreed (every grid set to "portrait",
+   a 125% ratio box) it was merely redundant. Where they disagreed — search and
+   related-products, both set to "square", a 100% box — the media was forced 25%
+   taller than the box that contains it and spilled down over the card text,
+   hiding the first line of every two-line product title.
+
+   The `ratio` box on .card__inner is the theme's mechanism for this and it is
+   driven by a setting a merchant can see and change. Let it win. */
 
 /* 1-of-1 Badge */
 .lena-badge-1of1 {
