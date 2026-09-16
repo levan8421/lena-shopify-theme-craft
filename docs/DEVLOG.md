@@ -756,3 +756,50 @@ back to 0.
 
 **Regression risk:** a heading setting typed `richtext`; a schema block copied without its
 style block; an image-in-link written without an explicit `alt:`.
+
+## 2026-09-16 · Bug · Three text colours were below the readable-contrast minimum
+**Commit:** PENDING · **Files:** assets/lena-custom.css
+
+**What it does / did:** Three colours were darkened so small text meets WCAG AA (4.5:1). All
+three were measured, not judged by eye.
+
+| What | Was | Measured on snow | Now | Measured |
+|---|---|---|---|---|
+| Section eyebrow, 11px uppercase | `#2E8FD9` | **3.35:1** | `--lena-blue-deep` `#1B4F8A` | 8.01:1 |
+| `--lena-success`, carries "Only piece in existence" | `#1A8A5C` | **4.19:1** | `#157048` | 5.89:1 |
+| `--lena-slate`, card category at 9.5px | `#6B7585` | **4.50:1** | `#5C6573` | 5.69:1 |
+
+**Why it matters:** the eyebrow is the widest-reaching of the three — it appears on the hero,
+the New Arrivals bar, Testimonials, Find Us, Featured Piece, the collection banner and the
+empty state. At 11px, uppercase, with 0.2em tracking, it is harder to read than the ratio alone
+suggests. The large-text exemption starts at 18.66px bold, so 11px gets no relief from being
+semi-bold.
+
+`--lena-success` carries the scarcity line, which is the most commercially important sentence
+on a one-of-a-kind card and also the smallest text on it.
+
+The two tokens are shared — 18 rules use `--lena-slate` and 7 use `--lena-success` — so
+darkening the token improves every one of them rather than patching one class.
+
+**Not changed:** `.lena-section-eye` is overridden to amber on navy inside `lena-spotlight`,
+which measures 8.69:1 and already passed.
+
+**Verify now:**
+```bash
+python3 - <<'PY2'
+def lum(h):
+    h=h.lstrip('#'); r,g,b=[int(h[i:i+2],16)/255 for i in (0,2,4)]
+    f=lambda c: c/12.92 if c<=0.03928 else ((c+0.055)/1.055)**2.4
+    return 0.2126*f(r)+0.7152*f(g)+0.0722*f(b)
+def cr(a,b):
+    l1,l2=sorted([lum(a),lum(b)],reverse=True); return (l1+0.05)/(l2+0.05)
+for c in ['#1B4F8A','#157048','#5C6573']:
+    print(c, round(cr(c,'#FAFBFC'),2))          # each must be >= 4.5
+print('control, must be under 4.5:', round(cr('#E8B867','#FAFBFC'),2))
+PY2
+```
+In the browser the change is visible but small — the eyebrow reads darker. Check the homepage,
+a collection page and a product card.
+
+**Regression risk:** a new colour picked to look right against white without being measured.
+The snippet above is the check; run it with one colour that must pass and one that must fail.

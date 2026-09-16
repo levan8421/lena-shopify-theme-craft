@@ -19,9 +19,13 @@
   --lena-snow: #FAFBFC;
   --lena-ink: #141A24;
   --lena-graphite: #3A4250;
-  --lena-slate: #6B7585;
+  /* Was #6B7585: 4.50:1 on --lena-snow, a hair under the 4.5:1 AA needs for small
+     text, and .lena-card-cat sets it at 9.5px. Now 5.69:1 on snow, 5.89:1 on white. */
+  --lena-slate: #5C6573;
   --lena-silver: #E2E5EA;
-  --lena-success: #1A8A5C;
+  /* Was #1A8A5C: 4.34:1 on white, under AA, and it carries "Only piece in existence" -
+     the smallest and most commercially important line on a card. Now 6.10:1. */
+  --lena-success: #157048;
   --lena-success-pale: #E6F7EF;
   /* Measured 2026-09-16: 6.54:1 on #FFFFFF, 6.31:1 on --lena-snow. WCAG AA for
      small text needs 4.5:1. Recompute before changing it:
@@ -228,7 +232,11 @@ a.lena-notify-btn {
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--lena-blue-bright);
+  /* Was --lena-blue-bright (#2E8FD9): 3.35:1 on snow against the 4.5:1 AA needs at
+     11px. Uppercase at 0.2em tracking is harder to read than the ratio alone suggests.
+     --lena-blue-deep measures 8.01:1 on snow, 8.29:1 on white.
+     lena-spotlight overrides this to amber on navy and still measures 8.69:1. */
+  color: var(--lena-blue-deep);
   margin-bottom: 10px;
   display: inline-flex;
   align-items: center;
