@@ -448,3 +448,41 @@ In the app: a two-line title is fully readable on the collection grid, in search
 `.media` in `lena-custom.css`. The theme already has one mechanism for card proportions — the `ratio`
 box, driven by a setting a merchant can see — and a second one in CSS will not track it. If the cards
 should be a different shape, change `image_ratio` on the sections, not the stylesheet.
+
+## 2026-09-16 · Bug · Turn on the Add to cart button in search results
+**Commit:** a6fa36c · **Files:** templates/search.json
+
+**What it does / did:** The search results page now shows an "Add to cart" button on each
+product card, the same as a collection page. Before, it showed no button.
+
+**Why it matters:** The code for this button was already written and shipped in 262289b —
+the setting, the CSS and JS loading, and the hand-off to the card snippet. But the setting
+was never switched on, so none of it ran. A customer who found a piece by searching had to
+open the product page before they could buy it. A customer who found the same piece by
+browsing a collection could buy it straight from the grid. Same card, two behaviours.
+
+The cause was narrow: `sections/main-search.liquid` declares the `quick_add` setting with
+`"default": "none"`, copied faithfully from stock Craft's `main-collection-product-grid`.
+Both collection templates override it to `"standard"`. `templates/search.json` never did,
+so it kept the default and the feature stayed dark.
+
+**Reproduce (before the fix):**
+1. Open the storefront and search for `crochet`.
+2. Look at any in-stock card in the results grid → no Add to cart button.
+3. Open `/collections/crochet-dolls` and look at the same piece → Add to cart is there.
+
+**Verify now:**
+```bash
+grep -n '"quick_add"' templates/*.json
+#   collection.json:              "quick_add": "standard"
+#   collection.new-arrivals.json: "quick_add": "standard"
+#   search.json:                  "quick_add": "standard"   <- new
+python3 -c "import json;json.load(open('templates/search.json'));print('valid')"
+```
+In the browser: search `crochet`, confirm in-stock cards now have Add to cart, and confirm
+a **sold-out** card still shows only "Notify Me" and no disabled Add to cart button.
+
+**Regression risk:** A new template that renders a section whose feature is opt-in by
+default. The class is "the code shipped but the setting was never turned on", which no build
+or lint step can see — only a rendered page shows it. Predictive search (the dropdown while
+typing) is deliberately left without the button; it is a preview list, not a shop grid.

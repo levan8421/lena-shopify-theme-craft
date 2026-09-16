@@ -3,6 +3,7 @@
     "main": {
       "type": "main-search",
       "settings": {
+        "quick_add": "standard",
         "columns_desktop": 4,
         "image_ratio": "portrait",
         "image_shape": "default",
