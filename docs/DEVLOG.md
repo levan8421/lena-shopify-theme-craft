@@ -1122,7 +1122,7 @@ whether the question is "does this collection hold anything" or "how many is the
 seeing" — they need different counts.
 
 ## 2026-09-16 · Bug · Both modals now move, trap and return keyboard focus
-**Commit:** PENDING · **Files:** snippets/lena-notify-modal.liquid, sections/lena-email-popup.liquid
+**Commit:** f224754 · **Files:** snippets/lena-notify-modal.liquid, sections/lena-email-popup.liquid
 
 **What it does / did:** Opening either dialog moves focus into it, Tab is kept inside while it
 is open, and closing returns focus to whatever opened it. None of that happened before.
