@@ -1256,7 +1256,7 @@ is the second copy, and the one most likely to have drifted.
 obvious place to add it.
 
 ## 2026-09-16 · Bug · All custom styles now live in lena-custom.css
-**Commit:** PENDING · **Files:** sections/main-404.liquid, sections/lena-spotlight.liquid, sections/lena-testimonials.liquid, sections/lena-find-us.liquid, sections/main-product.liquid, assets/lena-custom.css
+**Commit:** 44b65fe · **Files:** sections/main-404.liquid, sections/lena-spotlight.liquid, sections/lena-testimonials.liquid, sections/lena-find-us.liquid, sections/main-product.liquid, assets/lena-custom.css
 
 **What it does / did:** The 404 page's 132-line inline stylesheet and every remaining Lena
 inline `style` attribute moved into `assets/lena-custom.css`. CLAUDE.md rule 4: *"All custom
