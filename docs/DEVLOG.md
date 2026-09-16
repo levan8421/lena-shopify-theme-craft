@@ -1205,7 +1205,7 @@ expect `notify-glass-bead-woven-handbags`.
 snippet exists so there is one obvious place to look.
 
 ## 2026-09-16 · Bug · One definition of the colour-facet rule, not six
-**Commit:** PENDING · **Files:** snippets/lena-color-facet.liquid (new), snippets/facets.liquid
+**Commit:** e64d784 · **Files:** snippets/lena-color-facet.liquid (new), snippets/facets.liquid
 
 **What it does / did:** "Is this the Color filter, and is this value a real colour?" is now
 asked in one snippet. It was asked in six places in `facets.liquid`, **with two different
