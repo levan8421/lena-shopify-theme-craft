@@ -9,14 +9,14 @@
 
 {%- if collection.products.size == 0 -%}
 <div class="color-{{ section.settings.color_scheme }} gradient">
-  <div class="lena-coming-soon page-width" style="padding:60px 24px 80px;text-align:center;max-width:680px;margin:0 auto">
-    <div class="lena-section-eye" style="margin-bottom:12px">
+  <div class="lena-coming-soon page-width">
+    <div class="lena-section-eye">
       <span class="dm filled sm"></span> {{ section.settings.eyebrow }}
     </div>
-    <h2 class="lena-section-h" style="margin-bottom:16px">
+    <h2 class="lena-section-h">
       {{ section.settings.heading }}
     </h2>
-    <p style="font-size:16px;line-height:1.7;color:rgba(14,34,64,0.7);margin-bottom:28px">
+    <p class="lena-coming-soon-text">
       {{ section.settings.description }}
     </p>
 
@@ -28,7 +28,7 @@
     {%- endcomment -%}
     {%- if section.settings.cta_link != blank -%}
       <div>
-        <a href="{{ section.settings.cta_link }}" class="button" style="min-width:220px">
+        <a href="{{ section.settings.cta_link }}" class="button">
           {{ section.settings.cta_label }}
         </a>
       </div>

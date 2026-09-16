@@ -878,3 +878,42 @@ also like" can actually be bought. A sold-out piece should not appear at all.
 
 **Regression risk:** a third source added to the row without the same test. The row is built by
 two independent loops rather than one filtered list, so each one has to carry the rule.
+
+## 2026-09-16 · Bug · The collection empty state follows its own colour scheme
+**Commit:** PENDING · **Files:** sections/lena-drop-coming-soon.liquid, assets/lena-custom.css
+
+**What it does / did:** The empty-state paragraph took its colour from the section's colour
+scheme. It used to hardcode `rgba(14,34,64,0.7)` — navy at 70% — regardless of the scheme.
+
+**Why it matters:** the section exposes a `color_scheme` setting and the wrapper honours it
+(`class="color-{{ section.settings.color_scheme }} gradient"`). The paragraph reached past it.
+On the current `scheme-1` (snow) it measures 5.89:1 and reads fine. Pick `scheme-4` in the
+theme editor and the background becomes navy `#0E2240` while the text stays navy — the body
+copy vanishes. `scheme-5` (navy-mid) fails the same way.
+
+Both are offered in the same dropdown, with no warning. The eyebrow and heading above use
+classes and recolour correctly, so the section would render with a visible heading over an
+invisible paragraph — which reads as a loading fault, not a colour mistake.
+
+It now uses `rgba(var(--color-foreground), 0.75)`, the theme's own pattern for scheme-aware
+text (`assets/base.css` uses it in several places).
+
+**Also here (R23, in part):** all five inline `style` attributes moved into
+`assets/lena-custom.css`, which is where CLAUDE.md requires custom styles to live. Three of
+them — `text-align:center; margin-bottom:40px` — are the same wrapper repeated in
+`lena-testimonials` and `lena-find-us`; those two still carry it and are still open under R23.
+
+**Reproduce (before the fix):** theme editor → New Arrivals template → Collection Empty State →
+Colour scheme → `scheme-4`. The heading stays readable; the paragraph disappears.
+
+**Verify now:**
+```bash
+grep -c 'style="' sections/lena-drop-coming-soon.liquid   # 0
+grep -n "14,34,64" sections/lena-drop-coming-soon.liquid  # nothing
+grep -n "lena-coming-soon-text" assets/lena-custom.css    # the new rule
+```
+In the browser the section must look unchanged on scheme-1. Then switch it to scheme-4 and
+confirm the paragraph is now readable on navy. Set it back to scheme-1.
+
+**Regression risk:** any hardcoded colour inside a section that offers a colour scheme. The
+test is whether the section still reads correctly on `scheme-4`.
