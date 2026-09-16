@@ -1,0 +1,17 @@
+{%- comment -%}
+  The canonical category collection handles, as one comma-separated list.
+
+  Single source of truth. `breadcrumbs` uses it to decide which of a product's
+  collections is its category, and `related-products` uses it to find where to
+  top up a short recommendation row. Those two answered the same question
+  independently once; they must not drift apart again.
+
+  Consume it with capture, since a snippet cannot return a value:
+
+    {%- capture csv -%}{%- render 'lena-category-handles' -%}{%- endcapture -%}
+    {%- assign handles = csv | strip | split: ',' -%}
+
+  `compact-mirrors` is the parent on purpose — artisan- and motif- mirrors both
+  sit under it, and a breadcrumb naming the parent is correct for either.
+{%- endcomment -%}
+compact-mirrors,crochet-dolls,ribbon-embroidery-hats,velvet-purses,rattan-purses,glass-bead-woven-handbags,phone-travel-wallet

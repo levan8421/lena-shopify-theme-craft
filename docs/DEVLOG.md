@@ -310,3 +310,43 @@ In the app: one breadcrumb line, no eyebrow, and the category in it is clickable
 category; a second copy is what was just removed. Note the breadcrumb carries **no** schema.org
 markup, so if structured data is ever wanted, that is the change to make — not more visible text.
 
+---
+
+## 2026-09-15 · Bug · "You may also like" recommended unrelated products
+**Commit:** (see `git log --grep "same product type"`) · **Files:** `sections/related-products.liquid`, `snippets/lena-category-handles.liquid` (new), `snippets/breadcrumbs.liquid`
+
+**What it does / did:** Filters Shopify's recommendations to products sharing the viewed product's
+`type`, then tops the row up from that product's own category collection so it is never short.
+
+**Why it matters:** `related-products.liquid` called the recommendation endpoint with nothing but a
+limit. That algorithm leans on order history, and this store has nowhere near the volume to feed it —
+so a ribbon-embroidery hat was recommended alongside two crochet dolls and a velvet purse. For a
+catalogue sold on craft and category, that undercuts the browsing it exists to support.
+
+**`product.type` is the right key and `collection.title` is the wrong one.** Measured 2026-09-15 via
+the Admin API: active products carry types such as `Beaded Purses` and `Compact Mirrors`, while the
+collections are *Glass Bead Woven Handbags* and *Artisan / Motif Compact Mirrors*. Matching on title
+would have failed silently for most of the catalogue — it is the open T0-16 naming gap.
+
+Side effect worth knowing: the section now renders category products on the **first server pass**,
+before the JavaScript fetch returns. Previously it rendered nothing until that fetch completed. The
+section therefore works with JavaScript disabled, at the cost of the contents changing once the
+filtered set arrives.
+
+**Reproduce (before the fix):** open the Rose Garden Bouquet hat PDP → "You may also like" shows two
+crochet dolls and a velvet clutch.
+
+**Verify now:**
+```bash
+grep -n "rp_rec.type == product.type" sections/related-products.liquid   # → the filter
+grep -n "rp_has_fallback" sections/related-products.liquid               # → the top-up guard
+grep -rn "lena-category-handles" snippets sections                       # → 3: the snippet + 2 consumers
+```
+In the app: open a hat, a doll and a mirror. Every card in the row should be the same kind of thing,
+and the row should hold a full `products_to_show` wherever the category has that many in stock.
+
+**Regression risk:** Two things. Writing the canonical handle list a second time instead of rendering
+`lena-category-handles` — `breadcrumbs` and `related-products` answered the same question separately
+once already. And swapping `rp_has_fallback` back to a `!= nil` check: `assign x = nil` and `x != nil`
+are not dependable in Liquid, and a silently-false guard drops the top-up with no symptom but a short
+row.

@@ -17,7 +17,10 @@
 {%- endcomment -%}
 
 {%- liquid
-  assign lena_menu_categories = 'compact-mirrors,crochet-dolls,ribbon-embroidery-hats,velvet-purses,rattan-purses,glass-bead-woven-handbags,phone-travel-wallet' | split: ','
+  capture lena_cat_csv
+    render 'lena-category-handles'
+  endcapture
+  assign lena_menu_categories = lena_cat_csv | strip | split: ','
 
   assign lena_crumb_title = blank
   assign lena_crumb_url = blank

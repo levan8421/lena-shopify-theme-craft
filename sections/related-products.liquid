@@ -27,7 +27,114 @@
     data-section-id="{{ section.id }}"
     data-product-id="{{ product.id }}"
   >
-    {% if recommendations.performed and recommendations.products_count > 0 %}
+    {%- comment -%}
+      Lena: recommendations restricted to the same product type.
+
+      Shopify's recommendation endpoint leans on order history. This store does not
+      have the sales volume to feed it, so its unfiltered output put a hat beside two
+      crochet dolls and a purse. `product.type` is a dependable grouping here — note
+      it is NOT the same string as the collection title (Beaded Purses vs Glass Bead
+      Woven Handbags), so matching on type is correct and matching on title is not.
+
+      Matching suggestions are kept, then any shortfall is filled from the product's
+      own category collection. A half-empty row reads as broken, so the row is always
+      topped up rather than left short.
+    {%- endcomment -%}
+    {%- liquid
+      assign rp_limit = section.settings.products_to_show
+      assign rp_shown = 0
+      assign rp_seen = ','
+      assign rp_skip_styles = false
+
+      capture rp_cat_csv
+        render 'lena-category-handles'
+      endcapture
+      assign rp_categories = rp_cat_csv | strip | split: ','
+
+      comment
+        A boolean rather than a nil check: `assign x = nil` and `x != nil` are not
+        dependable in Liquid, and a silently-false guard here would drop the top-up
+        without any symptom other than a short row.
+      endcomment
+      assign rp_has_fallback = false
+      for rp_c in product.collections
+        if rp_categories contains rp_c.handle
+          assign rp_fallback = rp_c
+          assign rp_has_fallback = true
+          break
+        endif
+      endfor
+    -%}
+
+    {%- capture rp_items -%}
+      {%- comment -%} Pass 1 — Shopify's suggestions, same type only {%- endcomment -%}
+      {%- if product.type != blank and recommendations.performed -%}
+        {%- for rp_rec in recommendations.products -%}
+          {%- if rp_shown >= rp_limit -%}{%- break -%}{%- endif -%}
+          {%- if rp_rec.id != product.id and rp_rec.type == product.type -%}
+            <li class="grid__item">
+              {% render 'card-product',
+                card_product: rp_rec,
+                media_aspect_ratio: section.settings.image_ratio,
+                image_shape: section.settings.image_shape,
+                show_secondary_image: section.settings.show_secondary_image,
+                show_vendor: section.settings.show_vendor,
+                show_rating: section.settings.show_rating,
+                skip_styles: rp_skip_styles
+              %}
+            </li>
+            {%- liquid
+              assign rp_seen = rp_seen | append: rp_rec.id | append: ','
+              assign rp_shown = rp_shown | plus: 1
+              assign rp_skip_styles = true
+            -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
+
+      {%- comment -%} Pass 2 — top up from this product's own category {%- endcomment -%}
+      {%- if rp_shown < rp_limit and rp_has_fallback -%}
+        {%- for rp_p in rp_fallback.products -%}
+          {%- if rp_shown >= rp_limit -%}{%- break -%}{%- endif -%}
+          {%- liquid
+            comment
+              The key is comma-wrapped so id 12 cannot match inside id 123.
+            endcomment
+            assign rp_key = ',' | append: rp_p.id | append: ','
+            assign rp_ok = true
+            if rp_p.id == product.id
+              assign rp_ok = false
+            endif
+            unless rp_p.available
+              assign rp_ok = false
+            endunless
+            if rp_seen contains rp_key
+              assign rp_ok = false
+            endif
+          -%}
+          {%- if rp_ok -%}
+            <li class="grid__item">
+              {% render 'card-product',
+                card_product: rp_p,
+                media_aspect_ratio: section.settings.image_ratio,
+                image_shape: section.settings.image_shape,
+                show_secondary_image: section.settings.show_secondary_image,
+                show_vendor: section.settings.show_vendor,
+                show_rating: section.settings.show_rating,
+                skip_styles: rp_skip_styles
+              %}
+            </li>
+            {%- liquid
+              assign rp_seen = rp_seen | append: rp_p.id | append: ','
+              assign rp_shown = rp_shown | plus: 1
+              assign rp_skip_styles = true
+            -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
+    {%- endcapture -%}
+
+    {%- if rp_items != blank -%}
       <h2 class="related-products__heading inline-richtext {{ section.settings.heading_size }}">
         {{ section.settings.heading }}
       </h2>
@@ -35,23 +142,9 @@
         class="grid product-grid grid--{{ section.settings.columns_desktop }}-col-desktop grid--{{ section.settings.columns_mobile }}-col-tablet-down"
         role="list"
       >
-        {% assign skip_card_product_styles = false %}
-        {% for recommendation in recommendations.products %}
-          <li class="grid__item">
-            {% render 'card-product',
-              card_product: recommendation,
-              media_aspect_ratio: section.settings.image_ratio,
-              image_shape: section.settings.image_shape,
-              show_secondary_image: section.settings.show_secondary_image,
-              show_vendor: section.settings.show_vendor,
-              show_rating: section.settings.show_rating,
-              skip_styles: skip_card_product_styles
-            %}
-          </li>
-          {%- assign skip_card_product_styles = true -%}
-        {% endfor %}
+        {{ rp_items }}
       </ul>
-    {% endif %}
+    {%- endif -%}
   </product-recommendations>
   {% if section.settings.image_shape == 'arch' %}
     {{ 'mask-arch.svg' | inline_asset_content }}

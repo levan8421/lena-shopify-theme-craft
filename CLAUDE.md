@@ -24,7 +24,8 @@ shopify theme push --unpublished   # Push for review
 | `sections/lena-find-us.liquid` | 239 | Location cards + metaobject scheduled events |
 | `sections/lena-email-popup.liquid` | 90 | Newsletter modal (tags `newsletter` only) |
 | `snippets/lena-notify-modal.liquid` | 70 | "Notify me" modal for sold-out pieces. Tags the contact `newsletter,notify-<category-handle>` |
-| `snippets/breadcrumbs.liquid` | 50 | PDP breadcrumbs — `collection` when arrived through one, menu list as fallback. **No trailing crumb**: it would repeat the `<h1>` beneath it |
+| `snippets/breadcrumbs.liquid` | 56 | PDP breadcrumbs — `collection` when arrived through one, category list as fallback. **No trailing crumb**: it would repeat the `<h1>` beneath it |
+| `snippets/lena-category-handles.liquid` | 17 | The canonical category handles as one CSV. Single source of truth for `breadcrumbs` and `related-products`; consume with `capture` + `render` |
 | `assets/lena-custom.css` | 1203 | All custom styles (17 sections, 80+ classes) |
 
 **Filename note:** `lena-drop-header` and `lena-drop-coming-soon` keep their filenames for historical
@@ -45,6 +46,7 @@ them. Neither has anything to do with drops any more; see their header comments.
 | `snippets/header-mega-menu.liquid` | ~11 | Same rule. Dormant unless `menu_type_desktop` is set to `mega` |
 | `sections/main-404.liquid` | 1–175 | Full rewrite: branded 404 with search, nav links, diamond motifs |
 | `sections/collection-list.liquid` | ~18, schema | `subtitle` setting rendered under the section title |
+| `sections/related-products.liquid` | 30–145 | Recommendations filtered to matching `product.type`, topped up from the product's category collection so the row is never short |
 
 ### Comment convention
 
@@ -207,6 +209,10 @@ Do not hand-edit `templates/*.json`, `sections/*-group.json`, or `config/setting
   in `section-main-product.css` silently zeroed the margins on every Lena element inside the PDP
   title block. **When styling inside a stock component, add one more class to the selector** —
   `.product__title > .lena-breadcrumbs`, not `.lena-breadcrumbs`.
+- **`product.type` is NOT the collection title.** Measured 2026-09-15: types include `Beaded
+  Purses` and `Compact Mirrors` while the collections are *Glass Bead Woven Handbags* and
+  *Artisan / Motif Compact Mirrors*. Group products by `type`; never match `type` against
+  `collection.title` — it fails silently for most categories. See T0-16 in `docs/OPEN_ITEMS.md`.
 - **Sections with `presets` can be added to the header/footer groups by mistake.** The theme editor
   shows an "Add section" button inside the Header group as well as the Template area, and a section
   added there lands in `sections/header-group.json` — pinned above the template and undraggable.
