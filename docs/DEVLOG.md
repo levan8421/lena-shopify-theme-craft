@@ -989,3 +989,44 @@ underlined copy of the title appears beneath the `<h1>`, this was wrong — reve
 
 **Regression risk:** a future section rendering `.product__title > a` without loading
 `section-main-product.css`.
+
+## 2026-09-16 · Bug · One definition of the Find Us event window
+**Commit:** PENDING · **Files:** snippets/lena-event-window.liquid (new), sections/lena-find-us.liquid
+
+**What it does / did:** The 14-day event window now lives in one snippet. It used to be written
+out in full twice in the same file.
+
+**Why it matters:** `lena-find-us.liquid` walked the events twice — once at the top to count
+visible cards for `data-cards`, once lower down to render them — with the same timestamp
+arithmetic copied into both:
+
+```liquid
+assign diff_start = event_start_ts | minus: now_ts
+... diff_start <= fourteen_days and diff_end >= -86400
+```
+
+Change one copy, for instance to widen the window to 30 days, and `data-cards` disagrees with
+the number of cards actually drawn. `.lena-find-grid[data-cards="N"]` then lays out for the
+wrong count. The visible result is a wrong column count, which looks like a CSS fault and sends
+the next person to the wrong file.
+
+The snippet is consumed with `capture` + `render`, the same shape `breadcrumbs.liquid` already
+uses for `lena-category-handles` — a snippet cannot return a value, so this is the theme's
+existing idiom for "one fact, two readers".
+
+The file lost 739 bytes and one level of nesting.
+
+**Verify now:**
+```bash
+grep -c "lena-event-window" sections/lena-find-us.liquid   # 2 - the count pass and the render pass
+grep -n "fourteen_days\|diff_start\|now_ts" sections/lena-find-us.liquid || echo "no arithmetic left"
+python3 -c "
+import re;s=open('sections/lena-find-us.liquid').read()
+print(len(re.findall(r'{%-?\s*if\s',s)), len(re.findall(r'{%-?\s*endif\s*-?%}',s)))"   # equal
+```
+In the browser: the Find Us section must look unchanged — same cards, same column count. To
+test the shared definition, change `ev_window` in the snippet to `2592000` (30 days), confirm
+both the cards and the column layout change together, then put it back.
+
+**Regression risk:** a third reader of the same question added without the snippet. The point of
+the snippet is that the next person has somewhere obvious to look.

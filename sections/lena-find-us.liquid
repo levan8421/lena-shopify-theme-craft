@@ -17,25 +17,17 @@
   }
 {%- endstyle -%}
 
-{%- assign now_ts = 'now' | date: '%s' | plus: 0 -%}
-{%- assign fourteen_days = 1209600 -%}
-
-{%- comment -%} First pass: count visible cards to set grid layout {%- endcomment -%}
+{%- comment -%}
+  Lena: the 14-day window lives in snippets/lena-event-window.liquid and is asked for
+  here and again at render time. It used to be written out in full in both places, so
+  editing one made data-cards disagree with the number of cards drawn - and a wrong
+  column count reads as a CSS fault rather than a Liquid one.
+{%- endcomment -%}
 {%- assign visible_count = 0 -%}
-
-{%- comment -%} Count metaobject events within 14-day window {%- endcomment -%}
 {%- for event in shop.metaobjects.scheduled_event.values -%}
-  {%- if event.start_date.value != blank -%}
-    {%- assign event_start_ts = event.start_date.value | date: '%s' | plus: 0 -%}
-    {%- assign event_end_ts = event_start_ts -%}
-    {%- if event.end_date.value != blank -%}
-      {%- assign event_end_ts = event.end_date.value | date: '%s' | plus: 0 -%}
-    {%- endif -%}
-    {%- assign diff_start = event_start_ts | minus: now_ts -%}
-    {%- assign diff_end = event_end_ts | minus: now_ts -%}
-    {%- if diff_start <= fourteen_days and diff_end >= -86400 -%}
-      {%- assign visible_count = visible_count | plus: 1 -%}
-    {%- endif -%}
+  {%- capture fu_visible -%}{%- render 'lena-event-window', event: event -%}{%- endcapture -%}
+  {%- if fu_visible == '1' -%}
+    {%- assign visible_count = visible_count | plus: 1 -%}
   {%- endif -%}
 {%- endfor -%}
 
@@ -56,33 +48,25 @@
   <div class="lena-find-grid" data-cards="{{ visible_count }}">
     {%- comment -%} Render metaobject event cards first {%- endcomment -%}
     {%- for event in shop.metaobjects.scheduled_event.values -%}
-      {%- if event.start_date.value != blank -%}
-        {%- assign event_start_ts = event.start_date.value | date: '%s' | plus: 0 -%}
-        {%- assign event_end_ts = event_start_ts -%}
-        {%- if event.end_date.value != blank -%}
-          {%- assign event_end_ts = event.end_date.value | date: '%s' | plus: 0 -%}
-        {%- endif -%}
-        {%- assign diff_start = event_start_ts | minus: now_ts -%}
-        {%- assign diff_end = event_end_ts | minus: now_ts -%}
-        {%- if diff_start <= fourteen_days and diff_end >= -86400 -%}
-          <div class="lena-find-card event">
-            <div class="fc-i">{{ event.icon.value | default: '🎪' }}</div>
-            <h3>{{ event.name.value }}</h3>
-            <div class="fc-sched">
-              {{ event.start_date.value | date: '%A, %B %e' }}
-              {%- if event.end_date.value != blank and event.end_date.value != event.start_date.value -%}
-                &ndash; {{ event.end_date.value | date: '%A, %B %e' }}
-              {%- endif -%}
-              {%- if event.time_text.value != blank %} &middot; {{ event.time_text.value }}{% endif -%}
-            </div>
-            {%- if event.description.value != blank -%}
-              <p>{{ event.description.value }}</p>
+      {%- capture fu_visible -%}{%- render 'lena-event-window', event: event -%}{%- endcapture -%}
+      {%- if fu_visible == '1' -%}
+        <div class="lena-find-card event">
+          <div class="fc-i">{{ event.icon.value | default: '🎪' }}</div>
+          <h3>{{ event.name.value }}</h3>
+          <div class="fc-sched">
+            {{ event.start_date.value | date: '%A, %B %e' }}
+            {%- if event.end_date.value != blank and event.end_date.value != event.start_date.value -%}
+              &ndash; {{ event.end_date.value | date: '%A, %B %e' }}
             {%- endif -%}
-            {%- if event.address.value != blank -%}
-              <a class="lena-fc-dir" href="https://www.google.com/maps/search/?api=1&query={{ event.address.value | url_encode }}" target="_blank" rel="noopener">Get directions &rarr;</a>
-            {%- endif -%}
+            {%- if event.time_text.value != blank %} &middot; {{ event.time_text.value }}{% endif -%}
           </div>
-        {%- endif -%}
+          {%- if event.description.value != blank -%}
+            <p>{{ event.description.value }}</p>
+          {%- endif -%}
+          {%- if event.address.value != blank -%}
+            <a class="lena-fc-dir" href="https://www.google.com/maps/search/?api=1&query={{ event.address.value | url_encode }}" target="_blank" rel="noopener">Get directions &rarr;</a>
+          {%- endif -%}
+        </div>
       {%- endif -%}
     {%- endfor -%}
 

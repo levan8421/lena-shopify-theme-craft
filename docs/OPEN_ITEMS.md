@@ -178,7 +178,7 @@ is never used to mean "unchecked".
 | R22 | `main-404.liquid` carries a 175-line inline `<style>` block | Lena file | open | not yet |
 | R23 | Inline styles across five Lena files | Lena file | open | not yet |
 | R24 | Empty-state paragraph hardcodes navy text, ignoring `color_scheme` | Lena file | fixed | not yet |
-| R25 | Find Us computes its 14-day event window twice | Lena file | open | not yet |
+| R25 | Find Us computes its 14-day event window twice | Lena file | fixed | not yet |
 | R26 | `lena-drop-header` takes a typed collection handle instead of a picker | Lena file | open | not yet |
 | R27 | `.product__title > a` display rule is duplicated between stock and custom CSS | Lena file | fixed | not yet |
 | R28 | A6 (`color-clear`) is stale — the tag no longer exists | store data | open | not yet |

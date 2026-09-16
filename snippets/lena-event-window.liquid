@@ -1,0 +1,39 @@
+{%- comment -%}
+  Is this scheduled_event inside the display window?
+
+  Outputs "1" when it is, and nothing when it is not. Single source of truth: the same
+  question was asked twice in lena-find-us.liquid - once to count cards for the grid
+  layout, once to render them - with the arithmetic written out in full both times. A
+  change to one copy made data-cards disagree with the number of cards actually drawn,
+  and the symptom of that is a wrong column count, which looks like a CSS fault and is
+  not one.
+
+  Accepts: event (a scheduled_event metaobject)
+
+  Consume it the way breadcrumbs consumes lena-category-handles, since a snippet cannot
+  return a value:
+
+    {%- capture visible -%}{%- render 'lena-event-window', event: event -%}{%- endcapture -%}
+    {%- if visible == '1' -%}
+
+  The window: from now until 14 days ahead, and an event stays up until a day after it
+  ends. An event with no end date is treated as ending when it starts.
+{%- endcomment -%}
+{%- liquid
+  assign ev_window = 1209600
+  assign ev_grace = -86400
+
+  if event.start_date.value != blank
+    assign ev_now = 'now' | date: '%s' | plus: 0
+    assign ev_start = event.start_date.value | date: '%s' | plus: 0
+    assign ev_end = ev_start
+    if event.end_date.value != blank
+      assign ev_end = event.end_date.value | date: '%s' | plus: 0
+    endif
+    assign ev_from_now = ev_start | minus: ev_now
+    assign ev_until_end = ev_end | minus: ev_now
+    if ev_from_now <= ev_window and ev_until_end >= ev_grace
+      echo '1'
+    endif
+  endif
+-%}
