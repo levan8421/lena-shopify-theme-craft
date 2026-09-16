@@ -240,3 +240,41 @@ shopify theme check --fail-level error                              # → 0 erro
 (`where: 'available', true`). That form compares against a string and does not reliably match a
 boolean, so the pool would silently include sold-out pieces. Also: a future "pick truly at random"
 request means JavaScript and a rendered candidate pool — it is not a small change to this file.
+
+---
+
+## 2026-09-15 · Bug · Featured Piece could be added to the header group, where it cannot be moved
+**Commit:** (this commit) · **Files:** `sections/lena-featured-piece.liquid`, `sections/header-group.json`, `templates/index.json`, `CLAUDE.md`
+
+**What it does / did:** Moves the Featured Piece instance out of the header section group and into
+the homepage template, and adds `"disabled_on": { "groups": ["header", "footer"] }` to the section
+schema so it can never be added there again.
+
+**Why it matters:** The theme editor shows an **Add section** button inside the Header group as well
+as in the Template area. A section with a `presets` block is offered in both. Added under Header, it
+is written to `sections/header-group.json`, renders pinned between the header and the template, and
+**cannot be dragged into the template area** — the owner hit exactly this. Nothing in the editor
+explains why the section will not move.
+
+The same edit fixed a second thing: the instance carried `"color_scheme": ""`, which renders the
+class `color-` and matches no scheme at all, so the section had no background treatment. Set to
+`scheme-1`, the schema's own default.
+
+**Reproduce (before the fix):**
+1. Theme editor → Home page → under the **Header** group, Add section → Featured Piece.
+2. `git pull` → the instance appears in `sections/header-group.json`, not `templates/index.json`.
+3. Try to drag it below "Lena Hero" in the editor → it will not cross into the Template area.
+
+**Verify now:**
+```bash
+grep -c "lena-featured-piece" sections/header-group.json   # → 0
+grep -c "lena-featured-piece" templates/index.json         # → 1
+grep -A3 '"disabled_on"' sections/lena-featured-piece.liquid
+shopify theme check --fail-level error                     # → 0 errors
+```
+In the editor: Featured Piece now sits in the Template list and drags freely; it no longer appears
+in the Add-section list offered inside the Header or Footer groups.
+
+**Regression risk:** Any future Lena section that ships a `presets` block and belongs in the page
+body. Without `disabled_on` it is addable to the header and footer groups, and the resulting "why
+won't this move" is not obviously a theme problem.

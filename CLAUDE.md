@@ -60,15 +60,16 @@ All Lena changes in stock files are marked: `{%- comment -%} Lena: <description>
 |---|---------|------|-------|
 | 1 | Hero | `lena-hero` | Navy bg, mosaic grid, "One piece at a time" |
 | 2 | Trust Strip | `custom-liquid` | Scrolling diamond marquee (inline HTML, not a section file) |
-| 3 | New Arrivals bar | `lena-drop-header` | Collection `new-arrivals`. Heading + linked count. **Hidden while empty** |
-| 4 | New Arrivals grid | `featured-collection` | Section key `new-arrivals-grid`. Collection `new-arrivals`, 4 columns, no title — the bar above is its heading. Hides itself if empty, so the pair appear and disappear together |
-| 5 | Available Now | `featured-collection` | Collection: `available-now`, 4 columns. Hides itself if empty |
-| 6 | Our Story | `image-with-text` | Founder photo + brand narrative |
-| 7 | Testimonials | `lena-testimonials` | Customer quotes |
+| 3 | Our Story | `image-with-text` | Founder photo + brand narrative |
+| 4 | New Arrivals bar | `lena-drop-header` | Collection `new-arrivals`. Heading + linked count. **Hidden while empty** |
+| 5 | New Arrivals grid | `featured-collection` | Key `new-arrivals-grid`. Collection `new-arrivals`, no title — the bar above is its heading. Hides itself if empty, so the pair appear and disappear together |
+| 6 | Featured Piece | `lena-featured-piece` | One available product from a collection, rotating daily. Replaces the job Available Now was doing |
+| 7 | Available Now | `featured-collection` | **Disabled.** 219 products behind a 4-item window; superseded by Featured Piece |
 | 8 | Shop by Category | `collection-list` | 12 collection tiles + subtitle |
-| 9 | Artisan Spotlight | `lena-spotlight` | Requires "Artisan Stories" blog |
-| 10 | Q&A | `collapsible-content` | 6 accordion items (handmade, artisans, design, in-person, photo, returns) |
-| 11 | Find Us | `lena-find-us` | Uses `scheduled_event` metaobjects |
+| 9 | Testimonials | `lena-testimonials` | Customer quotes |
+| 10 | Artisan Spotlight | `lena-spotlight` | **Disabled.** Requires an "Artisan Stories" blog |
+| 11 | Q&A | `collapsible-content` | 6 accordion items (handmade, artisans, design, in-person, photo, returns) |
+| 12 | Find Us | `lena-find-us` | Uses `scheduled_event` metaobjects |
 
 **Note:** Trust Strip is custom-liquid HTML inside `templates/index.json`, NOT a standalone section file.
 
@@ -206,6 +207,10 @@ Do not hand-edit `templates/*.json`, `sections/*-group.json`, or `config/setting
   in `section-main-product.css` silently zeroed the margins on every Lena element inside the PDP
   title block. **When styling inside a stock component, add one more class to the selector** —
   `.product__title > .lena-breadcrumbs`, not `.lena-breadcrumbs`.
+- **Sections with `presets` can be added to the header/footer groups by mistake.** The theme editor
+  shows an "Add section" button inside the Header group as well as the Template area, and a section
+  added there lands in `sections/header-group.json` — pinned above the template and undraggable.
+  Guard any body-only section with `"disabled_on": { "groups": ["header", "footer"] }` in its schema.
 - **No random filter in Liquid.** To pick one item pseudo-randomly, seed an integer off `'now'`
   and modulo the collection size. `lena-spotlight` and `lena-featured-piece` both do this; reuse
   the pattern rather than adding JavaScript.
