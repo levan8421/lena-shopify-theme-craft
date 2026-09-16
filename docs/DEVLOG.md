@@ -488,7 +488,7 @@ or lint step can see — only a rendered page shows it. Predictive search (the d
 typing) is deliberately left without the button; it is a preview list, not a shop grid.
 
 ## 2026-09-16 · Bug · Search only products, so pages stop appearing in the product grid
-**Commit:** PENDING · **Files:** sections/main-search.liquid, snippets/header-search.liquid, sections/main-404.liquid
+**Commit:** 26a02aa · **Files:** sections/main-search.liquid, snippets/header-search.liquid, sections/main-404.liquid
 
 **What it does / did:** All three search forms now send `type=product`, so Shopify searches
 products only. Before, none of them said what to search, and Shopify's default is to search
