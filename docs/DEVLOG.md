@@ -706,7 +706,7 @@ In the browser: no badge should appear anywhere while `new-arrivals` is empty. T
 rather than read from the tag. The test is whether the theme can disagree with the app.
 
 ## 2026-09-16 · Bug · Repair four faults in the hero section
-**Commit:** PENDING · **Files:** sections/lena-hero.liquid, templates/index.json
+**Commit:** 2f44b95 · **Files:** sections/lena-hero.liquid, templates/index.json
 
 Four separate faults in one file, fixed together because they are all in the hero and each is
 small on its own.
