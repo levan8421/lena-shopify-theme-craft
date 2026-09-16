@@ -952,3 +952,40 @@ sections are listed. They must still be available in the template area.
 
 **Regression risk:** every new section that ships a `presets` block. The loop above is the
 check; it is cheap enough to run on any section change.
+
+## 2026-09-16 · Bug · Remove a CSS rule that restated a stock rule
+**Commit:** PENDING · **Files:** assets/lena-custom.css
+
+**What it does / did:** Deleted `.product__title > a.product__title { display: none; }` from
+`lena-custom.css`. Stock `section-main-product.css:257` already declares
+`.product__title > a { display: none; }`.
+
+**Why it matters:** the Lena rule was more specific and said exactly the same thing, so it
+changed nothing and could only ever drift from the rule it shadowed. It looks like an earlier,
+less-informed attempt at the problem the comment block further down the same file documents
+properly — stock `.product__title > * { margin: 0 }` zeroing the margins on Lena elements,
+solved there by adding a class to the selector.
+
+**Checked before deleting, not assumed.** The rule was only safe to remove if the stock rule
+loads everywhere the selector matches:
+
+```
+who loads section-main-product.css   → featured-product.liquid, main-product.liquid
+who renders <a class="product__title"> inside .product__title  → main-product.liquid:133 only
+featured-product.liquid              → <h2 class="product__title">, no nested anchor
+```
+
+So the only matching markup is on the product page, which always loads the stock sheet. Had
+`featured-product` rendered a nested anchor, deleting this would have hidden the link that
+section exists to provide.
+
+**Verify now:**
+```bash
+grep -n "product__title > a" assets/lena-custom.css assets/section-main-product.css
+#   only the stock file
+```
+In the browser: the product page title must still appear exactly once. If a second, smaller,
+underlined copy of the title appears beneath the `<h1>`, this was wrong — revert it.
+
+**Regression risk:** a future section rendering `.product__title > a` without loading
+`section-main-product.css`.

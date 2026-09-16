@@ -770,7 +770,12 @@ a.lena-notify-btn {
 }
 
 /* --- Product Detail Page (PDP) Lena Branding --- */
-.product__title > a.product__title { display: none; }
+/* `.product__title > a { display: none }` used to be repeated here. It is already
+   declared in stock section-main-product.css:257, and the only markup the selector
+   matches is main-product.liquid:133 - which always loads that stylesheet. The
+   duplicate said the same thing in a more specific way and could only ever drift.
+   featured-product.liquid renders <h2 class="product__title"> with no nested anchor,
+   so it never matched there either. */
 
 
 .lena-pdp-badge-1of1 {
