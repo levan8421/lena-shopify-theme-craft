@@ -581,7 +581,7 @@ nothing → expect the filter wording, and check the "remove all" link keeps pro
 whether filters exist when the question is whether one was used.
 
 ## 2026-09-16 · Bug · Signup forms no longer report success when the submit failed
-**Commit:** PENDING · **Files:** snippets/lena-notify-modal.liquid, sections/lena-email-popup.liquid, assets/lena-custom.css
+**Commit:** 2fdec91 · **Files:** snippets/lena-notify-modal.liquid, sections/lena-email-popup.liquid, assets/lena-custom.css
 
 **What it does / did:** Both signup forms now check the response and show an error if the
 submit failed. Before, every outcome reached the success branch.
