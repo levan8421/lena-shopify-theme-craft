@@ -1030,3 +1030,46 @@ both the cards and the column layout change together, then put it back.
 
 **Regression risk:** a third reader of the same question added without the snippet. The point of
 the snippet is that the next person has somewhere obvious to look.
+
+## 2026-09-16 · Bug · Featured Piece rotation can now reach every piece in its pool
+**Commit:** PENDING · **Files:** sections/lena-featured-piece.liquid
+
+**What it does / did:** The rotation seed counts days since the epoch. It used to read a
+calendar field directly.
+
+**Why it matters:** the old seed was `'now' | date: '%m'` for monthly rotation — the month
+number, 1 to 12. `fp_index = fp_seed | modulo: fp_pool_size` therefore only ever took 12
+values, so a pool larger than 12 could never show its 13th piece, and the same month picked the
+same index every year. Weekly used `'%W'` and capped at 54 the same way. Daily used `'%j'`,
+which was fine at 366 but reset each January.
+
+All three are offered as equals in the theme editor, under help text reading "Everyone sees the
+same piece for the whole period" — true, and it hides this completely.
+
+Days since the epoch only increases, so modulo covers the whole pool for every setting.
+
+**R15 is documented here, not fixed.** Outside a `{% paginate %}` tag, `collection.products`
+returns at most 50 products, so the pool is filtered from the first 50 of the collection in its
+sort order. Pointed at the Artisan collection (112 products) the section can only ever feature
+50 of them.
+
+Liquid offers no way round this in a section: `paginate` takes its page from the URL, and a
+homepage section does not control the URL. So rather than leave it silent, the limit is now
+written where the pool is built, and the collection setting's help text in the theme editor
+says a smaller curated collection suits this section better than a large one.
+
+**R15 stays open** with that note. The real answer is a store-side decision about which
+collection to point at, not a code change.
+
+**Verify now:**
+```bash
+grep -n "date: '%m'\|date: '%W'\|date: '%j'" sections/lena-featured-piece.liquid || echo "no calendar seeds"
+grep -n "fp_days" sections/lena-featured-piece.liquid   # the new seed
+```
+In the browser, set rotation to **Every month** and confirm a piece appears. The rotation itself
+takes a month to observe, so the useful check is arithmetic: with `fp_days` around 20700 today,
+`20700 / 30 = 690`, and `690 modulo 112` is 18 — an index the old `%m` seed could never reach,
+since it never exceeded 12.
+
+**Regression risk:** reusing a calendar component as a seed for any pool larger than that
+component's range. The test is whether the seed can exceed the pool size.

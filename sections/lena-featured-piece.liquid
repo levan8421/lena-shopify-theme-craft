@@ -21,6 +21,15 @@
   comment
     where: 'available' is the single-argument truthy form. The two-argument
     form compares against a string and does not reliably match a boolean.
+
+    KNOWN LIMIT (R15 in docs/OPEN_ITEMS.md): outside a {% paginate %} tag,
+    collection.products returns at most 50 products. So fp_pool is filtered from the
+    first 50 of the collection in its own sort order, not from all of it. Pointed at a
+    collection of 112, this section can only ever feature 50 of them.
+
+    Liquid offers no way round this in a section - paginate takes its page from the URL,
+    which a homepage section does not control. The practical answer is a collection sized
+    to the job rather than a large one, which is why the setting's help text now says so.
   endcomment
   assign fp_pool = fp_collection.products | where: 'available'
   assign fp_pool_size = fp_pool.size
@@ -28,13 +37,26 @@
 
 {%- if fp_collection != blank and fp_pool_size > 0 -%}
   {%- liquid
+    comment
+      The seed counts days since the epoch, not a position in the calendar.
+
+      It used to read a calendar field directly: '%m' for monthly, which only ever takes
+      12 values, so a pool larger than 12 could never show its 13th piece and the same
+      month always picked the same index every year. '%W' capped weekly at 54 the same
+      way. '%j' was fine at 366 but reset each year.
+
+      Days since the epoch only ever increases, so modulo covers the whole pool for every
+      rotation setting.
+    endcomment
+    assign fp_days = 'now' | date: '%s' | divided_by: 86400
+
     case section.settings.rotation
       when 'weekly'
-        assign fp_seed = 'now' | date: '%W' | plus: 0
+        assign fp_seed = fp_days | divided_by: 7
       when 'monthly'
-        assign fp_seed = 'now' | date: '%m' | plus: 0
+        assign fp_seed = fp_days | divided_by: 30
       else
-        assign fp_seed = 'now' | date: '%j' | plus: 0
+        assign fp_seed = fp_days
     endcase
 
     assign fp_index = fp_seed | modulo: fp_pool_size
@@ -153,7 +175,7 @@
       "type": "collection",
       "id": "collection",
       "label": "Collection to feature from",
-      "info": "One available piece is chosen from this collection. Sold-out pieces are skipped, and the section hides itself while nothing is available."
+      "info": "One available piece is chosen from this collection. Sold-out pieces are skipped, and the section hides itself while nothing is available. Only the first 50 products of the collection can be reached, so a smaller, curated collection works better here than a large one."
     },
     {
       "type": "select",
