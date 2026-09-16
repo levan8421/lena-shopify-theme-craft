@@ -954,7 +954,7 @@ sections are listed. They must still be available in the template area.
 check; it is cheap enough to run on any section change.
 
 ## 2026-09-16 · Bug · Remove a CSS rule that restated a stock rule
-**Commit:** PENDING · **Files:** assets/lena-custom.css
+**Commit:** 5ec006e · **Files:** assets/lena-custom.css
 
 **What it does / did:** Deleted `.product__title > a.product__title { display: none; }` from
 `lena-custom.css`. Stock `section-main-product.css:257` already declares
