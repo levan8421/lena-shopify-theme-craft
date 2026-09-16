@@ -880,7 +880,7 @@ also like" can actually be bought. A sold-out piece should not appear at all.
 two independent loops rather than one filtered list, so each one has to carry the rule.
 
 ## 2026-09-16 · Bug · The collection empty state follows its own colour scheme
-**Commit:** PENDING · **Files:** sections/lena-drop-coming-soon.liquid, assets/lena-custom.css
+**Commit:** 712ba48 · **Files:** sections/lena-drop-coming-soon.liquid, assets/lena-custom.css
 
 **What it does / did:** The empty-state paragraph took its colour from the section's colour
 scheme. It used to hardcode `rgba(14,34,64,0.7)` — navy at 70% — regardless of the scheme.
