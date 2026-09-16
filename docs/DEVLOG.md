@@ -919,7 +919,7 @@ confirm the paragraph is now readable on navy. Set it back to scheme-1.
 test is whether the section still reads correctly on `scheme-4`.
 
 ## 2026-09-16 · Bug · Six sections could be dropped into the header or footer group
-**Commit:** PENDING · **Files:** sections/lena-hero.liquid, sections/lena-drop-header.liquid, sections/lena-testimonials.liquid, sections/lena-spotlight.liquid, sections/lena-email-popup.liquid, sections/lena-find-us.liquid
+**Commit:** 5239cc4 · **Files:** sections/lena-hero.liquid, sections/lena-drop-header.liquid, sections/lena-testimonials.liquid, sections/lena-spotlight.liquid, sections/lena-email-popup.liquid, sections/lena-find-us.liquid
 
 **What it does / did:** Every Lena section with a `presets` block now carries
 `"disabled_on": { "groups": ["header", "footer"] }`. Only `lena-featured-piece` had it.
