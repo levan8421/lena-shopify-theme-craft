@@ -22,7 +22,7 @@
     where: 'available' is the single-argument truthy form. The two-argument
     form compares against a string and does not reliably match a boolean.
 
-    KNOWN LIMIT (R15 in docs/OPEN_ITEMS.md): outside a {% paginate %} tag,
+    KNOWN LIMIT (R15 in docs/OPEN_ITEMS.md): outside a paginate tag,
     collection.products returns at most 50 products. So fp_pool is filtered from the
     first 50 of the collection in its own sort order, not from all of it. Pointed at a
     collection of 112, this section can only ever feature 50 of them.

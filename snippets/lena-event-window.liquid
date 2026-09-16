@@ -15,6 +15,8 @@
 
     {%- capture visible -%}{%- render 'lena-event-window', event: event -%}{%- endcapture -%}
     {%- if visible == '1' -%}
+      ... the card ...
+    {%- endif -%}
 
   The window: from now until 14 days ahead, and an event stays up until a day after it
   ends. An event with no end date is treated as ending when it starts.

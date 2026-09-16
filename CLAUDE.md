@@ -23,10 +23,13 @@ shopify theme push --unpublished   # Push for review
 | `sections/lena-testimonials.liquid` | 190 | Customer testimonial cards |
 | `sections/lena-find-us.liquid` | 239 | Location cards + metaobject scheduled events |
 | `sections/lena-email-popup.liquid` | 90 | Newsletter modal (tags `newsletter` only) |
-| `snippets/lena-notify-modal.liquid` | 70 | "Notify me" modal for sold-out pieces. Tags the contact `newsletter,notify-<category-handle>` |
+| `snippets/lena-notify-modal.liquid` | 127 | "Notify me" modal for sold-out pieces. Tags the contact `newsletter,notify-<category-handle>`. Checks `response.ok` and shows an error on failure; manages dialog focus |
+| `snippets/lena-notify-target.liquid` | 63 | Resolves which category a Notify Me signup is filed under. Outputs `<handle>\|<label>`. **`product.type` is not the collection handle** — five of seven live categories disagree |
+| `snippets/lena-color-facet.liquid` | 42 | The colour-facet rule, in one place. Returns the display label, or nothing to hide a non-colour value. Was written six times in `facets.liquid` with two different conditions |
+| `snippets/lena-event-window.liquid` | 41 | Is a `scheduled_event` inside the 14-day display window? Outputs `1` or nothing. `lena-find-us` asks it twice — to count cards and to render them |
 | `snippets/breadcrumbs.liquid` | 56 | PDP breadcrumbs — `collection` when arrived through one, category list as fallback. **No trailing crumb**: it would repeat the `<h1>` beneath it |
 | `snippets/lena-category-handles.liquid` | 17 | The canonical category handles as one CSV. Single source of truth for `breadcrumbs` and `related-products`; consume with `capture` + `render` |
-| `assets/lena-custom.css` | 1203 | All custom styles (17 sections, 80+ classes) |
+| `assets/lena-custom.css` | 1414 | All custom styles (17 sections, 80+ classes). Includes the 404 page rules, moved here from an inline block in `main-404.liquid` |
 
 **Filename note:** `lena-drop-header` and `lena-drop-coming-soon` keep their filenames for historical
 reasons — the section `type` string is bound by three JSON templates, so renaming the files breaks
@@ -41,11 +44,11 @@ them. Neither has anything to do with drops any more; see their header comments.
 | `sections/featured-collection.liquid` | 67, ~215 | Conditional wrapper: hides section when linked collection is empty (**unmarked** — no `Lena:` comment, so grep misses it) |
 | `snippets/card-product.liquid` | 108–122, 164–167, 228–237, 332–337, 436–437 | Cards: inventory badge (dynamic), sold overlay, category label, scarcity/notify · quick add gated on `card_product.available` so a sold-out card keeps Notify Me as its only CTA |
 | `sections/main-search.liquid` | 5–27, ~300 | `quick_add` support: schema setting, conditional asset loading, and the param passed to `card-product`. Stock Craft's search section had none, so search cards could never show Add to cart |
-| `snippets/facets.liquid` | 204–220, 592–608 | Color filter whitelist: skips non-color tag values (e.g. "Accessories", "artisan") |
+| `snippets/facets.liquid` | 6 call sites | Color filter: every site renders `lena-color-facet`, which skips non-color tag values (e.g. "Accessories", "artisan") and strips the `color-` prefix. **These insertions carry no `Lena:` marker**, so `grep -rn "Lena:"` misses them — grep `lena-color-facet` or `lena_` instead |
 | `snippets/header-dropdown-menu.liquid` | ~11 | Omits the New Arrivals nav link while that collection is empty |
 | `snippets/header-drawer.liquid` | ~25 | Same rule, mobile drawer. Link list only — panel behaviour untouched |
 | `snippets/header-mega-menu.liquid` | ~11 | Same rule. Dormant unless `menu_type_desktop` is set to `mega` |
-| `sections/main-404.liquid` | 1–175 | Full rewrite: branded 404 with search, nav links, diamond motifs |
+| `sections/main-404.liquid` | whole file | Full rewrite: branded 404 with search, nav links, diamond motifs. Now 52 lines — its styles live in `lena-custom.css`, not inline |
 | `sections/collection-list.liquid` | ~18, schema | `subtitle` setting rendered under the section title |
 | `sections/related-products.liquid` | 30–145 | Recommendations filtered to matching `product.type`, topped up from the product's category collection so the row is never short |
 
@@ -203,7 +206,9 @@ Do not hand-edit `templates/*.json`, `sections/*-group.json`, or `config/setting
   read or item cap — those would make the theme second-guess the app.
 - **`all_products_count`, not `products_count`**: the latter reflects the current tag-filtered view.
   Use `all_products_count` for any visibility decision.
-- **Color filter**: Whitelist in `snippets/facets.liquid` — update both desktop and mobile instances
+- **Color filter**: the whitelist lives in `snippets/lena-color-facet.liquid`, once. It used to be
+  duplicated in `facets.liquid` and surrounded by six copies of the "is this the Color filter"
+  test in two non-equivalent forms. Add a new colour there and every call site follows.
 - **Section CSS beats `lena-custom.css` at equal specificity.** `lena-custom.css` loads in the
   `<head>` (`theme.liquid:259`); a section's own stylesheet loads from inside the section body, so
   it comes *later* in the cascade and wins any tie. This is why `.product__title > * { margin: 0 }`
