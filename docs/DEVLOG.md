@@ -1352,7 +1352,7 @@ grep -n "A6" docs/OPEN_ITEMS.md             # only the pointer line to this entr
 ```
 
 ## 2026-09-16 · Bug · New Arrivals bar takes a collection picker, not a typed handle
-**Commit:** PENDING · **Files:** sections/lena-drop-header.liquid
+**Commit:** 8eafb87 · **Files:** sections/lena-drop-header.liquid
 
 **What it does / did:** The section's collection setting is a picker. It was a free-text field
 holding a handle, looked up with `collections[section.settings.collection_handle]`.
