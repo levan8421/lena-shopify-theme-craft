@@ -175,6 +175,7 @@
     },
     "featured-collection": {
       "type": "featured-collection",
+      "disabled": true,
       "name": "Featured collection-Available",
       "settings": {
         "collection": "available-now",
@@ -425,6 +426,7 @@
         "qa-photo",
         "qa-return"
       ],
+      "name": "Q&A",
       "settings": {
         "caption": "",
         "heading": "Questions & Answers",
