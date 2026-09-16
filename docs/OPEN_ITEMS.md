@@ -10,40 +10,8 @@ Last swept: 2026-09-15.
 
 ## Theme code
 
-### A6 · `color-clear` is silently deleted from the Color facet
-
-The store carries **15** `color-*` tags; the live Color facet renders **14**. `clear` is absent from
-the ~55-name whitelist in `snippets/facets.liquid` (desktop ~line 204, drawer ~line 592), so products
-tagged `color-clear` are **unreachable by colour**, and nothing in the UI indicates a value is
-missing. Any future colour outside the hardcoded list vanishes the same way.
-
-Recommended fix: **invert the whitelist** — render any `color-*` value and strip the prefix for the
-label, rather than matching against a fixed list. A whitelist that fails silently is worse than no
-whitelist.
-
-Held report-only under the Part C protection. Worth re-raising with the auditor: the protection was
-written on the belief that the filters "all work", which this contradicts.
-
-**Verify:** compare the tag list against the rendered facet.
-```
-# every color-* tag on the store, vs what the facet renders
-shopify app ... / Admin API: productTags  →  expect 15
-open /collections/available-now and count the Color facet entries  →  renders 14
-```
-
-### The colour whitelist is duplicated
-
-The same ~55 names appear twice in `snippets/facets.liquid` — desktop and mobile drawer. The two can
-drift. Folding them into one `{% assign %}` or a snippet removes the class of bug entirely. Fix this
-in the same pass as the item above.
-
-### Notify Me reports success on failure
-
-`snippets/lena-notify-modal.liquid` submits with `fetch('/contact', …).then(…)` and has **no
-`.catch` and no response-status check**. A network failure or a rejected submission still swaps the
-form for "You'll be the first to know!", so the visitor believes they signed up when they did not.
-
-Fix: check `response.ok`, and show an error state on the failure path.
+*(A6, the duplicated colour whitelist, and the Notify Me failure item were all closed on
+2026-09-16 — see `DEVLOG.md`. A6 was stale, the other two were fixed as R21 and R4.)*
 
 ---
 
@@ -181,7 +149,7 @@ is never used to mean "unchecked".
 | R25 | Find Us computes its 14-day event window twice | Lena file | fixed | not yet |
 | R26 | `lena-drop-header` takes a typed collection handle instead of a picker | Lena file | open | not yet |
 | R27 | `.product__title > a` display rule is duplicated between stock and custom CSS | Lena file | fixed | not yet |
-| R28 | A6 (`color-clear`) is stale — the tag no longer exists | store data | open | not yet |
+| R28 | A6 (`color-clear`) is stale — the tag no longer exists | store data | fixed | not yet |
 | R29 | Search results mix in pages and blog posts — "Our Story" appears among the products | Lena in stock | fixed | not yet |
 | R30 | Search says "167 results" but most result pages are nearly or completely empty | Shopify search | open | not yet |
 | R31 | An empty search page says "Use fewer filters" even when no filter is applied | Lena in stock | fixed | not yet |

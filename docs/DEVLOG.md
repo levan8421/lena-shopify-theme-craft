@@ -1310,3 +1310,43 @@ heading on navy. Check the PDP scarcity line still shows a green diamond.
 
 **Regression risk:** a new section written as a self-contained file with its own styles. The
 grep above is the check.
+
+## 2026-09-16 · Bug · Close three older open items: A6, the duplicated whitelist, Notify Me failures
+**Commit:** PENDING · **Files:** docs/OPEN_ITEMS.md
+
+`OPEN_ITEMS.md` holds only what is open — closing an item removes its row and records the fact
+here instead, so the same thing is never written down twice. Three items from the Tier 0 tail
+are now closed.
+
+**A6 — `color-clear` is silently deleted from the Color facet. Closed as stale, not fixed.**
+A6 stated the store carried **15** `color-*` tags and the facet rendered 14, with `clear`
+missing from the whitelist. Measured against the live store on 2026-09-16 via
+`productTags(first: 250)`, there are **13**, and every one passes the whitelist:
+
+```
+color-beige  color-black  color-blue   color-brown  color-gray
+color-green  color-multi  color-orange color-pink   color-purple
+color-red    color-white  color-yellow
+```
+
+There is no `color-clear`. The bug it describes is not reachable, because the data moved. The
+design point it made — a whitelist that drops unknown values silently — is real and is now
+recorded in `snippets/lena-color-facet.liquid`, where someone adding a fourteenth colour will
+meet it.
+
+**The colour whitelist is duplicated. Closed as fixed (R21).** It was worse than the item said:
+the ~55 names appeared twice, and the surrounding "is this the Color filter" test appeared six
+times in two non-equivalent forms.
+
+**Notify Me reports success on failure. Closed as fixed (R4).** Also worse than recorded — the
+newsletter popup had the same fault plus a `localStorage` write on the failure path, so a
+failed signup was reported as success and then suppressed the popup permanently.
+
+**Still open and unchanged:** the bare `Black` tag alongside `color-black` is still live —
+confirmed present in the same tag query.
+
+**Verify now:**
+```bash
+grep -c "color-clear" docs/OPEN_ITEMS.md    # 0
+grep -n "A6" docs/OPEN_ITEMS.md             # only the pointer line to this entry
+```
