@@ -1120,3 +1120,39 @@ Arrivals collection and confirm the "preparing something special" section still 
 **Regression risk:** any new gate written as `products_count` or `products.size`. The test is
 whether the question is "does this collection hold anything" or "how many is the visitor
 seeing" — they need different counts.
+
+## 2026-09-16 · Bug · Both modals now move, trap and return keyboard focus
+**Commit:** PENDING · **Files:** snippets/lena-notify-modal.liquid, sections/lena-email-popup.liquid
+
+**What it does / did:** Opening either dialog moves focus into it, Tab is kept inside while it
+is open, and closing returns focus to whatever opened it. None of that happened before.
+
+**Why it matters:** both overlays declare `role="dialog" aria-modal="true"`. That tells
+assistive technology the rest of the page is inert. Neither did anything to make it so:
+
+- Focus stayed behind the dialog, so a screen-reader user was given no indication the newsletter
+  popup had appeared after 10 seconds.
+- Tab walked straight out of the dialog and through the page underneath — and everything it
+  reached was content the page had just declared did not exist.
+- `document.body.style.overflow = 'hidden'` stopped the mouse scrolling the page behind, but
+  not the keyboard, so the two disagreed.
+- Closing left focus wherever it had wandered to, instead of back at the button that opened it.
+
+**Also fixed:** the Escape handler is bound to `document` for the life of the page. In the
+notify modal it was unguarded, so it ran on every Escape keypress whether or not the dialog was
+on screen. Both now check the dialog is actually open, and `hide()` returns early if it is not —
+so a stray close cannot steal focus from the page.
+
+**Verify now:**
+```bash
+grep -c "takeFocus\|releaseFocus\|trapTab" snippets/lena-notify-modal.liquid sections/lena-email-popup.liquid
+#   7 each
+node --check <the extracted <script> body>   # both parse; done before committing
+```
+In the browser, without a mouse: click a "Notify Me" button, then press Tab repeatedly. Focus
+must stay inside the dialog and cycle. Press Escape — focus must return to the Notify Me button
+you started from. Repeat for the newsletter popup.
+
+**Regression risk:** any new dialog built by copying these two. The helper block is duplicated
+in both files rather than shared, because they are a snippet and a section with separate
+`<script>` bodies — a third copy should become a shared asset instead.

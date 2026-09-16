@@ -45,15 +45,57 @@
   var overlay = document.getElementById('lena-popup-overlay');
   var shown = false;
 
+  // --- focus handling -------------------------------------------------------
+  // Both overlays declare role="dialog" aria-modal="true", which tells assistive
+  // technology the rest of the page is inert. Neither moved focus, trapped it, or
+  // gave it back - so focus stayed behind the dialog, Tab walked out into the page
+  // underneath, and everything it reached was content the page had just declared
+  // did not exist. body overflow:hidden stopped the mouse scrolling but not the
+  // keyboard.
+  var lastFocus = null;
+
+  function focusable() {
+    return overlay.querySelectorAll(
+      'button:not([disabled]), [href], input:not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+  }
+
+  function isOpen() { return overlay.style.display !== 'none'; }
+
+  function trapTab(e) {
+    if (e.key !== 'Tab') return;
+    var f = focusable();
+    if (!f.length) return;
+    var first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
+
+  function takeFocus() {
+    lastFocus = document.activeElement;
+    document.addEventListener('keydown', trapTab);
+    var target = overlay.querySelector('input[type="email"]') || overlay.querySelector('.lena-popup-close');
+    if (target) { target.focus(); }
+  }
+
+  function releaseFocus() {
+    document.removeEventListener('keydown', trapTab);
+    if (lastFocus && typeof lastFocus.focus === 'function') { lastFocus.focus(); }
+    lastFocus = null;
+  }
+
   function show() {
     if (shown) return;
     shown = true;
     overlay.style.display = '';
     document.body.style.overflow = 'hidden';
+    takeFocus();
   }
   function hide() {
+    if (!isOpen()) return;
     overlay.style.display = 'none';
     document.body.style.overflow = '';
+    releaseFocus();
     remember(DK);
   }
 
@@ -65,7 +107,7 @@
 
   overlay.querySelector('.lena-popup-close').addEventListener('click', hide);
   overlay.addEventListener('click', function(e) { if (e.target === overlay) hide(); });
-  document.addEventListener('keyup', function(e) { if (e.key === 'Escape' && shown) hide(); });
+  document.addEventListener('keyup', function(e) { if (e.key === 'Escape' && isOpen()) hide(); });
 
   var form = overlay.querySelector('form');
   var errorBox = overlay.querySelector('.lena-popup-error');

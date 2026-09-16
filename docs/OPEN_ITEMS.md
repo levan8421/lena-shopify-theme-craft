@@ -170,7 +170,7 @@ is never used to mean "unchecked".
 | R14 | Notify Me tags by `product.type`, not the canonical collection handle | Lena in stock | open | not yet |
 | R15 | Featured Piece pool is capped at 50 by `collection.products` — no Liquid fix exists; now documented in the section and its help text | Lena file | open | not yet |
 | R16 | Featured Piece monthly rotation can only ever surface 12 items | Lena file | fixed | not yet |
-| R17 | Both modals declare `aria-modal` but never move, trap, or restore focus | Lena file | open | not yet |
+| R17 | Both modals declare `aria-modal` but never move, trap, or restore focus | Lena file | fixed | not yet |
 | R18 | Testimonial star ratings have no text alternative | Lena file | fixed | not yet |
 | R19 | PDP `lena_qty` depends on block order — moving the title block kills the badge and scarcity line | Lena in stock | fixed | not yet |
 | R20 | Six sections with `presets` lack the `disabled_on` header/footer guard | Lena file | fixed | not yet |
