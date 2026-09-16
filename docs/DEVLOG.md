@@ -524,3 +524,58 @@ separate Shopify endpoint and keeps its own product/suggestion split.
 
 **Does NOT fix:** R30. The empty result pages and the unstable ordering are a Shopify-side
 search fault and are unaffected by this change.
+
+## 2026-09-16 · Bug · Stop blaming filters the visitor never used
+**Commit:** PENDING · **Files:** sections/main-search.liquid
+
+**What it does / did:** An empty search page used to say "No products found — use fewer
+filters or remove all", whether or not the visitor had applied a filter. It now tests whether
+a filter was actually applied, and shows one of three messages instead of one.
+
+**Why it matters:** `search.filters` is the list of filters the page *offers*, not the ones
+the visitor *chose*. Filtering is switched on for search, so that list is never empty and the
+condition was always true. Two consequences:
+
+- Every empty page told the visitor to remove filters they had never set. The advice could not
+  be followed, and "remove all" was a link that undid nothing they had done.
+- The correct plain wording, "No results for X", was unreachable. Its guard required
+  `search.filters == empty`, which never happens while filtering is on.
+
+This made R30 read as the visitor's fault. It does not fix R30.
+
+Three states now:
+
+| Situation | Message |
+|---|---|
+| No results at all, no filter used | No results for "X" |
+| No results, a filter was used | Use fewer filters or remove all |
+| This page empty, other pages have results | Nothing on this page → back to the first page |
+
+The third case is new. It is what a visitor hits on page 4 of `mirror`: neither stock message
+was true there, because the count says results exist.
+
+**Also fixed here:** the "remove all" link is built by hand at line 71 and did not carry
+`type=product`. After the previous commit, one click on it would have dropped the product-only
+restriction and brought pages and blog posts back into the grid. It now carries it.
+
+**Reproduce (before the fix):**
+1. Search `mirror`, apply no filters, go to page 4.
+2. → "No products found. Use fewer filters or remove all", with no filters applied.
+3. Search for a word matching nothing at all, e.g. `zzzzz` → same filter message, never
+   "No results for zzzzz".
+
+**Verify now:**
+```bash
+grep -n "lena_filter_applied" sections/main-search.liquid   # 5 hits: 1 assign, 1 loop, 3 reads
+grep -n "type=product" sections/main-search.liquid          # in the search_url string
+python3 -c "
+import re;s=open('sections/main-search.liquid').read()
+print(len(re.findall(r'{%-?\\s*if\\s',s)), len(re.findall(r'{%-?\\s*endif\\s*-?%}',s)))"   # equal
+```
+In the browser: search `zzzzz` → expect "No results for zzzzz", not filter wording. Search
+`mirror`, go to page 4 → expect the link back to page 1. Apply a colour filter that matches
+nothing → expect the filter wording, and check the "remove all" link keeps products only.
+
+**Regression risk:** Any new empty-state condition written as `search.filters != empty` or
+`collection.filters != empty`. The same mistake is open as R3 on the collection banner: asking
+whether filters exist when the question is whether one was used.

@@ -68,7 +68,31 @@
 {%- liquid
   assign sort_by = search.sort_by | default: search.default_sort_by
   assign terms = search.terms | escape
-  assign search_url = '?q=' | append: terms | append: '&options%5Bprefix%5D=last&sort_by=' | append: sort_by
+
+  comment
+    Lena: type=product is carried here too. This string is the "remove all filters" link,
+    so without it one click would drop the restriction the search forms set and bring
+    pages and blog posts back into the grid.
+  endcomment
+  assign search_url = '?q=' | append: terms | append: '&type=product&options%5Bprefix%5D=last&sort_by=' | append: sort_by
+
+  comment
+    Lena: did the visitor actually apply a filter, as opposed to filters merely being
+    offered on the page? search.filters is the list of AVAILABLE filters and is never
+    empty while filtering is enabled, so testing it answers the wrong question and told
+    every visitor with an empty page to "use fewer filters" they had never used.
+  endcomment
+  assign lena_filter_applied = false
+  for lena_f in search.filters
+    if lena_f.active_values.size > 0
+      assign lena_filter_applied = true
+      break
+    endif
+    if lena_f.min_value.value != blank or lena_f.max_value.value != blank
+      assign lena_filter_applied = true
+      break
+    endif
+  endfor
 -%}
 
 {%- style -%}
@@ -167,7 +191,7 @@
             </p>
           {%- endif -%}
         {%- endunless -%}
-        {%- if search.results_count == 0 and search.filters == empty -%}
+        {%- if search.results_count == 0 and lena_filter_applied == false -%}
           <p role="status">{{ 'templates.search.no_results' | t: terms: search.terms }}</p>
         {%- endif -%}
       {%- endif -%}
@@ -254,7 +278,7 @@
           {%- endif -%}
         {%- endif -%}
         <div class="product-grid-container" id="ProductGridContainer">
-          {%- if search.results.size == 0 and search.filters != empty -%}
+          {%- if search.results.size == 0 and lena_filter_applied -%}
             <div
               class="template-search__results collection collection--empty{% if section.settings.filter_type != 'vertical' %} page-width{% endif %}"
               id="product-grid"
@@ -269,6 +293,27 @@
                     'sections.collection_template.use_fewer_filters_html'
                     | t: link: search_url, class: 'underlined-link link'
                   }}
+                </h2>
+              </div>
+            </div>
+          {%- elsif search.results.size == 0 and search.results_count > 0 -%}
+            {%- comment -%}
+              Lena: this page of results is empty while other pages are not, and no filter
+              was applied - so neither stock message fits. "Use fewer filters" blames the
+              visitor for something they did not do, and the plain "no results" wording is
+              untrue when the count says otherwise. Offer the way back instead.
+              See R30 in docs/OPEN_ITEMS.md: the underlying fault is Shopify-side.
+            {%- endcomment -%}
+            <div
+              class="template-search__results collection collection--empty{% if section.settings.filter_type != 'vertical' %} page-width{% endif %}"
+              id="product-grid"
+              data-id="{{ section.id }}"
+            >
+              <div class="loading-overlay gradient"></div>
+              <div class="title-wrapper center">
+                <h2 class="title title--primary">
+                  Nothing on this page.<br>
+                  <a href="{{ search_url }}" class="underlined-link link">Back to the first page of results</a>
                 </h2>
               </div>
             </div>
