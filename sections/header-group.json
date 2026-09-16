@@ -62,10 +62,26 @@
         "padding_top": 16,
         "padding_bottom": 16
       }
+    },
+    "lena_featured_piece_gqXnJa": {
+      "type": "lena-featured-piece",
+      "name": "Featured Piece",
+      "settings": {
+        "collection": "signature-purses",
+        "rotation": "daily",
+        "eyebrow": "Piece of the Day",
+        "heading": "Today's <strong>Find</strong>",
+        "description": "",
+        "cta_label": "View this piece",
+        "color_scheme": "",
+        "padding_top": 52,
+        "padding_bottom": 52
+      }
     }
   },
   "order": [
     "announcement-bar",
-    "header"
+    "header",
+    "lena_featured_piece_gqXnJa"
   ]
 }
