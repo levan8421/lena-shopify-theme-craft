@@ -177,7 +177,7 @@
       "type": "lena-featured-piece",
       "name": "Featured Piece",
       "settings": {
-        "collection": "signature-purses",
+        "collection": "artisan",
         "rotation": "daily",
         "eyebrow": "Piece of the Day",
         "heading": "Today's <strong>Find</strong>",
