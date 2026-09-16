@@ -851,7 +851,7 @@ says "3 out of 5 stars".
 indicator without a text alternative.
 
 ## 2026-09-16 · Bug · "You may also like" no longer recommends sold-out pieces from one source only
-**Commit:** PENDING · **Files:** sections/related-products.liquid
+**Commit:** 0275556 · **Files:** sections/related-products.liquid
 
 **What it does / did:** The recommendations pass now skips sold-out pieces, which the category
 top-up pass already did.
