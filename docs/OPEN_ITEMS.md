@@ -137,48 +137,54 @@ above.
 Whole-theme survey: homepage stack, PDP, cards, collection and search templates, facets,
 modals, CSS, and accessibility. Read-only — **nothing was changed**.
 
-**Legend.** *Origin* — `Lena file` a file Lena created; `Lena in stock` a Lena-added
-range inside a stock Craft file; `admin setting` a value in a theme-editor-owned JSON,
-not code; `store data` neither. No finding is an inherited stock Craft defect, though
-this review covered the custom surface and the stock code adjacent to it, not
-unmodified Craft 15.4.1 at large. *Status* — `open` until the change is committed.
-*Review* — `passed` once the
-fix has been re-verified by the steps in that item's **Verify** block; `failed` means not
-yet verified, which is every row today.
+**Legend.**
+
+*Origin* — `Lena file` a file Lena created; `Lena in stock` a Lena-added range inside a stock
+Craft file; `admin setting` a value in a theme-editor-owned JSON, not code; `store data`
+neither; `Shopify search` a fault on Shopify's side, outside this repository. No finding is an
+inherited stock Craft defect — though this review covered the custom surface and the stock
+code next to it, not the whole of unmodified Craft 15.4.1.
+
+*Status* — `open` means not changed yet. `fixed` means the change is committed.
+
+*Review* — `not yet` means nobody has checked it in a browser. `passed` means someone followed
+the **Verify** steps for that item and it worked. `failed` means someone followed them and it
+did not work. A fix stays `not yet` until a person looks at it; `failed` is a real verdict and
+is never used to mean "unchecked".
 
 | # | Bug | Origin | Status | Review |
 |---|---|---|---|---|
-| R1 | Featured Piece points at collection handle `artisan`, which does not exist — section renders nothing, and the homepage has no products at all | admin setting | open | failed |
-| R2 | Quick add on search is inert: schema default is `none` and `search.json` never sets it | admin setting | fixed | failed |
-| R3 | Filtering a collection to zero results removes the `<h1>` and shows "we're preparing something special" | Lena in stock | open | failed |
-| R4 | Email popup and Notify modal report success on a failed submit; the popup also suppresses itself permanently | Lena file | open | failed |
-| R5 | Card "New" badge uses a 7-day `created_at` window — a second definition of "new" competing with the app-owned tag | Lena in stock | open | failed |
-| R6 | Hero's padding sliders are bound to nothing | Lena file | open | failed |
-| R7 | Hero heading is `richtext`, emitting `<p>` inside `<h1>` | Lena file | open | failed |
-| R8 | Hero mosaic links have no accessible name when image alt is empty | Lena file | open | failed |
-| R9 | Section eyebrow `#2E8FD9` on snow measures 3.35:1 — fails WCAG AA at 11px | Lena file | open | failed |
-| R10 | Scarcity green on white measures 4.34:1; card category grey 4.50:1 — both under AA | Lena file | open | failed |
-| R11 | Every section title is a `<div>`, not a heading — homepage outline jumps h1 → h3 | Lena file | open | failed |
-| R12 | Related products filters sold-out pieces out of the top-up pass but not the recommendations pass | Lena in stock | open | failed |
-| R13 | Breadcrumbs and related-products top-up both fail for products outside the 7 canonical collections | Lena file | open | failed |
-| R14 | Notify Me tags by `product.type`, not the canonical collection handle | Lena in stock | open | failed |
-| R15 | Featured Piece pool is capped at 50 by `collection.products` | Lena file | open | failed |
-| R16 | Featured Piece monthly rotation can only ever surface 12 items | Lena file | open | failed |
-| R17 | Both modals declare `aria-modal` but never move, trap, or restore focus | Lena file | open | failed |
-| R18 | Testimonial star ratings have no text alternative | Lena file | open | failed |
-| R19 | PDP `lena_qty` depends on block order — moving the title block kills the badge and scarcity line | Lena in stock | open | failed |
-| R20 | Five sections with `presets` lack the `disabled_on` header/footer guard | Lena file | open | failed |
-| R21 | Colour-filter logic is written six times, with two different conditions | Lena in stock | open | failed |
-| R22 | `main-404.liquid` carries a 175-line inline `<style>` block | Lena file | open | failed |
-| R23 | Inline styles across five Lena files | Lena file | open | failed |
-| R24 | Empty-state paragraph hardcodes navy text, ignoring `color_scheme` | Lena file | open | failed |
-| R25 | Find Us computes its 14-day event window twice | Lena file | open | failed |
-| R26 | `lena-drop-header` takes a typed collection handle instead of a picker | Lena file | open | failed |
-| R27 | `.product__title > a` display rule is duplicated between stock and custom CSS | Lena file | open | failed |
-| R28 | A6 (`color-clear`) is stale — the tag no longer exists | store data | open | failed |
-| R29 | Search results mix in pages and blog posts — "Our Story" appears among the products | Lena in stock | open | failed |
-| R30 | Search says "167 results" but most result pages are nearly or completely empty | Shopify search | open | failed |
-| R31 | An empty search page says "Use fewer filters" even when no filter is applied | Lena in stock | open | failed |
+| R1 | Featured Piece points at collection handle `artisan`, which does not exist — section renders nothing, and the homepage has no products at all | admin setting | open | not yet |
+| R2 | Quick add on search is inert: schema default is `none` and `search.json` never sets it | admin setting | fixed | not yet |
+| R3 | Filtering a collection to zero results removes the `<h1>` and shows "we're preparing something special" | Lena in stock | open | not yet |
+| R4 | Email popup and Notify modal report success on a failed submit; the popup also suppresses itself permanently | Lena file | open | not yet |
+| R5 | Card "New" badge uses a 7-day `created_at` window — a second definition of "new" competing with the app-owned tag | Lena in stock | open | not yet |
+| R6 | Hero's padding sliders are bound to nothing | Lena file | open | not yet |
+| R7 | Hero heading is `richtext`, emitting `<p>` inside `<h1>` | Lena file | open | not yet |
+| R8 | Hero mosaic links have no accessible name when image alt is empty | Lena file | open | not yet |
+| R9 | Section eyebrow `#2E8FD9` on snow measures 3.35:1 — fails WCAG AA at 11px | Lena file | open | not yet |
+| R10 | Scarcity green on white measures 4.34:1; card category grey 4.50:1 — both under AA | Lena file | open | not yet |
+| R11 | Every section title is a `<div>`, not a heading — homepage outline jumps h1 → h3 | Lena file | open | not yet |
+| R12 | Related products filters sold-out pieces out of the top-up pass but not the recommendations pass | Lena in stock | open | not yet |
+| R13 | Breadcrumbs and related-products top-up both fail for products outside the 7 canonical collections | Lena file | open | not yet |
+| R14 | Notify Me tags by `product.type`, not the canonical collection handle | Lena in stock | open | not yet |
+| R15 | Featured Piece pool is capped at 50 by `collection.products` | Lena file | open | not yet |
+| R16 | Featured Piece monthly rotation can only ever surface 12 items | Lena file | open | not yet |
+| R17 | Both modals declare `aria-modal` but never move, trap, or restore focus | Lena file | open | not yet |
+| R18 | Testimonial star ratings have no text alternative | Lena file | open | not yet |
+| R19 | PDP `lena_qty` depends on block order — moving the title block kills the badge and scarcity line | Lena in stock | open | not yet |
+| R20 | Five sections with `presets` lack the `disabled_on` header/footer guard | Lena file | open | not yet |
+| R21 | Colour-filter logic is written six times, with two different conditions | Lena in stock | open | not yet |
+| R22 | `main-404.liquid` carries a 175-line inline `<style>` block | Lena file | open | not yet |
+| R23 | Inline styles across five Lena files | Lena file | open | not yet |
+| R24 | Empty-state paragraph hardcodes navy text, ignoring `color_scheme` | Lena file | open | not yet |
+| R25 | Find Us computes its 14-day event window twice | Lena file | open | not yet |
+| R26 | `lena-drop-header` takes a typed collection handle instead of a picker | Lena file | open | not yet |
+| R27 | `.product__title > a` display rule is duplicated between stock and custom CSS | Lena file | open | not yet |
+| R28 | A6 (`color-clear`) is stale — the tag no longer exists | store data | open | not yet |
+| R29 | Search results mix in pages and blog posts — "Our Story" appears among the products | Lena in stock | open | not yet |
+| R30 | Search says "167 results" but most result pages are nearly or completely empty | Shopify search | open | not yet |
+| R31 | An empty search page says "Use fewer filters" even when no filter is applied | Lena in stock | open | not yet |
 
 ---
 
