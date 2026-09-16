@@ -1203,3 +1203,54 @@ expect `notify-glass-bead-woven-handbags`.
 
 **Regression risk:** a third caller of `window.lenaNotify` written with `product.type`. The
 snippet exists so there is one obvious place to look.
+
+## 2026-09-16 · Bug · One definition of the colour-facet rule, not six
+**Commit:** PENDING · **Files:** snippets/lena-color-facet.liquid (new), snippets/facets.liquid
+
+**What it does / did:** "Is this the Color filter, and is this value a real colour?" is now
+asked in one snippet. It was asked in six places in `facets.liquid`, **with two different
+conditions**.
+
+**Why it matters:** the two forms are not equivalent.
+
+| Where | Condition |
+|---|---|
+| The two checkbox lists (desktop, drawer) | `filter.label \| downcase == 'color'` |
+| The four active-filter pills | `filter.label == 'Color' or filter.label == 'color'` |
+
+A filter renamed to `COLOUR` or `Colour` in Search & Discovery satisfies the first and not the
+second. The checkbox list would then read "Blue" while the pill directly above it read
+"color-blue" — the raw tag, leaked to the customer. The ~55-name whitelist itself was pasted
+out in full twice, so adding a colour to one copy and not the other silently produced the same
+split.
+
+Nothing was broken today: the filter is labelled exactly `Color`, and all 13 live `color-*`
+tags pass the whitelist. This is the cost CLAUDE.md names — *"One rule written twice is the
+most expensive fault class there is, because every copy passes its own tests."* Six copies
+passed six times.
+
+The snippet also accepts the `colour` spelling now, which neither original did.
+
+**Still a whitelist, deliberately.** The Color facet is fed from tags, and the tag namespace
+carries non-colours like `Accessories` and `artisan`, so something has to separate them. It now
+fails in one place instead of two. The known cost stands: a fourteenth colour added in admin
+vanishes from the facet until it is added to the snippet. That is recorded in the snippet's own
+comment so the next person meets it there.
+
+`facets.liquid` lost 2,462 bytes.
+
+**Verify now:**
+```bash
+grep -c "lena-color-facet" snippets/facets.liquid                       # 8: 6 renders + 2 mentions
+grep -c "lena_color_whitelist\|lena_is_color\|lena_value_stripped" snippets/facets.liquid   # 0
+python3 -c "
+import re;s=open('snippets/facets.liquid').read()
+print(len(re.findall(r'{%-?\s*if\s',s)), len(re.findall(r'{%-?\s*endif\s*-?%}',s)))"   # equal
+```
+In the browser: open a collection with filtering on. The Color facet must list the same 13
+colours with the same names, and non-colour tag values must still be absent. Tick one and check
+the pill above reads "Color: Blue", not "Color: color-blue". Repeat in the mobile drawer — that
+is the second copy, and the one most likely to have drifted.
+
+**Regression risk:** a seventh reader of the same question. The snippet exists so there is one
+obvious place to add it.

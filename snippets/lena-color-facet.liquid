@@ -1,0 +1,42 @@
+{%- comment -%}
+  The display label for one facet value - or nothing at all, meaning hide this value.
+
+  Accepts: filter (required), value (required)
+
+  Why this exists. The question "is this the Color filter, and is this value a real colour?"
+  was asked in six places in snippets/facets.liquid, with TWO different conditions:
+
+    the two checkbox lists    filter.label | downcase == 'color'
+    the four active pills     filter.label == 'Color' or filter.label == 'color'
+
+  Those are not equivalent. A filter labelled COLOUR or Colour satisfies the first and not
+  the second, so the checkbox list would read "Blue" while the pill above it read
+  "color-blue". The ~55-name whitelist itself was pasted out in full twice. Six copies, two
+  meanings, and nothing fails when one is edited.
+
+  Behaviour:
+    not the Color filter  -> the value's own label, unchanged
+    a whitelisted colour  -> the colour name, prefix stripped and capitalised
+    anything else         -> nothing, so the caller hides the value
+
+  The whitelist is still a whitelist, because the Color facet is fed from tags and the tag
+  namespace carries non-colours. It now fails in one place instead of two. R28 records that
+  all 13 live color-* tags pass it as of 2026-09-16; a fourteenth colour added in admin will
+  vanish from the facet until it is added here, which is the known cost of this approach.
+{%- endcomment -%}
+{%- liquid
+  assign cf_filter_lower = filter.label | downcase
+
+  if cf_filter_lower == 'color' or cf_filter_lower == 'colour'
+    assign cf_whitelist = 'pink,red,orange,yellow,green,blue,purple,brown,beige,white,gray,grey,black,multi,navy,teal,coral,ivory,cream,gold,silver,rose,lavender,mint,burgundy,maroon,tan,khaki,olive,turquoise,magenta,peach,charcoal,indigo,aqua,mauve,plum,rust,salmon,taupe,wine,amber,bronze,champagne,copper,crimson,emerald,fuchsia,jade,lilac,mustard,sage,sapphire,scarlet,slate,violet' | split: ','
+    assign cf_stripped = value.label | downcase | remove_first: 'color-'
+    for cf_name in cf_whitelist
+      if cf_stripped == cf_name
+        echo cf_stripped | capitalize
+        break
+      endif
+    endfor
+  else
+    echo value.label
+  endif
+-%}

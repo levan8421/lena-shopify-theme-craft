@@ -74,12 +74,8 @@
                 </div>
                 {%- for filter in results.filters -%}
                   {%- for value in filter.active_values -%}
-                    {%- liquid
-                      assign lena_pill_label = value.label
-                      if filter.label == 'Color' or filter.label == 'color'
-                        assign lena_pill_label = value.label | downcase | remove_first: 'color-' | capitalize
-                      endif
-                    -%}
+                    {%- capture lena_pill_raw -%}{%- render 'lena-color-facet', filter: filter, value: value -%}{%- endcapture -%}
+                    {%- assign lena_pill_label = lena_pill_raw | strip | default: value.label -%}
                     <facet-remove>
                       <a href="{{ value.url_to_remove }}" class="active-facets__button active-facets__button--light">
                         <span class="active-facets__button-inner button button--tertiary">
@@ -206,26 +202,15 @@
                                 assign is_disabled = true
                               endif
 
-                              # Filter out non-color values from the Color filter
-                              # Tags are "color-black", "color-red" etc. — strip prefix before matching
+                              # Lena: one definition of the colour rule, in snippets/lena-color-facet.liquid.
+                              # An empty label means the value is not a colour and should be hidden.
+                              capture lena_facet_label
+                                render 'lena-color-facet', filter: filter, value: value
+                              endcapture
+                              assign lena_display_label = lena_facet_label | strip
                               assign lena_skip_value = false
-                              assign lena_filter_lower = filter.label | downcase
-                              assign lena_display_label = value.label
-                              if lena_filter_lower == 'color'
-                                assign lena_color_whitelist = 'pink,red,orange,yellow,green,blue,purple,brown,beige,white,gray,grey,black,multi,navy,teal,coral,ivory,cream,gold,silver,rose,lavender,mint,burgundy,maroon,tan,khaki,olive,turquoise,magenta,peach,charcoal,indigo,aqua,mauve,plum,rust,salmon,taupe,wine,amber,bronze,champagne,copper,crimson,emerald,fuchsia,jade,lilac,mustard,sage,sapphire,scarlet,slate,violet' | split: ','
-                                assign lena_value_lower = value.label | downcase
-                                assign lena_value_stripped = lena_value_lower | remove_first: 'color-'
-                                assign lena_is_color = false
-                                for lena_color in lena_color_whitelist
-                                  if lena_value_stripped == lena_color
-                                    assign lena_is_color = true
-                                    assign lena_display_label = lena_value_stripped | capitalize
-                                    break
-                                  endif
-                                endfor
-                                unless lena_is_color
-                                  assign lena_skip_value = true
-                                endunless
+                              if lena_display_label == blank
+                                assign lena_skip_value = true
                               endif
                             %}
                             {%- unless lena_skip_value -%}
@@ -370,12 +355,8 @@
             <div class="active-facets active-facets-desktop">
               {%- for filter in results.filters -%}
                 {%- for value in filter.active_values -%}
-                  {%- liquid
-                    assign lena_pill_label = value.label
-                    if filter.label == 'Color' or filter.label == 'color'
-                      assign lena_pill_label = value.label | downcase | remove_first: 'color-' | capitalize
-                    endif
-                  -%}
+                  {%- capture lena_pill_raw -%}{%- render 'lena-color-facet', filter: filter, value: value -%}{%- endcapture -%}
+                  {%- assign lena_pill_label = lena_pill_raw | strip | default: value.label -%}
                   <facet-remove>
                     <a href="{{ value.url_to_remove }}" class="active-facets__button active-facets__button--light">
                       <span class="active-facets__button-inner button button--tertiary">
@@ -604,26 +585,15 @@
                                   assign is_disabled = true
                                 endif
 
-                                # Filter out non-color values from the Color filter
-                                # Tags are "color-black", "color-red" etc. — strip prefix before matching
+                                # Lena: one definition of the colour rule, in snippets/lena-color-facet.liquid.
+                                # An empty label means the value is not a colour and should be hidden.
+                                capture lena_facet_label
+                                  render 'lena-color-facet', filter: filter, value: value
+                                endcapture
+                                assign lena_display_label = lena_facet_label | strip
                                 assign lena_skip_value = false
-                                assign lena_filter_lower = filter.label | downcase
-                                assign lena_display_label = value.label
-                                if lena_filter_lower == 'color'
-                                  assign lena_color_whitelist = 'pink,red,orange,yellow,green,blue,purple,brown,beige,white,gray,grey,black,multi,navy,teal,coral,ivory,cream,gold,silver,rose,lavender,mint,burgundy,maroon,tan,khaki,olive,turquoise,magenta,peach,charcoal,indigo,aqua,mauve,plum,rust,salmon,taupe,wine,amber,bronze,champagne,copper,crimson,emerald,fuchsia,jade,lilac,mustard,sage,sapphire,scarlet,slate,violet' | split: ','
-                                  assign lena_value_lower = value.label | downcase
-                                  assign lena_value_stripped = lena_value_lower | remove_first: 'color-'
-                                  assign lena_is_color = false
-                                  for lena_color in lena_color_whitelist
-                                    if lena_value_stripped == lena_color
-                                      assign lena_is_color = true
-                                      assign lena_display_label = lena_value_stripped | capitalize
-                                      break
-                                    endif
-                                  endfor
-                                  unless lena_is_color
-                                    assign lena_skip_value = true
-                                  endunless
+                                if lena_display_label == blank
+                                  assign lena_skip_value = true
                                 endif
                               %}
                               {%- unless lena_skip_value -%}
@@ -845,12 +815,8 @@
   <div class="active-facets active-facets-mobile medium-hide large-up-hide">
     {%- for filter in results.filters -%}
       {%- for value in filter.active_values -%}
-        {%- liquid
-          assign lena_pill_label = value.label
-          if filter.label == 'Color' or filter.label == 'color'
-            assign lena_pill_label = value.label | downcase | remove_first: 'color-' | capitalize
-          endif
-        -%}
+        {%- capture lena_pill_raw -%}{%- render 'lena-color-facet', filter: filter, value: value -%}{%- endcapture -%}
+        {%- assign lena_pill_label = lena_pill_raw | strip | default: value.label -%}
         <facet-remove>
           <a href="{{ value.url_to_remove }}" class="active-facets__button active-facets__button--light">
             <span class="active-facets__button-inner button button--tertiary">
@@ -960,12 +926,8 @@
         <div class="active-facets active-facets-desktop">
           {%- for filter in results.filters -%}
             {%- for value in filter.active_values -%}
-              {%- liquid
-                assign lena_pill_label = value.label
-                if filter.label == 'Color' or filter.label == 'color'
-                  assign lena_pill_label = value.label | downcase | remove_first: 'color-' | capitalize
-                endif
-              -%}
+              {%- capture lena_pill_raw -%}{%- render 'lena-color-facet', filter: filter, value: value -%}{%- endcapture -%}
+              {%- assign lena_pill_label = lena_pill_raw | strip | default: value.label -%}
               <facet-remove>
                 <a href="{{ value.url_to_remove }}" class="active-facets__button active-facets__button--light">
                   <span class="active-facets__button-inner button button--tertiary">
