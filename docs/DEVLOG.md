@@ -639,7 +639,7 @@ returns for a bad address, which needs a browser. Filed as part of R4.
 the check; a third copy would not.
 
 ## 2026-09-16 · Bug · PDP stock count no longer depends on block order
-**Commit:** PENDING · **Files:** sections/main-product.liquid
+**Commit:** 6a740d5 · **Files:** sections/main-product.liquid
 
 **What it does / did:** `lena_qty` is now assigned once, above the block loop. It used to be
 assigned inside the `title` block and read from three later blocks.
