@@ -161,3 +161,82 @@ grep -c "^" docs/OPEN_ITEMS.md                        # → the open-items sweep
 
 **Regression risk:** Acting on an archived document without reading its header. The headers are the
 only thing standing between `archive/` and a reintroduced `new_arrivals_window_days` setting.
+
+---
+
+## 2026-09-15 · Bug · Stock section CSS was flattening the PDP title block
+**Commit:** 58adb7a · **Files:** `assets/lena-custom.css`, `CLAUDE.md`
+
+**What it does / did:** Restores margins on every Lena element inside `.product__title`, and gives
+the `<h1>` a size that belongs to this design system.
+
+**Why it matters:** `section-main-product.css:253` sets `.product__title > * { margin: 0 }`. It
+loads from inside the section body (`main-product.liquid:12`), which puts it **after**
+`lena-custom.css` in the head (`theme.liquid:259`) — so at equal specificity the stock rule wins.
+Breadcrumbs, the category eyebrow, the 1-of-1 badge and the artisan line all rendered as one cramped
+stack. Separately the `<h1>` had no Lena rule at all and inherited stock
+`calc(var(--font-heading-scale) * 4rem)` ≈ **70px** at `heading_scale: 110`, dwarfing the 11px
+eyebrow beside it.
+
+Nothing catches this: `theme check` passes, the Liquid is correct, the classes are applied. It is
+visible only in a browser.
+
+**Reproduce (before the fix):**
+1. `grep -n "product__title > \*" assets/section-main-product.css` → the `margin: 0` rule.
+2. `grep -n "base.css\|lena-custom.css" layout/theme.liquid` → both in `<head>`.
+3. `grep -n "section-main-product.css" sections/main-product.liquid` → line 12, inside the body,
+   therefore later in the cascade.
+4. Open any PDP → breadcrumb, eyebrow and title touch with no spacing; title is ~70px.
+
+**Verify now:**
+```bash
+grep -n "product__title >" assets/lena-custom.css
+# → 7 matches: the 5 new rules (h1 + 4 children, each one class more specific than the stock
+#   `.product__title > *`), plus the pre-existing line 727 and one mention inside the comment.
+```
+In the app, on a PDP: clear space between breadcrumb, eyebrow, title, badge and artisan line; the
+title sits at a size comparable to other section headings.
+
+**Regression risk:** Adding a new element inside `.product__title` and styling it with a bare class
+selector. It will silently lose its margin. Always qualify with the parent:
+`.product__title > .lena-thing`.
+
+---
+
+## 2026-09-15 · Feature · Featured Piece section, rotating one product on a date seed
+**Commit:** d79bc4a · **Files:** `sections/lena-featured-piece.liquid` (new), `assets/lena-custom.css`, `CLAUDE.md`
+
+**What it does / did:** Spotlights a single available product from a chosen collection, with a large
+image beside category, title, inventory badge, price, scarcity line and a CTA. The piece changes on
+a daily, weekly or monthly period set in the theme editor.
+
+**Why it matters:** Available Now holds **219 products** and is sorted **MANUAL** (measured
+2026-09-15 via the Shopify Admin API: `productsCount` 219, `sortOrder` MANUAL). A 4-item homepage
+window into that is neither a shop nor a taste — the four shown were whatever floated to the top of
+an arrangement nobody maintains. One deliberately presented piece does more work.
+
+**Liquid has no random filter.** Rather than add JavaScript, this reuses the rotation already proven
+in `lena-spotlight.liquid:32-35`: seed an integer off `'now'`, modulo the pool size, pick by index.
+Everyone sees the same piece for the period, which reads as curation rather than chance and loads
+exactly one image.
+
+Two self-enforced rules: **sold-out pieces are excluded** from the pool (`where: 'available'`), since
+nearly everything here is one of a kind and featuring something already sold is worse than showing
+nothing; and the section **hides entirely** when the collection is blank or has nothing available.
+
+**Reproduce (feature — the steps that exercise it):**
+1. Theme editor → Add section → **Featured Piece**. Assign a collection.
+2. With every product in it sold out, or no collection assigned → the section does not render.
+3. With available products → one piece shows; it changes when the seeded period rolls over.
+
+**Verify now:**
+```bash
+grep -n "where: 'available'" sections/lena-featured-piece.liquid    # → the sold-out exclusion
+grep -n "date: '%j'\|date: '%W'\|date: '%m'" sections/lena-featured-piece.liquid   # → the three seeds
+shopify theme check --fail-level error                              # → 0 errors
+```
+
+**Regression risk:** Switching `where: 'available'` to the two-argument form
+(`where: 'available', true`). That form compares against a string and does not reliably match a
+boolean, so the pool would silently include sold-out pieces. Also: a future "pick truly at random"
+request means JavaScript and a rendered candidate pool — it is not a small change to this file.
