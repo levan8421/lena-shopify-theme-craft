@@ -176,6 +176,9 @@ yet verified, which is every row today.
 | R26 | `lena-drop-header` takes a typed collection handle instead of a picker | Lena file | open | failed |
 | R27 | `.product__title > a` display rule is duplicated between stock and custom CSS | Lena file | open | failed |
 | R28 | A6 (`color-clear`) is stale — the tag no longer exists | store data | open | failed |
+| R29 | Search results mix in pages and blog posts — "Our Story" appears among the products | Lena in stock | open | failed |
+| R30 | Search says "167 results" but most result pages are nearly or completely empty | Shopify search | open | failed |
+| R31 | An empty search page says "Use fewer filters" even when no filter is applied | Lena in stock | open | failed |
 
 ---
 
@@ -1046,3 +1049,183 @@ is present in the live tag list.
 grep -o "lena_color_whitelist = '[^']*'" snippets/facets.liquid | head -1
 # confirm each of the 13 appears after the color- prefix is stripped
 ```
+
+
+---
+
+# Search problems found in the browser — 2026-09-16
+
+Found by Hai while checking the quick-add fix, then measured against the **live** site
+(`lenahandicrafts.com`), so none of these were introduced by our recent commits.
+
+These three are written in the four-part format: what effect, where and how, how to fix,
+what else it affects.
+
+---
+
+## R29 · Pages and blog posts appear among the product results
+
+**1. What effect it can cause**
+
+A customer searches for `mirror`. In the grid of products, one card is not a product. It is
+the "Our Story" page. The card has no photo, no price, and no Add to cart button — just a
+small grey label saying "Page".
+
+It looks like a product that failed to load. A customer may think the site is broken.
+
+**2. Where and how it happens**
+
+The search box sends no instruction about what kind of thing to search for. In
+`sections/main-search.liquid` around line 126 the form contains only:
+
+```liquid
+<input name="options[prefix]" type="hidden" value="last">
+```
+
+When Shopify is not told what to search, it searches everything: products, pages and blog
+posts. The section then draws whatever comes back into the same grid
+(`main-search.liquid:294`, `case item.object_type`).
+
+To see it: search `mirror` on the live site. "Our Story" is on page 1.
+
+**3. How to fix**
+
+Code change, one line. Add a hidden field to the search form so only products are searched:
+
+```liquid
+<input type="hidden" name="type" value="product">
+```
+
+This is stock Craft behaviour, not something Lena added — but the form lives in a file Lena
+already edits, so the change belongs with our code.
+
+**4. Does it affect other features**
+
+Yes, two:
+
+- **The dropdown while typing** (predictive search) is a different feature in a different
+  file. It has its own settings and is not changed by this.
+- **The result count drops.** Today the page says 167 results, which includes pages and blog
+  posts. Searching products only will make that number smaller and more honest. It does not
+  fix R30.
+
+---
+
+## R30 · Search says 167 results but the pages are nearly empty
+
+**1. What effect it can cause**
+
+This is the serious one. A customer searching `mirror` is told there are **167 results**
+across **7 pages**. Most of those pages are almost empty, and two of them show nothing at
+all.
+
+A customer who clicks to page 4 sees "No products found". They will reasonably conclude the
+shop has nothing, and leave — while the shop actually has 132 mirrors in stock.
+
+Measured on the live site, 2026-09-16, with **no filters applied**:
+
+| Page | Product cards shown |
+|---|---|
+| 1 | 24 (23 products + the "Our Story" page) |
+| 2 | 10 |
+| 3 | 5 |
+| 4 | **0 — "No products found"** |
+| 5 | 1 |
+| 7 | **0 — "No products found"** |
+
+Header on every one of those pages: "167 results".
+
+**Confidence.** Pages 4 and 7 being empty is certain — the words "No products found" are
+written into the page by the server, and Hai saw the same thing independently in the browser.
+The counts for pages 2, 3 and 5 come from an automated reader and may be undercounts; they
+have not been counted by hand in a browser.
+
+**Control test.** The same check on a collection page works correctly:
+`/collections/compact-mirrors?page=3` shows 36 cards, says "132 pieces", links exactly 3
+pages, and shows no empty message. So **normal page-by-page browsing is fine. Only search is
+broken.**
+
+**2. Where and how it happens**
+
+`sections/main-search.liquid:88` splits the results into pages:
+
+```liquid
+{% paginate search.results by 24 %}
+```
+
+Shopify decides how many pages to draw from its own total (167). But the actual products it
+hands back for each page are far fewer than 24. The total and the contents disagree.
+
+The cause is inside Shopify's search, not in our theme. The pagination code here is stock
+Craft and has not been modified.
+
+**Leading idea, not yet proven:** the search page has filtering switched on
+(`"enable_filtering": true` in `templates/search.json`). On a search page, turning filters on
+changes how Shopify builds the results, and the total count and the returned results can stop
+agreeing. This has not been tested.
+
+**3. How to fix**
+
+Not yet known. Test in this order, cheapest first:
+
+1. **Turn filtering off on the search page** (admin setting) and re-check pages 1 to 7. If the
+   pages fill up, that is the cause, and the choice becomes filters-or-working-pagination.
+2. **Apply R29** (products only). Fewer result types may make the count and the contents agree.
+3. If neither works, this is a Shopify platform problem and needs a support ticket. Include
+   the table above — it is the evidence.
+
+Do **not** change the `by 24` number. That is not the cause and changing it will hide the
+symptom without fixing anything.
+
+**4. Does it affect other features**
+
+- **Collection pages are not affected.** Proven by the control test above.
+- **The dropdown while typing is not affected.** It shows a short list and does not paginate.
+- **R29 and R31 sit on top of this.** Fixing them makes the page less confusing but does not
+  make the missing products appear.
+- **The Add to cart button we just switched on (R2) is not affected** — but a customer cannot
+  use it on a product that never appears.
+
+---
+
+## R31 · An empty search page blames filters that were never used
+
+**1. What effect it can cause**
+
+When a search page has nothing on it, the page says:
+
+> **No products found**
+> Use fewer filters or **remove all**
+
+The customer used no filters. There is nothing to remove. The advice cannot be followed, and
+"remove all" is a link that changes nothing they did.
+
+This makes R30 worse: the customer is told the empty page is their own fault.
+
+**2. Where and how it happens**
+
+`sections/main-search.liquid:252`:
+
+```liquid
+{%- if search.results.size == 0 and search.filters != empty -%}
+```
+
+`search.filters` is the list of filters that are *available* on the page — not the filters the
+customer *chose*. Because filtering is switched on for search, that list is never empty. So
+this message is shown for every empty search page, whether or not a filter was used.
+
+Line 165 has the correct plain message, but it can only appear when no filters exist at all.
+
+**3. How to fix**
+
+Code change. Test whether a filter was actually applied, not whether filters exist. Shopify
+exposes the applied values, so the check becomes "does any filter have an active value" rather
+than "does the filter list exist". Show the plain "no results" wording otherwise.
+
+**4. Does it affect other features**
+
+- **Collection pages use the same wording** from a different file
+  (`main-collection-product-grid.liquid`). There the message is usually correct, because a
+  customer normally reaches an empty collection page by filtering. Worth checking, not urgent.
+- **This overlaps R3** in the earlier list, which is the same class of mistake: asking "do
+  filters exist" when the question is "did the customer use one". Fix them together.
