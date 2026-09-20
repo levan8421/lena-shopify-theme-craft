@@ -391,6 +391,20 @@ a.lena-notify-btn {
   grid-template-columns: 1fr 1fr;
   gap: 56px;
 }
+/* Lena: the text column holds less than the mosaic beside it, so the grid row is
+   as tall as the mosaic and the text had all of the leftover space dumped below
+   the buttons. align-self takes this one column out of the default stretch, so
+   its content is centred and the leftover space is split evenly above and below
+   instead of sitting at the bottom.
+
+   This deliberately gives up the top-edge alignment between the eyebrow and the
+   mosaic that the 2026-09-20 centring fix introduced - see the later DEVLOG entry
+   of the same date. The mosaic still stretches, so its own top, left and bottom
+   gaps are all still 56px. Below 900px the hero is one column, every item is its
+   own row sized by its content, and this has no effect. */
+.lena-hero-text {
+  align-self: center;
+}
 .lena-hero-eyebrow {
   font-size: 11.5px;
   font-weight: 400;

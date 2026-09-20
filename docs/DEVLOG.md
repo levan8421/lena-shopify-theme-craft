@@ -1799,3 +1799,44 @@ heading set in the theme editor - the field is admin-owned, so it can change wit
 will overflow the column again, and nothing warns anyone. The failure is always the same shape: the
 longest sentence wraps, usually at a hyphen. If the heading grows, the cap comes down, or the text
 column gets more of the grid than `1fr 1fr` gives it.
+
+---
+
+## 2026-09-20 · Bug · All the hero's leftover vertical space piled up under the buttons
+**Commit:** <hash> · **Files:** assets/lena-custom.css
+
+**What it does / did:** the hero is a two-column grid. The text column holds less than the mosaic
+beside it, so the row is as tall as the mosaic and the text column stretched to match - but its
+*content* stayed at the top, putting every pixel of leftover space in one block below the buttons.
+`.lena-hero-text { align-self: center }` takes that one column out of the default `stretch`, so the
+leftover space is split evenly above and below the text instead.
+
+**Why it matters:** the gap under the buttons read as an unfinished section rather than as spacing.
+It is also the kind of fault that gets worse on its own - every word removed from the heading or
+subheading makes the text column shorter and the gap below it bigger.
+
+**Reproduce (before the fix):** homepage at 1280px. The eyebrow sat level with the top of the
+mosaic, the buttons ended roughly two thirds of the way down, and the remaining third of the left
+column was empty.
+
+**Supersedes part of the earlier entry today.** The 2026-09-20 centring fix
+("The hero was off-centre and had five different spacing values", commit `b55b816`) told you to
+verify that *"the mosaic's top edge should be level with the top of the eyebrow and its bottom edge
+level with the bottom of the buttons."* **That check is no longer correct and must not be used.**
+Top-edge alignment was the side effect of both columns stretching; centring the text column
+deliberately trades it away. Everything else in that entry still holds - in particular the mosaic
+still stretches, so its own top, left and bottom gaps are all still 56px.
+
+**Verify now:**
+```
+grep -n "lena-hero-text" -A3 assets/lena-custom.css   # align-self: center
+```
+In a browser at 1280px: the empty space above the eyebrow and the empty space below the buttons
+should look the same size. The mosaic's top, left and bottom gaps should each still be 56px. At
+640px and 900px the hero is one column, every item is its own row sized by its content, and nothing
+should move at all - that is the check that this did not leak into mobile.
+
+**Regression risk:** returning `align-items: center` to `.lena-hero-content` would apply this to the
+mosaic as well, which is what caused the original off-centre and uneven-gap faults - the mosaic must
+keep stretching. Any future breakpoint that keeps two columns needs to decide this again; the rule
+only makes sense while the two columns have different content heights.
