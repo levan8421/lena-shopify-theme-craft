@@ -305,11 +305,20 @@ a.lena-notify-btn {
    half way across and looked misaligned with the row underneath. It is one
    sentence, so it fits on a single full-width line on desktop and still wraps
    normally on narrow screens. */
+/* Lena: the size here is deliberately the same expression base.css uses for h3,
+   which is what the collection names under each tile are. Copying the computed
+   pixel value instead would drift the moment the type scale is changed in
+   admin - these two have to agree, so they read from the same variable. */
 .lena-section-sub {
-  font-size: 15px;
+  font-size: calc(var(--font-heading-scale) * 1.7rem);
   line-height: 1.6;
   color: var(--lena-slate);
   margin: -8px 0 28px;
+}
+@media screen and (min-width: 750px) {
+  .lena-section-sub {
+    font-size: calc(var(--font-heading-scale) * 1.8rem);
+  }
 }
 .lena-section-p {
   font-size: 15px;

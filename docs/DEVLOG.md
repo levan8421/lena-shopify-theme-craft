@@ -1531,3 +1531,38 @@ the last collection tile. At 640px it wraps to several lines with no horizontal 
 "Our Collections" is the only section on the site using it, so nothing else moves. If a much longer
 subtitle is ever typed into that field it will now run the full 1200px, which is a long line to
 read - if that happens, cap it again at a width closer to the grid rather than at 60ch.
+
+---
+
+## 2026-09-20 · Feature · Match the Shop by Category description to the collection-name size
+**Commit:** <pending> · **Files:** assets/lena-custom.css
+
+**What it does / did:** `.lena-section-sub` was a fixed `font-size: 15px`. The collection names
+under each tile are plain `<h3>` elements in `snippets/card-collection.liquid:86`, with no size
+override anywhere, so base.css governs them: `calc(var(--font-heading-scale) * 1.7rem)` below 750px
+and `1.8rem` above it. The subtitle now uses that same expression at both breakpoints.
+
+**Why it matters:** two pieces of text stacked directly on top of each other at visibly different
+sizes read as an accident. More importantly, the size is now *derived* rather than copied - the
+heading scale is a theme setting the owner can change in admin, and a hardcoded 15px would have
+silently stopped matching the first time it moved.
+
+**Numbers, for reference only:** with `heading_scale: 110` and `body_scale: 105` in
+`config/settings_data.json` (measured 2026-09-20), `--font-heading-scale` is 110/105 = 1.0476 and
+`html` is `calc(var(--font-body-scale) * 62.5%)` = 10.5px per rem, so desktop lands near 19.8px and
+mobile near 18.7px. Do not treat those as targets - the expression is the contract.
+
+**Knock-on effect:** the previous entry said this sentence fits on one desktop line. At the larger
+size it no longer does; it wraps to two full-width lines at 1200px. That is the size request
+winning over the line-count, and it still aligns to the same left and right edges as the tile row.
+
+**Verify now:**
+```
+grep -n "font-heading-scale" assets/lena-custom.css   # expect the two .lena-section-sub rules
+```
+In a browser: the description text and the words "Velvet Purses" should measure the same height.
+Easiest check is to zoom in - the two should stay the same as each other at any zoom level.
+
+**Regression risk:** if anyone ever adds a size to `.card__heading` for collection cards - in
+`section-collection-list.css` or `lena-custom.css` - the two stop matching and this rule has to
+follow. There is no size there today, which is the only reason reading base.css directly is safe.
