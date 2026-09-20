@@ -2224,7 +2224,7 @@ third rotating section ever appears, extract it rather than writing the seed a t
 ---
 
 ## 2026-09-20 · Bug · Find Us kept three columns on a phone, because its mobile rule could never win
-**Commit:** <pending> · **Files:** assets/lena-custom.css, sections/lena-email-popup.liquid, sections/main-search.liquid, docs/regression-check.sh, docs/OPEN_ITEMS.md
+**Commit:** `577fb7a` · **Files:** assets/lena-custom.css, sections/lena-email-popup.liquid, sections/main-search.liquid, docs/regression-check.sh, docs/OPEN_ITEMS.md
 
 **Batch 6 of the CODE_SURVEY_2026-09-20 work** (survey findings D1, D2, D4 — and one bug the survey
 recorded as dead code).
