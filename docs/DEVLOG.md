@@ -2642,7 +2642,7 @@ the homepage after an admin session, not only at the diff.
 ---
 
 ## 2026-09-20 · Bug · The testimonial grid kept two columns on a phone, on the selector a comment called safe
-**Commit:** <pending> · **Files:** assets/lena-custom.css, docs/OPEN_ITEMS.md, docs/regression-check.sh
+**Commit:** c810fcf · **Files:** assets/lena-custom.css, docs/OPEN_ITEMS.md, docs/regression-check.sh
 
 **What it does / did:** `assets/lena-custom.css` sets `.lena-testimonial-grid[data-cards="2"] {
 grid-template-columns: 1fr 1fr; }`. The mobile override inside `@media (max-width: 640px)` was
