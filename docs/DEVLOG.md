@@ -1439,3 +1439,64 @@ again, because it promises returns unconditionally.
 **Regression risk:** any number that is written down in more than one place. This one lived in
 code, in a theme-editor field, and in a Shopify admin policy page — three owners, no single
 source. The policy page is the binding one; the other two must follow it, never the reverse.
+
+---
+
+## 2026-09-19 · Bug · Three faults in the hero and trust strip
+**Commit:** PENDING · **Files:** sections/lena-hero.liquid, assets/lena-custom.css, templates/index.json
+
+### 1. The theme editor kept putting a `<p>` back inside the H1
+
+**What it did:** the `heading` setting is `inline_richtext`, but saving the section in the theme
+editor stores the value wrapped in `<p>...</p>`. The markup was `<h1>{{ heading }}</h1>`, so the
+page rendered `<h1><p>One piece at a time...</p></h1>` - a block element inside a heading, which
+is invalid, and which adds the paragraph's bottom margin on top of `h1 { margin-bottom: 22px }`.
+
+**Why it matters:** it was fixed once already, in `2f44b95`, by correcting the stored value in
+`templates/index.json`. Commit `2ca5914` - a theme-editor save by the owner on 2026-09-16 - put
+it straight back. Correcting stored data does not hold when a second system writes the same
+field. The fix has to live where the value is *consumed*.
+
+**The fix:** strip `<p>` and `</p>` on output. The stored value no longer matters.
+
+### 2. The hero reserved roughly 240px of empty navy
+
+**What it did:** `.lena-hero { min-height: 88vh }` plus `.lena-hero-content { padding: 80px }`.
+The tallest thing inside is the mosaic at 510px (175 + 140 + 175 + two 10px gaps). On a 1000px
+window 88vh is 880px, so the content centred and left wide empty bands above and below.
+
+**The fix:** `min-height: 640px` (content is 622px at the new padding, so ~18px slack) and
+padding 80px → 56px. Mobile was already `min-height: auto` / `padding: 56px 20px` and is
+untouched.
+
+### 3. The trust marquee jumped once per loop
+
+**What it did:** `@keyframes lena-marquee` slides the track to `translateX(-50%)` and restarts.
+That is only seamless if the second half of the track is an exact copy of the first. The track
+held five items in the order 1, 2, 3, 1, 3 - so -50% did not even land on an item boundary, and
+the strip visibly snapped every 28 seconds.
+
+**The fix:** six items, 1, 2, 3, 1, 2, 3.
+
+**Reproduce (before the fix):**
+1. Homepage, desktop, tall window → wide empty navy above the eyebrow and below the buttons.
+2. Watch the white badge strip for 30 seconds → it snaps back.
+3. View source on the hero → `<h1><p>`.
+
+**Verify now:**
+```bash
+grep -n "lena_heading" sections/lena-hero.liquid          # the replace filter
+grep -n "min-height: 640px" assets/lena-custom.css        # not 88vh
+python3 -c "
+import re;s=open('templates/index.json').read();i=s.find('lena-marquee-track')
+print(re.findall(r'<strong>([^<]+)</strong>', s[i:i+1600]))"
+#   must print the same three names twice, in the same order
+```
+In a browser: the hero sits tighter top and bottom; the gap between the heading and the grey
+paragraph is smaller; the badge strip scrolls without a snap. Check 640px and 900px - the mobile
+rules were not touched, so both should look exactly as before.
+
+**Regression risk:** fault 1 is the one to watch. Any Lena setting that is `inline_richtext` and
+rendered into a heading has the same exposure, because the theme editor decides what it stores,
+not us. Sanitise on output, never by correcting the stored JSON - that fix gets overwritten by
+the next admin save and nobody is told.

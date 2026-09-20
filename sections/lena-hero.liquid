@@ -22,7 +22,16 @@
   <div class="lena-hero-content">
     <div class="lena-hero-text">
       <div class="lena-hero-eyebrow"><span class="dm gold sm"></span> {{ section.settings.eyebrow }}</div>
-      <h1>{{ section.settings.heading }}</h1>
+      {%- comment -%}
+        Lena: the theme editor writes this field back wrapped in <p>...</p> every time it is
+        saved, even though the setting is inline_richtext. That put a block-level <p> inside
+        the H1, which is invalid and adds the paragraph margin on top of the h1 margin - a
+        visible gap between the heading and the subheading. Stripping it here means the stored
+        value no longer matters, so an admin save cannot reintroduce it. Fixed once in
+        templates/index.json before; it came straight back in commit 2ca5914.
+      {%- endcomment -%}
+      {%- assign lena_heading = section.settings.heading | replace: '<p>', '' | replace: '</p>', '' -%}
+      <h1>{{ lena_heading }}</h1>
       <p class="lena-hero-sub">{{ section.settings.subheading }}</p>
       <div class="lena-hero-ctas">
         {% if section.settings.button_label_1 != blank and section.settings.button_link_1 != blank %}

@@ -321,7 +321,7 @@ a.lena-notify-btn {
 /* --- Hero Section --- */
 .lena-hero {
   position: relative;
-  min-height: 88vh;
+  min-height: 640px;
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -356,7 +356,7 @@ a.lena-notify-btn {
   position: relative;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 80px 24px;
+  padding: 56px 24px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 56px;
