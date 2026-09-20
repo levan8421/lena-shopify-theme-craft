@@ -20,19 +20,10 @@
             "text": "Free shipping on orders over $70 ♦ Handmade in Vietnam",
             "link": "shopify://policies/shipping-policy"
           }
-        },
-        "announcement-bar-1": {
-          "type": "announcement",
-          "disabled": true,
-          "settings": {
-            "text": "Next drop: Friday 8 PM ET →",
-            "link": ""
-          }
         }
       },
       "block_order": [
-        "announcement-bar-0",
-        "announcement-bar-1"
+        "announcement-bar-0"
       ],
       "settings": {
         "auto_rotate": true,
