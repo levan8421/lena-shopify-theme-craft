@@ -31,109 +31,66 @@
 </div>
 
 <script>
-(function(){
+document.addEventListener('DOMContentLoaded', function () {
   var DK = 'lena-popup-dismissed', SK = 'lena-popup-subscribed';
 
-  // localStorage throws rather than returning null in some browsers (private
-  // modes, embedded webviews). Unguarded, that killed this whole script and the
-  // popup never appeared at all.
+  // localStorage throws rather than returning null in some browsers (private modes,
+  // embedded webviews). Unguarded, that killed this whole script and the popup never
+  // appeared at all.
   function remember(k) { try { localStorage.setItem(k, '1'); } catch (e) {} }
   function seen(k) { try { return !!localStorage.getItem(k); } catch (e) { return false; } }
 
   if (seen(DK) || seen(SK)) return;
 
   var overlay = document.getElementById('lena-popup-overlay');
+  // Focus trapping, the scroll lock, the close button, the backdrop click and Escape all
+  // live in assets/lena-modal.js now. Closing this dialog also records the dismissal, so
+  // that hook is passed in rather than duplicated.
+  var modal = window.LenaModal && window.LenaModal.create(overlay, {
+    onClose: function () { remember(DK); }
+  });
+  if (!modal) return;
+
+  // Once per page view, whatever triggers it. This is the popup's own rule, not a dialog
+  // rule: the timer and the exit-intent handler can both fire, and neither should be able
+  // to reopen it after the visitor has closed it.
   var shown = false;
-
-  // --- focus handling -------------------------------------------------------
-  // Both overlays declare role="dialog" aria-modal="true", which tells assistive
-  // technology the rest of the page is inert. Neither moved focus, trapped it, or
-  // gave it back - so focus stayed behind the dialog, Tab walked out into the page
-  // underneath, and everything it reached was content the page had just declared
-  // did not exist. body overflow:hidden stopped the mouse scrolling but not the
-  // keyboard.
-  var lastFocus = null;
-
-  function focusable() {
-    return overlay.querySelectorAll(
-      'button:not([disabled]), [href], input:not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])'
-    );
-  }
-
-  function isOpen() { return overlay.style.display !== 'none'; }
-
-  function trapTab(e) {
-    if (e.key !== 'Tab') return;
-    var f = focusable();
-    if (!f.length) return;
-    var first = f[0], last = f[f.length - 1];
-    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
-  }
-
-  function takeFocus() {
-    lastFocus = document.activeElement;
-    document.addEventListener('keydown', trapTab);
-    var target = overlay.querySelector('input[type="email"]') || overlay.querySelector('.lena-popup-close');
-    if (target) { target.focus(); }
-  }
-
-  function releaseFocus() {
-    document.removeEventListener('keydown', trapTab);
-    if (lastFocus && typeof lastFocus.focus === 'function') { lastFocus.focus(); }
-    lastFocus = null;
-  }
-
   function show() {
     if (shown) return;
     shown = true;
-    overlay.style.display = '';
-    document.body.style.overflow = 'hidden';
-    takeFocus();
-  }
-  function hide() {
-    if (!isOpen()) return;
-    overlay.style.display = 'none';
-    document.body.style.overflow = '';
-    releaseFocus();
-    remember(DK);
+    modal.open();
   }
 
   setTimeout(show, {{ section.settings.delay_seconds | default: 10 | times: 1000 }});
 
-  document.addEventListener('mouseout', function(e) {
+  document.addEventListener('mouseout', function (e) {
     if (e.clientY < 5 && !e.relatedTarget) show();
   });
 
-  overlay.querySelector('.lena-popup-close').addEventListener('click', hide);
-  overlay.addEventListener('click', function(e) { if (e.target === overlay) hide(); });
-  document.addEventListener('keyup', function(e) { if (e.key === 'Escape' && isOpen()) hide(); });
-
   var form = overlay.querySelector('form');
   var errorBox = overlay.querySelector('.lena-popup-error');
-  form.addEventListener('submit', function(e) {
+  form.addEventListener('submit', function (e) {
     e.preventDefault();
     errorBox.style.display = 'none';
-    // form.action on an HTMLFormElement always returns a resolved absolute URL, so the
-    // `|| '/contact'` that used to sit here could never fire. Reading it from the form is
-    // still the right thing: Shopify's customer form tag writes the action, which carries
-    // any locale or subfolder prefix. Hardcoding '/contact' would drop that.
+    // form.action always returns a resolved absolute URL, so the `|| '/contact'` that used
+    // to sit here could never fire. Reading it from the form is still right: Shopify's
+    // customer form tag writes the action including any locale or subfolder prefix.
     fetch(form.action, { method: 'POST', body: new FormData(form) })
-      .then(function(response) {
+      .then(function (response) {
         if (!response.ok) { throw new Error('HTTP ' + response.status); }
-        // Only remember the signup once it actually succeeded. This used to run on
-        // every outcome, so a failed signup was reported as success AND suppressed
-        // the popup permanently - the visitor could never try again on that device.
+        // Only remember the signup once it actually succeeded. This used to run on every
+        // outcome, so a failed signup was reported as success AND suppressed the popup
+        // permanently - the visitor could never try again on that device.
         remember(SK);
         overlay.querySelector('.lena-popup-form').style.display = 'none';
         overlay.querySelector('.lena-popup-success').style.display = '';
-        setTimeout(hide, 2000);
+        setTimeout(modal.close, 2000);
       })
-      .catch(function() {
+      .catch(function () {
         errorBox.style.display = '';
       });
   });
-})();
+});
 </script>
 
 {% schema %}

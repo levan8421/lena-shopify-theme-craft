@@ -32,54 +32,22 @@
 </div>
 
 <script>
-(function(){
+document.addEventListener('DOMContentLoaded', function () {
   var overlay = document.getElementById('lena-notify-overlay');
-  if (!overlay) return;
+  // LenaModal.create returns null for a missing element, so this one guard covers both
+  // "the markup is not on this page" and "the shared module failed to load".
+  var modal = window.LenaModal && window.LenaModal.create(overlay);
+  if (!modal) return;
+
   var catLabel = document.getElementById('lena-notify-cat-label');
   var tagsInput = document.getElementById('lena-notify-tags');
   var form = document.getElementById('lena-notify-form');
   var success = overlay.querySelector('.lena-notify-success');
   var error = overlay.querySelector('.lena-notify-error');
 
-  // --- focus handling -------------------------------------------------------
-  // Both overlays declare role="dialog" aria-modal="true", which tells assistive
-  // technology the rest of the page is inert. Neither moved focus, trapped it, or
-  // gave it back - so focus stayed behind the dialog, Tab walked out into the page
-  // underneath, and everything it reached was content the page had just declared
-  // did not exist. body overflow:hidden stopped the mouse scrolling but not the
-  // keyboard.
-  var lastFocus = null;
-
-  function focusable() {
-    return overlay.querySelectorAll(
-      'button:not([disabled]), [href], input:not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])'
-    );
-  }
-
-  function isOpen() { return overlay.style.display !== 'none'; }
-
-  function trapTab(e) {
-    if (e.key !== 'Tab') return;
-    var f = focusable();
-    if (!f.length) return;
-    var first = f[0], last = f[f.length - 1];
-    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
-  }
-
-  function takeFocus() {
-    lastFocus = document.activeElement;
-    document.addEventListener('keydown', trapTab);
-    var target = overlay.querySelector('input[type="email"]') || overlay.querySelector('.lena-popup-close');
-    if (target) { target.focus(); }
-  }
-
-  function releaseFocus() {
-    document.removeEventListener('keydown', trapTab);
-    if (lastFocus && typeof lastFocus.focus === 'function') { lastFocus.focus(); }
-    lastFocus = null;
-  }
-
+  // Focus trapping, the scroll lock, the close button, the backdrop click and Escape all
+  // live in assets/lena-modal.js now. What stays here is only what this dialog does
+  // differently: filling in the category before it opens.
   function show(label, handle) {
     catLabel.textContent = label || 'items';
     tagsInput.value = 'newsletter,notify-' + (handle || 'general');
@@ -87,41 +55,29 @@
     success.style.display = 'none';
     error.style.display = 'none';
     form.querySelector('input[type="email"]').value = '';
-    overlay.style.display = '';
-    document.body.style.overflow = 'hidden';
-    takeFocus();
-  }
-  function hide() {
-    if (!isOpen()) return;
-    overlay.style.display = 'none';
-    document.body.style.overflow = '';
-    releaseFocus();
+    modal.open();
   }
 
-  overlay.querySelector('.lena-popup-close').addEventListener('click', hide);
-  overlay.addEventListener('click', function(e) { if (e.target === overlay) hide(); });
-  // Guarded on isOpen: this listener lives for the life of the page, so unguarded it
-  // ran on every Escape whether or not the dialog was on screen.
-  document.addEventListener('keyup', function(e) { if (e.key === 'Escape' && isOpen()) hide(); });
-
-  form.addEventListener('submit', function(e) {
+  form.addEventListener('submit', function (e) {
     e.preventDefault();
     error.style.display = 'none';
-    fetch('/contact', { method: 'POST', body: new FormData(form) })
-      .then(function(response) {
+    // Read the action off the form rather than hardcoding '/contact', so a locale or
+    // subfolder prefix is carried. form.action always resolves to an absolute URL.
+    fetch(form.action, { method: 'POST', body: new FormData(form) })
+      .then(function (response) {
         // Without this check every outcome reached the success branch, so a failed
         // signup still read "You'll be the first to know!".
         if (!response.ok) { throw new Error('HTTP ' + response.status); }
         form.style.display = 'none';
         success.style.display = '';
-        setTimeout(hide, 2500);
+        setTimeout(modal.close, 2500);
       })
-      .catch(function() {
+      .catch(function () {
         // Leave the form in place and filled in, so retrying costs one click.
         error.style.display = '';
       });
   });
 
   window.lenaNotify = show;
-})();
+});
 </script>

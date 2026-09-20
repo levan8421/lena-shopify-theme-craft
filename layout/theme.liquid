@@ -33,6 +33,12 @@
     <script src="{{ 'global.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'details-disclosure.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'details-modal.js' | asset_url }}" defer="defer"></script>
+    {%- comment -%}
+      Lena: shared dialog behaviour for the newsletter popup and the Notify Me modal.
+      Deferred, so it runs before DOMContentLoaded and is ready for both callers, which
+      wait for that event rather than running inline.
+    {%- endcomment -%}
+    <script src="{{ 'lena-modal.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'search-form.js' | asset_url }}" defer="defer"></script>
 
     {%- if settings.animations_reveal_on_scroll -%}

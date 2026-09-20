@@ -2301,3 +2301,71 @@ also checking the mobile override still out-specifies it. More generally: any mo
 this file written as a bare class, against a base rule written with an attribute or a second class,
 is inert and will look fine. When a mobile rule appears not to work, check specificity before
 changing the value.
+
+---
+
+## 2026-09-20 · Bug · Closing one dialog unlocked page scrolling behind the other
+**Commit:** <pending> · **Files:** assets/lena-modal.js (new), layout/theme.liquid, sections/lena-email-popup.liquid, snippets/lena-notify-modal.liquid, docs/regression-check.sh
+
+**Batch 7 of the CODE_SURVEY_2026-09-20 work** (survey finding C5).
+
+**What it did:** the newsletter popup and the Notify Me dialog each carried their own copy of the
+same ~57 lines — `focusable()`, `isOpen`, `trapTab`, `takeFocus`, `releaseFocus`, the show/hide
+display toggling, the body scroll lock, and the close-button / backdrop / Escape wiring. Identical
+character for character, including the comment explaining why the focus trap exists.
+
+**The bug the duplication caused:** both copies wrote `document.body.style.overflow` directly. The
+popup fires on a timer *and* on exit intent, so it can appear on top of an open Notify Me dialog.
+Whichever of the two closed **first** reset the body to scrollable while the other was still on
+screen — the page scrolled behind an open modal.
+
+**Why it matters beyond the scroll:** two copies of an accessibility fix are two places for it to be
+half-removed. The focus trap is the thing that stops Tab walking out of a dialog that has just told
+assistive technology the rest of the page does not exist. It should not depend on someone remembering
+there is a second copy.
+
+**What it does now:** `assets/lena-modal.js` holds a `LenaModal.create(overlay, { onClose })`
+factory. The scroll lock is a **count** held in that module and shared by every dialog on the page,
+so the body is released only when the last open dialog closes. Each dialog keeps only what is
+genuinely its own — the popup's once-per-visit rules, `localStorage` keys, delay and exit-intent
+triggers; the Notify dialog's category fields and its `window.lenaNotify` entry point.
+
+Measured after the change: **17 identical lines remain between the two scripts, down from 57**, and
+those 17 are braces, `</script>`, and the shape of an AJAX form submit. The submit handlers are
+*similar* but not the same — different elements, different timings, one records a `localStorage` key
+— so they were left alone rather than forced into a shared helper with four options.
+
+**Loading order matters here.** The module is loaded with `defer` from `<head>`, alongside the stock
+scripts. A deferred script runs **before** `DOMContentLoaded`, but an inline script in the body runs
+**during** parsing — which is earlier. Both dialogs therefore now do their setup inside a
+`DOMContentLoaded` listener. Without that, the inline code would run before `window.LenaModal`
+existed and both dialogs would silently do nothing.
+
+**Reproduce (before the fix):**
+1. On a product page, open a sold-out product's **Notify Me** dialog.
+2. Wait for the newsletter popup to fire on top of it (or trigger it by moving the pointer out of
+   the top of the window).
+3. Close the newsletter popup. The Notify dialog is still open, but the page scrolls behind it.
+
+**Verify now:**
+```
+bash docs/regression-check.sh
+grep -c "trapTab" sections/lena-email-popup.liquid snippets/lena-notify-modal.liquid   # 0 and 0
+```
+**This batch needs the most browser checking of any so far** — it moved working JavaScript, and none
+of it can be proven from the command line:
+- **Notify Me**: opens from a sold-out card *and* from a sold-out PDP; the category name in the text
+  matches the product; Escape closes it; clicking the dark backdrop closes it; the × closes it
+- **Focus**: when it opens, focus lands in the email field; **Tab cycles inside the dialog and never
+  reaches the page behind**; on close, focus returns to the button that opened it
+- **Submit**: a real signup shows the success message and closes after ~2.5s; submitting with the
+  network throttled to offline shows the error message and **leaves the form filled in**
+- **Newsletter popup**: appears after its delay; appears on exit intent; once dismissed it stays
+  dismissed on reload (that is the `localStorage` key still working through `onClose`)
+- **The scroll lock, which is the actual fix**: open Notify Me, let the popup appear on top, close
+  the popup — the page must **still not scroll** behind the Notify dialog
+
+**Regression risk:** adding a third dialog that writes `document.body.style.overflow` itself instead
+of going through `LenaModal`. It would work alone and break the count for the other two. The
+regression check asserts neither existing dialog writes it directly, so a third one copying an
+existing dialog inherits the right pattern.

@@ -153,6 +153,21 @@ assert_count "that override is declared once, not once per breakpoint" \
 assert_no_grep "the popup no longer guards a value that cannot be empty" \
   "form.action ||" sections/lena-email-popup.liquid
 
+# Batch 7 - shared modal behaviour (DEVLOG 2026-09-20)
+assert_grep "the shared modal module exists" "window.LenaModal = " assets/lena-modal.js
+assert_grep "the scroll lock is a shared count, not a raw assignment per dialog" \
+  "openCount" assets/lena-modal.js
+assert_grep "theme.liquid loads the module, deferred" \
+  "lena-modal.js" layout/theme.liquid
+for f in sections/lena-email-popup.liquid snippets/lena-notify-modal.liquid; do
+  n="$(basename "$f" .liquid)"
+  assert_no_grep "$n does not keep its own focus trap" "trapTab" "$f"
+  assert_no_grep "$n does not keep its own focusable() query" "focusable" "$f"
+  assert_no_grep "$n does not write body overflow directly" "body.style.overflow" "$f"
+  assert_grep "$n waits for DOMContentLoaded so the module is loaded first" \
+    "DOMContentLoaded" "$f"
+done
+
 echo
 if [ "$FAIL" -eq 0 ]; then
   printf '\033[32mAll checks passed.\033[0m\n'
