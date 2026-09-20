@@ -38,6 +38,16 @@ restructure introduces the inconsistency it exists to remove.
 
 ### Smaller data items
 
+- **The `new-arrivals` collection's title in admin is `New`, not "New Arrivals".** Decide whether to
+  rename it. Added 2026-09-20: until that day nothing on the site displayed it — the homepage bar's
+  heading is a theme setting, and the collection banner hid itself while the collection was empty.
+  The batch 1 fix (DEVLOG 2026-09-20, "A genuinely empty collection page had no `<h1>` at all") puts
+  it on screen as the page's `<h1>`, so `/collections/new-arrivals` now reads **New** as its title.
+  **If you rename it, change the title only — the handle must stay `new-arrivals`.** Three separate
+  things key off that handle: the smart collection rule, the theme's visibility gate
+  (`collections['new-arrivals'].all_products_count`), and `lena-hide-nav-link`. Shopify does not
+  change a handle when you edit a title, but it does offer to, so decline.
+  Check with: `{ collectionByIdentifier(identifier: {handle: "new-arrivals"}) { title handle } }`
 - A bare `Black` tag coexists with `color-black` — one tag, cleanup.
 - `Phone Travel Wallet` → **`Phone Travel Wallets`** (pluralisation, for consistency with the other
   seven category names).
