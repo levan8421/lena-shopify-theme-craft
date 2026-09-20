@@ -2701,7 +2701,7 @@ asserts the 640px rule carries `[data-cards]`.
 ---
 
 ## 2026-09-20 · Bug · R1 was wrong three times, because nobody loaded the page
-**Commit:** <pending> · **Files:** docs/OPEN_ITEMS.md, CLAUDE.md
+**Commit:** 0150c4d · **Files:** docs/OPEN_ITEMS.md, CLAUDE.md, docs/regression-check.sh
 
 **What it does / did:** R1 said the Featured Piece section pointed at a collection handle,
 `artisan`, that does not exist — so the section rendered nothing and the homepage showed no product
