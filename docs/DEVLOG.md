@@ -1613,7 +1613,7 @@ the earlier entry today: matching `h3` here was the wrong reference and lasted o
 ---
 
 ## 2026-09-20 · Bug · The Shop by Category description touched both screen edges on mobile
-**Commit:** <pending> · **Files:** sections/collection-list.liquid
+**Commit:** 436c2c5 · **Files:** sections/collection-list.liquid
 
 **What it does / did:** on screens under 750px, `assets/section-collection-list.css:16` sets
 `.section-collection-list .page-width { padding-left: 0; padding-right: 0 }` - it removes the
