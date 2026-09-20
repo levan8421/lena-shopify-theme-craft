@@ -29,9 +29,8 @@
                   created category from the nav before its products are loaded.
                   Skips one link only; the drawer's panel behaviour is untouched.
                 {%- endcomment -%}
-                {%- if link.type == 'collection_link' and link.object.handle == 'new-arrivals' and link.object.all_products_count == 0 -%}
-                  {%- continue -%}
-                {%- endif -%}
+                {%- capture lena_nav_hide -%}{%- render 'lena-hide-nav-link', link: link -%}{%- endcapture -%}
+                {%- if lena_nav_hide != blank -%}{%- continue -%}{%- endif -%}
                 <li>
                   {%- if link.links != blank -%}
                     <details id="Details-menu-drawer-menu-item-{{ forloop.index }}">
@@ -61,6 +60,8 @@
                           </button>
                           <ul class="menu-drawer__menu list-menu" role="list" tabindex="-1">
                             {%- for childlink in link.links -%}
+                              {%- capture lena_nav_hide_child -%}{%- render 'lena-hide-nav-link', link: childlink -%}{%- endcapture -%}
+                              {%- if lena_nav_hide_child != blank -%}{%- continue -%}{%- endif -%}
                               <li>
                                 {%- if childlink.links == blank -%}
                                   <a
@@ -106,6 +107,8 @@
                                         tabindex="-1"
                                       >
                                         {%- for grandchildlink in childlink.links -%}
+                                          {%- capture lena_nav_hide_grand -%}{%- render 'lena-hide-nav-link', link: grandchildlink -%}{%- endcapture -%}
+                                          {%- if lena_nav_hide_grand != blank -%}{%- continue -%}{%- endif -%}
                                           <li>
                                             <a
                                               id="HeaderDrawer-{{ link.handle }}-{{ childlink.handle }}-{{ grandchildlink.handle }}"

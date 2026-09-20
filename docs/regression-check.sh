@@ -124,6 +124,19 @@ assert_count "both checkbox lists skip a filter with no visible values" \
 assert_grep "the empty-fieldset guard still spares price_range filters" \
   "filter.type == 'boolean' or filter.type == 'list'" snippets/facets.liquid
 
+# Batch 4 - nav depth, a dangling aria reference, an empty Find Us (DEVLOG 2026-09-20)
+for f in snippets/header-dropdown-menu.liquid snippets/header-drawer.liquid \
+         snippets/header-mega-menu.liquid; do
+  assert_count "$(basename "$f" .liquid) guards all three menu depths" \
+    "render 'lena-hide-nav-link'" "$f" 3
+done
+assert_single_source "the nav-hiding rule is written once" \
+  "link.object.handle == 'new-arrivals'" snippets/lena-hide-nav-link.liquid
+assert_no_grep "the card link no longer names an emptied badge span" \
+  'aria-labelledby="CardLink-{{ section_id }}-{{ card_product.id }} Badge-' snippets/card-product.liquid
+assert_grep "Find Us hides itself when nothing is visible" \
+  "if visible_count > 0" sections/lena-find-us.liquid
+
 echo
 if [ "$FAIL" -eq 0 ]; then
   printf '\033[32mAll checks passed.\033[0m\n'

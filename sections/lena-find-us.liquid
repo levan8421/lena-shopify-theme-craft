@@ -38,6 +38,20 @@
   {%- endif -%}
 {%- endfor -%}
 
+{%- comment -%}
+  Lena: the whole section is skipped when nothing is visible, the way lena-testimonials
+  already does it.
+
+  The heading, eyebrow and subheading used to render unconditionally, with
+  <div class="lena-find-grid" data-cards="0"> beneath them. Remove the location blocks and
+  let every scheduled event fall outside the 14-day window and the homepage showed
+  "Find Us This Weekend" over nothing - an invitation with no address under it, which is
+  worse than no section at all.
+
+  visible_count is already computed above for data-cards, so this costs nothing extra. It
+  counts both sources: scheduled events inside the window, and location blocks.
+{%- endcomment -%}
+{%- if visible_count > 0 -%}
 <div id="find-us" class="color-{{ section.settings.color_scheme }} gradient section-{{ section.id }}-padding">
   <div class="lena-section-head">
     <div class="lena-section-eye"><span class="dm filled sm"></span> {{ section.settings.eyebrow }}</div>
@@ -90,6 +104,7 @@
     {%- endfor -%}
   </div>
 </div>
+{%- endif -%}
 
 {% schema %}
 {

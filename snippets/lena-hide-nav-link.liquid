@@ -1,0 +1,32 @@
+{%- comment -%}
+  Should this navigation link be left out of the menu?
+
+  Accepts: link (required) - a menu link at any depth. Outputs `1` for hide, nothing for keep.
+
+  Today there is one rule: omit the New Arrivals link while that collection is empty, so the
+  nav never offers a page with nothing on it.
+
+  Scoped to that one handle on purpose. A general "hide empty collections" rule would erase a
+  newly created category from the nav before its products are loaded, and the theme does not
+  get to decide what "new" means - the app owns the tag, the smart collection matches it.
+
+  WHY A SNIPPET. The test was written out in three header snippets and applied only to the
+  top-level `for link in section.settings.menu.links` loop in each. The childlink and
+  grandchildlink loops had no such test, so moving New Arrivals under a dropdown in the menu
+  editor brought the empty-collection link straight back - in all three menus at once, with
+  nothing to warn you. Fixing that by hand meant nine copies of one condition. It is one copy
+  now, and adding a second rule later means editing one file.
+
+  USAGE
+
+    {%- capture lena_nav_hide -%}{%- render 'lena-hide-nav-link', link: link -%}{%- endcapture -%}
+    {%- if lena_nav_hide != blank -%}{%- continue -%}{%- endif -%}
+
+  The caller does the `continue` rather than this snippet, because a snippet cannot break out
+  of the caller's loop.
+{%- endcomment -%}
+{%- liquid
+  if link.type == 'collection_link' and link.object.handle == 'new-arrivals' and link.object.all_products_count == 0
+    echo 1
+  endif
+-%}

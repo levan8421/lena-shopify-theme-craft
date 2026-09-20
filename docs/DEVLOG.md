@@ -2095,3 +2095,76 @@ In a browser, on `/collections/compact-mirrors`:
 looks like defensive coding and is actually the bug: blank is a *decision* this snippet made, and
 overriding it locally puts the decision back in two places. If a call site needs different wording
 for a hidden value, that is a new `fallback` name, not a filter at the call site.
+
+---
+
+## 2026-09-20 · Bug · The nav-hiding rule only worked at the top level of the menu
+**Commit:** <pending> · **Files:** snippets/lena-hide-nav-link.liquid (new), snippets/header-dropdown-menu.liquid, snippets/header-drawer.liquid, snippets/header-mega-menu.liquid, snippets/card-product.liquid, sections/lena-find-us.liquid, docs/regression-check.sh
+
+**Batch 4 of the CODE_SURVEY_2026-09-20 work** (survey findings B3, B8, B9). Three unrelated small
+faults, batched because each is a few lines and none touches the others.
+
+### B3 — the New Arrivals link comes back if you move it into a dropdown
+
+**What it did:** all three header snippets skip the New Arrivals link while that collection is
+empty, so the nav never offers a page with nothing on it. All three applied that test **only** in
+the top-level `for link in section.settings.menu.links` loop. The `childlink` and `grandchildlink`
+loops had no test at all.
+
+**Why it matters:** `main-menu` — the menu intended for go-live — is a three-level purse tree. The
+moment New Arrivals is nested under a dropdown there, the empty-collection link reappears in all
+three menus at once, and nothing warns you. This was latent only because the preview menu
+(`main-menu-staging`) happens to be flat.
+
+**What it does now:** the condition moved into `snippets/lena-hide-nav-link.liquid` and is applied
+at all three depths in all three snippets. Fixing this by hand would have meant nine copies of one
+condition; it is one copy called nine times. A second rule later means editing one file.
+
+### B8 — a link named an element with nothing in it
+
+`aria-labelledby="CardLink-… Badge-…"` listed two ids, but the Lena change further down empties the
+`Badge-` span (stock put the "Sold out" / "Sale" text in it). The reference resolved to an empty
+element and contributed nothing to the accessible name. The `Badge-` id is removed; the link now
+names itself from its title.
+
+**Left alone deliberately:** the emptied `<div class="card__badge" style="display:none">` itself.
+It is the last child of the card content, and `component-card.css` carries
+`.card__heading:last-child { margin-bottom: 0 }` — deleting it would promote another element to
+`:last-child` and silently change card spacing. The inline style is the only thing keeping a blank
+badge off the card, so it cannot move to the stylesheet without the element going too. That is a
+layout change needing a browser, not a tidy-up, and a comment in the file now says so.
+
+**Also noted, not changed:** the *no-media* card path still renders stock "Sold out" / "Sale"
+badges, so a photoless card shows one and a card with a photo does not. Its `aria-labelledby` is
+therefore correct and was left as it is — it is the positive control for this fix.
+
+### B9 — "Find Us This Weekend" over an empty grid
+
+`lena-find-us` computed `visible_count` and then rendered the heading and
+`<div class="lena-find-grid" data-cards="0">` regardless. Remove the location blocks and let every
+scheduled event fall outside the 14-day window, and the homepage showed an invitation with no
+address under it. `lena-testimonials` already wraps everything in `{%- if testimonial_count > 0 -%}`;
+this now does the same, reusing the count it was already computing for `data-cards`.
+
+**Reproduce (before the fix):**
+- B3: in admin, move New Arrivals under any dropdown in the header menu. The link reappears while
+  `new-arrivals` holds 0 products.
+- B9: delete every `location` block from Find Us, with no `scheduled_event` inside 14 days. Saw:
+  heading over empty space. Expected: no section.
+
+**Verify now:**
+```
+bash docs/regression-check.sh
+grep -c "render 'lena-hide-nav-link'" snippets/header-drawer.liquid   # 3
+```
+In a browser:
+- the header nav must look **exactly as it does today** — New Arrivals absent (0 products), every
+  other link present, dropdowns still opening. That is the positive control; this change must be
+  invisible while the menu is flat.
+- then, if you want to see the fix work, nest New Arrivals under a dropdown in admin and confirm
+  the link stays hidden at that depth. Check the mobile drawer at 640px too — it is a separate file.
+- the homepage Find Us section must still render, with its cards.
+
+**Regression risk (B3):** adding a fourth menu snippet, or a fourth depth, and not calling the
+snippet. The regression check asserts each of the three files calls it exactly three times, so a
+depth added without a guard shows up as a count mismatch rather than as a link nobody notices.

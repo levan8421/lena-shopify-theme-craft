@@ -192,7 +192,16 @@
               href="{{ card_product.url }}"
               id="CardLink-{{ section_id }}-{{ card_product.id }}"
               class="full-unstyled-link"
-              aria-labelledby="CardLink-{{ section_id }}-{{ card_product.id }} Badge-{{ section_id }}-{{ card_product.id }}"
+              {%- comment -%}
+                Lena: the "Badge-" id was removed from this list. Stock put the "Sold out" /
+                "Sale" text inside that span; the Lena change below empties it, so the
+                reference pointed at an element with no text in it and contributed nothing to
+                the accessible name. The link now names itself from the title alone.
+
+                The equivalent list on the no-media card (further up) still names its badge,
+                and correctly so - that path still renders the stock badge text.
+              {%- endcomment -%}
+              aria-labelledby="CardLink-{{ section_id }}-{{ card_product.id }}"
             >
               {{ card_product.title | escape }}
             </a>
@@ -598,7 +607,17 @@
             </div>
           {% endif %}
         {% endif %}
-        {%- comment -%} Lena: Default badges hidden — using custom 1-of-1 and New badges instead {%- endcomment -%}
+        {%- comment -%}
+          Lena: default badges hidden - the custom 1-of-1, New and sold-overlay badges replace
+          them.
+
+          The empty element stays rather than being deleted. It is the last child of the card
+          content, and component-card.css carries `.card__heading:last-child { margin-bottom: 0 }`
+          - removing it would promote another element to :last-child and silently change card
+          spacing. The inline style is the one thing keeping a blank badge off the card, so it
+          cannot move to the stylesheet without the element going too. Deleting both is a
+          layout change that needs a browser, not a tidy-up.
+        {%- endcomment -%}
         <div class="card__badge {{ settings.badge_position }}" style="display:none">
           <span id="Badge-{{ section_id }}-{{ card_product.id }}"></span>
         </div>
