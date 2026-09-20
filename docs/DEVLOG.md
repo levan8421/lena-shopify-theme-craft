@@ -1393,3 +1393,49 @@ then set it back.
 
 **Regression risk:** any collection addressed by a typed string. `lena-drop-coming-soon` takes a
 `url` rather than a collection, which is a different shape and was left alone.
+
+---
+
+## 2026-09-19 · Bug · The return window on the PDP contradicted the refund policy page
+**Commit:** PENDING · **Files:** sections/main-product.liquid
+
+**What it does / did:** Every product page told the customer "Returns accepted within **30 days of
+delivery**". The store's own Refund Policy page said 15 days for purses and 7 days for
+accessories. Three places, two different systems, three different answers.
+
+**Why it matters:** A customer reads 30 days on the product page, buys, and asks for a return on
+day 20. The policy page says the window closed on day 15. That is a chargeback, and the card
+issuer normally sides with the customer, because the merchant's own product page promised 30.
+It is also the one contradiction a customer is most likely to act on, since it is the number they
+check before buying.
+
+**Reproduce (before the fix):**
+1. Open any available product → the returns line reads "30 days of delivery".
+2. Click "Full return policy" in that same line → the page it opens says 15 days / 7 days.
+3. Open the homepage Q&A, "How do I start a return?" → says 30 days.
+
+**The decision:** the owner set one window — **15 days, all products** — and rewrote the Refund
+Policy page on 2026-09-19 to say so, removing the purses/accessories split and the stale
+"hair clips, headbands, bookmarks, keychains" list. This commit makes the PDP agree.
+
+**Still to match (theme editor, not code):** the homepage Q&A block `qa-return` in
+`templates/index.json` still says 30 days. It is a `collapsible-content` setting, so it is edited
+in admin and Shopify commits it back — see CLAUDE.md, "Where to make the change".
+
+**Verify now:**
+```bash
+grep -rn "30 days" sections/ snippets/ templates/     # must return NOTHING once the Q&A is fixed
+grep -n "15 days" sections/main-product.liquid        # one hit, line ~654
+```
+In a browser: open any available product. The returns line must read "15 days of delivery", and
+the "Full return policy" link next to it must open a page that also says 15 days.
+
+**The new policy adds a clause the theme does not mention:** items bought in person, and items
+marked Sale or Clearance, are final sale. Measured 2026-09-19 with
+`productsCount(query: "tag:Sale OR tag:sale OR tag:Clearance OR tag:clearance")` → **0 products**,
+so nothing on the site is affected today. If a Sale tag is ever used, this PDP line becomes wrong
+again, because it promises returns unconditionally.
+
+**Regression risk:** any number that is written down in more than one place. This one lived in
+code, in a theme-editor field, and in a Shopify admin policy page — three owners, no single
+source. The policy page is the binding one; the other two must follow it, never the reverse.
