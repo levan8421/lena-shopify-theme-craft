@@ -105,18 +105,8 @@
                 >
               {%- endif -%}
             </div>
-            {%- comment -%} Lena: inventory badge — "1 of 1" for unique, "N in stock" for multiples {%- endcomment -%}
-            {%- assign lena_qty = card_product.selected_or_first_available_variant.inventory_quantity | default: 0 -%}
-            {%- if lena_qty > 0 -%}
-              <div class="lena-badge-1of1">
-                <span class="dm gold sm"></span>
-                {%- if lena_qty == 1 -%}
-                  1 of 1
-                {%- else -%}
-                  {{ lena_qty }} in stock
-                {%- endif -%}
-              </div>
-            {%- endif -%}
+            {%- comment -%} Lena: inventory badge, see snippets/lena-stock.liquid {%- endcomment -%}
+            {%- render 'lena-stock', product: card_product, style: 'card', part: 'badge' -%}
             {%- comment -%}
               Lena: New badge, read from the app-owned `new` tag.
 
@@ -252,23 +242,13 @@
             {%- endif -%}
 
             {% render 'price', product: card_product, price_class: '', show_compare_at_price: true %}
-            {%- comment -%} Lena: Scarcity text or Notify button {%- endcomment -%}
-            {%- if card_product.available and lena_qty == 1 -%}
-              <div class="lena-scarcity">
-                <span class="dm filled sm"></span> Only piece in existence
-              </div>
-            {%- endif -%}
-            {%- unless card_product.available -%}
-              {%- comment -%} Lena: file the signup under the product's real category, not its
-                   product.type - the two disagree for five of the seven live categories.
-                   See snippets/lena-notify-target.liquid. {%- endcomment -%}
-              {%- capture lena_card_notify -%}{%- render 'lena-notify-target', product: card_product -%}{%- endcapture -%}
-              {%- assign lena_card_notify_parts = lena_card_notify | strip | split: '|' -%}
-              <button class="lena-notify-btn" type="button"
-                onclick="window.lenaNotify('{{ lena_card_notify_parts[1] | escape }}','{{ lena_card_notify_parts[0] | escape }}')">
-                <span class="dm sm"></span> Notify Me
-              </button>
-            {%- endunless -%}
+            {%- comment -%}
+              Lena: scarcity line or Notify button. Both live in snippets now - the quantity
+              used to be assigned inside the featured_media branch above and read here,
+              outside it, so a product with no photo lost its scarcity line in silence.
+            {%- endcomment -%}
+            {%- render 'lena-stock', product: card_product, style: 'card', part: 'scarcity' -%}
+            {%- render 'lena-notify-button', product: card_product, style: 'card' -%}
             {%- if card_product.quantity_price_breaks_configured? -%}
               {% if card_product.variants_count == 1 and quick_add == 'bulk' %}
                 {% liquid

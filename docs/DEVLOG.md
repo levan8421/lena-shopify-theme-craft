@@ -1950,3 +1950,81 @@ oddly as a page title.
 **Regression risk:** re-adding a count gate around the banner. It will look like the right fix the
 next time a filtered page misbehaves, because that is exactly how it was introduced the first time.
 The regression check asserts the gate is absent for this reason.
+
+---
+
+## 2026-09-20 · Bug · A card with no photo silently lost its scarcity line, and two other copies of the same rule could not tell
+**Commit:** <pending> · **Files:** snippets/lena-stock.liquid (new), snippets/lena-notify-button.liquid (new), snippets/card-product.liquid, sections/main-product.liquid, sections/lena-featured-piece.liquid, docs/regression-check.sh
+
+**Batch 2 of the CODE_SURVEY_2026-09-20 work** (survey findings B2 and C1–C4). The bug and its
+duplicates are fixed together on purpose; fixing only the bug would have left two copies free to
+drift again, which is how it got here.
+
+**What it did:** `snippets/card-product.liquid` assigned the stock quantity at line 109, *inside*
+`{%- if card_product.featured_media -%}` (the branch spanning lines 61–151), and read it again at
+line 256, *outside* that branch. For a product with no featured image the variable was never set, so
+`{%- if card_product.available and lena_qty == 1 -%}` was false and the **"Only piece in existence"**
+line vanished. No error, nothing in the linter, nothing on screen to notice. The `1 of 1` badge, the
+`New` badge and the sold-out overlay all sat in the same branch and disappeared with it.
+
+**Why it matters:** "Only piece in existence" is the sentence that makes a one-of-a-kind catalogue
+feel one-of-a-kind. Losing it costs nothing visible and everything persuasive.
+
+**This is the same fault as R19, in a second place.** R19 was the PDP version: the quantity was
+assigned inside the `title` block and read from `price`, and reordering blocks in the theme editor
+emptied it. That was fixed by hoisting the assign and writing a comment explaining why.
+`card-product` never got the same treatment, because nothing connected the two.
+
+**Latent today, not reachable — and why it will not stay that way.** Of the first 250 of 296 active
+products, 6 have no featured media, and all 6 are POS-tagged; every POS product has
+`publishedAt: null`, so none is reachable from the storefront. It becomes reachable the first time a
+published product is created before its photo is uploaded, which is the normal order of work.
+
+**What it does now:** two new snippets own these rules outright.
+
+- `snippets/lena-stock.liquid` — takes `product`, `style` (`card` / `pdp` / `featured`) and `part`
+  (`badge` / `scarcity`). It computes the quantity itself, at the call site, every time. **There is
+  no quantity variable left anywhere to read out of scope**, which is what makes this fix
+  structural rather than something to remember.
+- `snippets/lena-notify-button.liquid` — takes `product` and `style`. It captures
+  `lena-notify-target`, splits on the pipe and calls `window.lenaNotify(label, handle)`. Getting
+  that argument order wrong files a signup under the wrong category silently, so it should never
+  have been written twice.
+
+Three copies of the badge, three of the scarcity line and two of the Notify button collapse to one
+each. `style` picks the CSS class only — it never changes the wording.
+
+**One deliberate behaviour change.** The scarcity line is now gated on `product.available` as well
+as a quantity of 1. `card-product` and `main-product` already did this; `lena-featured-piece` tested
+the quantity alone, which was safe only because its pool is pre-filtered with `where: 'available'`.
+The extra test changes nothing today and stops the section depending on a filter applied elsewhere.
+
+**What was deliberately NOT extracted.** "This piece found its home" is written twice, but the card
+paints it across the image as an overlay and the PDP prints it as a line under the price. They share
+a sentence, not an element, and a snippet that renders two unrelated shapes is worse than two lines
+of duplication. Both call sites now carry a comment saying so.
+
+**Reproduce (before the fix):**
+1. In admin, create a published product with inventory 1 and **no image**.
+2. Put it in any collection and open that collection page.
+3. Saw: a text-only card with no "Only piece in existence" line. Expected: the line, as on every
+   other one-of-a-kind card.
+
+**Verify now:**
+```
+bash docs/regression-check.sh
+grep -rn "lena_qty" snippets/card-product.liquid      # must return nothing
+grep -rl "lena-badge-1of1" sections/ snippets/        # only snippets/lena-stock.liquid
+```
+The script asserts each of the six badge/scarcity class names appears in exactly one file. In a
+browser, check all three surfaces still look identical to before:
+- **a collection page** — `1 of 1` badge over the image, "Only piece in existence" under the price
+- **a PDP** — the same two, plus "Notify me of similar items" on a sold-out product
+- **the homepage Featured Piece** — the same two
+Then the actual fix: a published product with inventory 1 and no photo must now show the scarcity
+line.
+
+**Regression risk:** someone needing the quantity for a fourth thing and assigning it at the call
+site again "just this once". The next copy will agree on the day it is written and drift later, the
+same way these three did. If a new surface needs the badge, give `lena-stock` a new `style`; if it
+needs the number for something else, that is a new `part`, not a new `assign`.

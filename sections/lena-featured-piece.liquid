@@ -70,7 +70,6 @@
       assign fp_i = fp_i | plus: 1
     endfor
 
-    assign fp_qty = featured.selected_or_first_available_variant.inventory_quantity | default: 0
   -%}
 
   {%- style -%}
@@ -128,26 +127,13 @@
             <a href="{{ featured.url }}">{{ featured.title | escape }}</a>
           </h3>
 
-          {%- if fp_qty > 0 -%}
-            <div class="lena-fp-badge">
-              <span class="dm gold sm"></span>
-              {%- if fp_qty == 1 -%}
-                1 of 1
-              {%- else -%}
-                {{ fp_qty }} in stock
-              {%- endif -%}
-            </div>
-          {%- endif -%}
+          {%- render 'lena-stock', product: featured, style: 'featured', part: 'badge' -%}
 
           <div class="lena-fp-price">
             {%- render 'price', product: featured, price_class: '', show_compare_at_price: true -%}
           </div>
 
-          {%- if fp_qty == 1 -%}
-            <div class="lena-fp-scarcity">
-              <span class="dm filled sm"></span> Only piece in existence
-            </div>
-          {%- endif -%}
+          {%- render 'lena-stock', product: featured, style: 'featured', part: 'scarcity' -%}
 
           {%- if section.settings.description != blank -%}
             <p class="lena-fp-desc">{{ section.settings.description }}</p>

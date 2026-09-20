@@ -86,18 +86,19 @@
           {%- assign product_form_id = 'product-form-' | append: section.id -%}
 
           {%- comment -%}
-            Lena: stock count, read once before the block loop.
+            Lena: there is no stock count assigned here any more.
 
-            This used to be assigned inside the 'title' block and read from the 'price',
-            'quantity_selector' and 'buy_buttons' blocks. That only worked because
-            block_order happens to list title first. Blocks are reordered and removed from
-            the theme editor, so moving Price above Title - or deleting the Title block -
-            silently emptied lena_qty and took the "1 of 1" badge and the "Only piece in
-            existence" line with it, with no error and nothing else to notice.
+            It used to be, and before that it was assigned inside the 'title' block and read
+            from 'price', 'quantity_selector' and 'buy_buttons' - which only worked because
+            block_order happens to list title first. Moving Price above Title, or deleting
+            the Title block, silently emptied it and took the "1 of 1" badge and the "Only
+            piece in existence" line with it (R19). Hoisting it here fixed that.
 
-            Assigned here it does not depend on block order at all.
+            snippets/lena-stock.liquid now computes the quantity itself, at each call site,
+            so there is no variable left to depend on block order - or on being inside the
+            right branch, which is how the same fault survived in card-product until the
+            2026-09-20 survey found it. Do not reintroduce a shared quantity variable here.
           {%- endcomment -%}
-          {%- assign lena_qty = product.selected_or_first_available_variant.inventory_quantity | default: 0 -%}
 
           {%- for block in section.blocks -%}
             {%- case block.type -%}
@@ -115,17 +116,8 @@
                   {%- comment -%} Lena: breadcrumbs {%- endcomment -%}
                   {%- render 'breadcrumbs', product: product, collection: collection -%}
                   <h1>{{ product.title | escape }}</h1>
-                  {%- comment -%} Lena: inventory badge — "1 of 1" for unique, "N in stock" for multiples. lena_qty is assigned above the block loop {%- endcomment -%}
-                  {%- if lena_qty > 0 -%}
-                    <div class="lena-pdp-badge-1of1">
-                      <span class="dm gold sm"></span>
-                      {%- if lena_qty == 1 -%}
-                        1 of 1
-                      {%- else -%}
-                        {{ lena_qty }} in stock
-                      {%- endif -%}
-                    </div>
-                  {%- endif -%}
+                  {%- comment -%} Lena: inventory badge, see snippets/lena-stock.liquid {%- endcomment -%}
+                  {%- render 'lena-stock', product: product, style: 'pdp', part: 'badge' -%}
                   {%- comment -%} Lena: Artisan attribution {%- endcomment -%}
                   <p class="lena-pdp-artisan">
                     <span class="dm filled sm"></span> Handmade by artisans in Vietnam
@@ -145,26 +137,18 @@
                     price_class: 'price--large'
                   -%}
                 </div>
-                {%- comment -%} Lena: Scarcity or sold-out messaging {%- endcomment -%}
-                {%- if product.available and lena_qty == 1 -%}
-                  <div class="lena-pdp-scarcity">
-                    <span class="dm filled sm"></span>
-                    Only piece in existence
-                  </div>
-                {%- endif -%}
+                {%- comment -%} Lena: scarcity line, see snippets/lena-stock.liquid {%- endcomment -%}
+                {%- render 'lena-stock', product: product, style: 'pdp', part: 'scarcity' -%}
                 {%- unless product.available -%}
+                  {%- comment -%}
+                    The sold message stays here rather than moving into a snippet: the card
+                    paints the same sentence across the image as an overlay, so the two share
+                    only the wording, not the element.
+                  {%- endcomment -%}
                   <div class="lena-pdp-sold-msg">
                     <span class="dm gold sm"></span> This piece found its home
                   </div>
-                  {%- comment -%} Lena: file the signup under the product's real category, not its
-                       product.type - the two disagree for five of the seven live categories.
-                       See snippets/lena-notify-target.liquid. {%- endcomment -%}
-                  {%- capture lena_pdp_notify -%}{%- render 'lena-notify-target', product: product -%}{%- endcapture -%}
-                  {%- assign lena_pdp_notify_parts = lena_pdp_notify | strip | split: '|' -%}
-                  <button class="lena-pdp-notify-btn" type="button"
-                    onclick="window.lenaNotify('{{ lena_pdp_notify_parts[1] | escape }}','{{ lena_pdp_notify_parts[0] | escape }}')">
-                    <span class="dm sm"></span> Notify me of similar items
-                  </button>
+                  {%- render 'lena-notify-button', product: product, style: 'pdp' -%}
                 {%- endunless -%}
                 {%- if product.quantity_price_breaks_configured? -%}
                   <div class="volume-pricing-note" id="Volume-Note-{{ section.id }}">

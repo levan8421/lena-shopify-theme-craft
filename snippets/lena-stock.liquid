@@ -1,0 +1,79 @@
+{%- comment -%}
+  The inventory rule for the whole theme, in one place.
+
+  "How many of this piece are left, and what do we say about it" was written three times:
+  in card-product, in main-product and in lena-featured-piece. All three computed the same
+  quantity the same way and then printed the same two sentences, differing only in the CSS
+  class on the wrapper. They agreed by accident, not by construction - and one of them had
+  already drifted.
+
+  THE BUG THIS REPLACES (survey B2). In card-product the quantity was assigned at line 109,
+  inside {%- if card_product.featured_media -%}, but read again at line 256, outside it. For
+  a product with no featured image the variable was never set, so the "Only piece in
+  existence" line silently disappeared - along with the badge, the New badge and the sold
+  overlay, which all sat in the same branch. That is the identical fault that was found and
+  fixed on the PDP as R19; card-product never got the same treatment.
+
+  Hoisting the assign would have fixed it a third time in a third place. Moving the rule
+  here fixes it once and makes it structurally impossible to reintroduce, because there is
+  now no quantity variable at any call site to read out of scope.
+
+  USAGE
+
+    {%- render 'lena-stock', product: card_product, style: 'card', part: 'badge' -%}
+    {%- render 'lena-stock', product: card_product, style: 'card', part: 'scarcity' -%}
+
+    product  the product to read. Required; renders nothing if absent.
+    style    'card' | 'pdp' | 'featured' - picks the CSS class only, never the wording.
+             Anything else falls back to 'card'.
+    part     'badge'    -> the "1 of 1" / "N in stock" pill
+             'scarcity' -> the "Only piece in existence" line
+             Two parts rather than one block because the call sites put them in different
+             places: the badge sits over the image, the line sits under the price.
+
+  ONE DELIBERATE BEHAVIOUR CHANGE. The scarcity line is gated on `product.available` as
+  well as a quantity of 1. card-product and main-product both already did this;
+  lena-featured-piece tested the quantity alone. That was safe there only because its pool
+  is pre-filtered with `where: 'available'`, so the extra test changes nothing today and
+  stops the section depending on a filter applied somewhere else.
+
+  WHY NOT ALSO THE SOLD OVERLAY. "This piece found its home" is also written twice, but the
+  two are genuinely different elements - card-product paints it across the image as an
+  overlay, main-product prints it as a line under the price. Only the sentence is shared,
+  and sharing a sentence is not worth a snippet that has to render two unrelated shapes.
+{%- endcomment -%}
+
+{%- liquid
+  assign ls_qty = product.selected_or_first_available_variant.inventory_quantity | default: 0
+
+  case style
+    when 'pdp'
+      assign ls_badge_class = 'lena-pdp-badge-1of1'
+      assign ls_scarcity_class = 'lena-pdp-scarcity'
+    when 'featured'
+      assign ls_badge_class = 'lena-fp-badge'
+      assign ls_scarcity_class = 'lena-fp-scarcity'
+    else
+      assign ls_badge_class = 'lena-badge-1of1'
+      assign ls_scarcity_class = 'lena-scarcity'
+  endcase
+-%}
+
+{%- if part == 'scarcity' -%}
+  {%- if product.available and ls_qty == 1 -%}
+    <div class="{{ ls_scarcity_class }}">
+      <span class="dm filled sm"></span> Only piece in existence
+    </div>
+  {%- endif -%}
+{%- else -%}
+  {%- if ls_qty > 0 -%}
+    <div class="{{ ls_badge_class }}">
+      <span class="dm gold sm"></span>
+      {%- if ls_qty == 1 -%}
+        1 of 1
+      {%- else -%}
+        {{ ls_qty }} in stock
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+{%- endif -%}

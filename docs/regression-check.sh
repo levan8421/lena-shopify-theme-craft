@@ -76,6 +76,13 @@ assert_grep() {   # assert_grep <description> <pattern> <file>
 assert_no_grep() { # assert_no_grep <description> <pattern> <file>
   if grep -q "$2" "$3"; then fail "$1"; else pass "$1"; fi
 }
+assert_single_source() { # assert_single_source <description> <pattern> <expected file>
+  # The pattern must appear in exactly one file under sections/ and snippets/, and that
+  # file must be the one named. This is what stops a rule being copied back out again.
+  local found
+  found="$(grep -rl "$2" sections/ snippets/ 2>/dev/null | sort | tr '\n' ' ' | sed 's/ $//')"
+  if [ "$found" = "$3" ]; then pass "$1"; else fail "$1 (found in: ${found:-nothing})"; fi
+}
 
 # Batch 1 - collection page empty states (DEVLOG 2026-09-20)
 assert_grep "filtered-to-zero shows 'No products found' + remove-all link" \
@@ -86,6 +93,20 @@ assert_grep "the collection banner still has its <h1>" \
   "collection-hero__title" sections/main-collection-banner.liquid
 assert_no_grep "the banner's <h1> is not gated on a product count" \
   "if collection.all_products_count > 0" sections/main-collection-banner.liquid
+
+# Batch 2 - one source for the inventory rule (DEVLOG 2026-09-20)
+assert_no_grep "card-product holds no quantity variable to read out of scope" \
+  "lena_qty" snippets/card-product.liquid
+assert_no_grep "lena-featured-piece holds no quantity variable either" \
+  "fp_qty" sections/lena-featured-piece.liquid
+for cls in lena-badge-1of1 lena-pdp-badge-1of1 lena-fp-badge \
+           lena-scarcity lena-pdp-scarcity lena-fp-scarcity; do
+  assert_single_source "$cls is written only in lena-stock" "$cls" snippets/lena-stock.liquid
+done
+assert_single_source "the Notify Me button is built in only one place" \
+  'onclick="window.lenaNotify(' snippets/lena-notify-button.liquid
+assert_grep "...and the function it calls is still defined by the modal" \
+  "window.lenaNotify = " snippets/lena-notify-modal.liquid
 
 echo
 if [ "$FAIL" -eq 0 ]; then

@@ -1,0 +1,46 @@
+{%- comment -%}
+  The "Notify Me" button, in one place.
+
+  The button was built twice - once in card-product, once in main-product - and both copies
+  carried the same three lines of plumbing: capture the output of lena-notify-target, strip
+  it, split it on the pipe, and pass the two halves to window.lenaNotify in the right order.
+  Getting that order wrong swaps the label and the handle, which files the signup under the
+  wrong category without failing or showing anything odd on screen. That is exactly the kind
+  of rule that should not be written twice.
+
+  USAGE
+
+    {%- render 'lena-notify-button', product: card_product, style: 'card' -%}
+    {%- render 'lena-notify-button', product: product, style: 'pdp' -%}
+
+    product  the sold-out product. Required.
+    style    'card' -> "Notify Me",               class lena-notify-btn
+             'pdp'  -> "Notify me of similar items", class lena-pdp-notify-btn
+             Anything else falls back to 'card'.
+
+  The button renders nothing for a product that is still available, so a call site cannot
+  produce a Notify Me button next to an Add to cart button by forgetting a guard. Call sites
+  that need to wrap other sold-out content keep their own `unless` as well; the two agree.
+
+  The category comes from lena-notify-target, never from product.type - the two disagree for
+  five of the seven live categories.
+{%- endcomment -%}
+
+{%- if product.available == false -%}
+  {%- liquid
+    case style
+      when 'pdp'
+        assign nb_class = 'lena-pdp-notify-btn'
+        assign nb_label = 'Notify me of similar items'
+      else
+        assign nb_class = 'lena-notify-btn'
+        assign nb_label = 'Notify Me'
+    endcase
+  -%}
+  {%- capture nb_target -%}{%- render 'lena-notify-target', product: product -%}{%- endcapture -%}
+  {%- assign nb_parts = nb_target | strip | split: '|' -%}
+  <button class="{{ nb_class }}" type="button"
+    onclick="window.lenaNotify('{{ nb_parts[1] | escape }}','{{ nb_parts[0] | escape }}')">
+    <span class="dm sm"></span> {{ nb_label }}
+  </button>
+{%- endif -%}
