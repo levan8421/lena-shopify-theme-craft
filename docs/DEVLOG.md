@@ -1703,7 +1703,7 @@ matching gaps, but a much longer subheading is the thing that would show it.
 ---
 
 ## 2026-09-20 · Bug · CLAUDE.md told the next reader the return window was 30 days
-**Commit:** <hash> · **Files:** CLAUDE.md
+**Commit:** 13ed4be · **Files:** CLAUDE.md
 
 **What it does / did:** the "Modified stock files" table described `sections/main-product.liquid` as
 carrying "30-day returns". The PDP has said **15 days** since the return-window fix. The same row's
