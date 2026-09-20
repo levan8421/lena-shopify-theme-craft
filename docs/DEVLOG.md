@@ -1742,7 +1742,7 @@ confirm with `grep -n "Lena:"` before editing.
 ---
 
 ## 2026-09-20 · Bug · The hero heading broke into four lines and split a word on desktop
-**Commit:** <hash> · **Files:** assets/lena-custom.css
+**Commit:** fcbe8d1 · **Files:** assets/lena-custom.css
 
 **What it does / did:** `.lena-hero h1` was `clamp(36px, 5vw, 58px)`. Both the cap and the middle
 value size the text against the **viewport**, but the heading is not in the viewport - it is in the
