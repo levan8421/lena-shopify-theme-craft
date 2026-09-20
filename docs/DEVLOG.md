@@ -2032,7 +2032,7 @@ needs the number for something else, that is a new `part`, not a new `assign`.
 ---
 
 ## 2026-09-20 · Bug · The Color filter hid non-colours from the list but printed them raw in the pill above it
-**Commit:** <pending> · **Files:** snippets/lena-color-facet.liquid, snippets/lena-facet-pill.liquid (new), snippets/lena-facet-visible.liquid (new), snippets/facets.liquid, docs/regression-check.sh
+**Commit:** `c87f6bf` · **Files:** snippets/lena-color-facet.liquid, snippets/lena-facet-pill.liquid (new), snippets/lena-facet-visible.liquid (new), snippets/facets.liquid, docs/regression-check.sh
 
 **Batch 3 of the CODE_SURVEY_2026-09-20 work** (survey findings B4, B5, C7).
 
