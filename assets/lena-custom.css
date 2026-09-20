@@ -1068,16 +1068,30 @@ a.lena-notify-btn {
      in the file, so it wins the tie. The attribute is always present - lena-find-us writes
      data-cards on every render - so nothing is missed by requiring it.
 
-     .lena-testimonial-grid below is deliberately NOT changed. It has the same shape of
-     selector and is winnable in the same way, but it happens to come out right: for 1 card
-     [data-cards="1"] gives one centred column, which is what you want at this width, and for
-     3 or more no attribute rule matches so the line below applies normally. Making it
-     specific would force a lone testimonial into a 2-column grid - a regression, not a fix. */
+     .lena-testimonial-grid at THIS width stays a bare class on purpose, and that is not the
+     same decision as the one at 640px below. Here the declaration is 1fr 1fr, so every case
+     already lands where it should: [data-cards="1"] wins and gives one centred column, which
+     is right; [data-cards="2"] wins and gives 1fr 1fr, which is what this rule wanted anyway;
+     3 or more matches no attribute rule and falls through to this line. Adding [data-cards]
+     here WOULD be a regression - it would force a lone testimonial into a 2-column grid.
+
+     An earlier version of this comment said the same about the 640px rule below. It was
+     wrong: it reasoned about 1 card and about 3-or-more and skipped 2. See below. */
   .lena-find-grid[data-cards] { grid-template-columns: 1fr; }
   .lena-testimonial-grid { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 640px) {
-  .lena-testimonial-grid { grid-template-columns: 1fr; }
+  /* Lena: [data-cards] is load-bearing here, for the same cascade reason as .lena-find-grid
+     above, and it is the case that comment originally got wrong.
+
+     .lena-testimonial-grid[data-cards="2"] is a class plus an attribute. As a bare class this
+     rule lost to it, so a section holding exactly 2 testimonials stayed in 2 columns on a
+     375px phone. 1 card and 3-or-more both came out right, which is why it read as safe.
+
+     Unlike the 900px rule above, matching [data-cards] here is free: this declaration is 1fr,
+     which is what all three cases want at this width. [data-cards="1"]'s max-width: 600px
+     centring is a different property and is untouched. */
+  .lena-testimonial-grid[data-cards] { grid-template-columns: 1fr; }
   .lena-hero { min-height: auto; }
 
   /* Hero mosaic: 2x2 stack. Replaces a snap-scroll carousel that showed ~1.4 of 4

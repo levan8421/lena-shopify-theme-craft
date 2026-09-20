@@ -82,36 +82,9 @@ specific, likely change.
 
 | ID | Finding | Becomes reachable when | State |
 |---|---|---|---|
-| S1 | Testimonial grid keeps 2 columns on a phone at exactly 2 cards | a testimonial block is deleted in admin | open |
 | S2 | A card with no photo still has no badge, New badge or sold overlay | a published product ships without a featured image | open — may be intended |
 | S3 | Hiding the only child of a dropdown leaves an empty submenu | the `Shop ▾` menu restructure ships | open |
 | S4 | The default collection template has no empty state | a new category collection is created before its products load | open |
-
-#### S1 · The testimonial grid is two columns on a phone when it has exactly two cards
-
-`assets/lena-custom.css` sets `.lena-testimonial-grid[data-cards="2"] { grid-template-columns: 1fr
-1fr; }`. The mobile override inside `@media (max-width: 640px)` is `.lena-testimonial-grid {
-grid-template-columns: 1fr; }` — a class alone against a class plus an attribute, so it loses at
-every width. A media query adds no specificity of its own.
-
-This is the same cascade fault that was just fixed for `.lena-find-grid`, on the one selector the
-fix's own comment declares safe. That comment reasons about one card and about three-or-more and
-skips the case of two. `index.json` carries three testimonial blocks today and no
-`[data-cards="3"]` rule exists, so the override applies and the phone layout is correct — by luck,
-not by construction, which is the same standard the `featured-collection` gate was just held to.
-
-The fix is the one already applied next door: `.lena-testimonial-grid[data-cards] {
-grid-template-columns: 1fr; }`, which makes the two selectors equally specific so the later one
-wins. It touches only `grid-template-columns`, so `[data-cards="1"]`'s `max-width: 600px` centring
-is unaffected.
-
-**Verify:**
-```bash
-grep -n "lena-testimonial-grid" assets/lena-custom.css
-```
-Order alone cannot fix this: `[data-cards="2"]` is more specific, so it wins wherever it sits. The
-mobile override has to match that specificity — carry `[data-cards]` — *and* come later in the file.
-Then set the section to two testimonials and look at 375px.
 
 #### S2 · A card with no photo still has no badge, New badge or sold overlay
 

@@ -2638,3 +2638,62 @@ so this is not git drifting from Shopify.
 in admin. The stored value is the handle as captured when it was picked; nothing re-resolves it and
 nothing warns, and the section hides itself rather than erroring. The general guard is to look at
 the homepage after an admin session, not only at the diff.
+
+---
+
+## 2026-09-20 · Bug · The testimonial grid kept two columns on a phone, on the selector a comment called safe
+**Commit:** <pending> · **Files:** assets/lena-custom.css, docs/OPEN_ITEMS.md, docs/regression-check.sh
+
+**What it does / did:** `assets/lena-custom.css` sets `.lena-testimonial-grid[data-cards="2"] {
+grid-template-columns: 1fr 1fr; }`. The mobile override inside `@media (max-width: 640px)` was
+`.lena-testimonial-grid { grid-template-columns: 1fr; }` — a bare class against a class plus an
+attribute. **A media query adds no specificity of its own**, so the attribute rule won at every
+width, and a section holding **exactly two** testimonials stayed in two columns on a 375px phone.
+
+This is the identical cascade fault fixed earlier the same day for `.lena-find-grid`, and it was
+sitting on the one selector that fix's own comment declared safe. That comment reasoned about one
+card and about three-or-more and **skipped the case of two**. Closes S1.
+
+**Why it matters:** two testimonial cards side by side inside 375px leaves roughly 165px of column
+each, and these cards carry a quote, a name and a location. It is the same defect and the same
+width as the Find Us one; only the trigger differs.
+
+**Not reachable on 2026-09-20, and that is the point.** `templates/index.json` carries three
+testimonial blocks, so `data-cards="3"` matches no attribute rule and the override applied
+normally. The layout was correct **by luck** — one deletion in the theme editor away from wrong,
+with no code change and nothing to review. That is the same standard the `featured-collection`
+visibility gate was held to in batch 9.
+
+**The fix, and why the two media blocks are now deliberately different:**
+
+- **640px** — `.lena-testimonial-grid[data-cards]`. The declaration here is `1fr`, which is what
+  **all three** cases want at this width, so matching the attribute costs nothing.
+  `[data-cards="1"]`'s `max-width: 600px` centring is a different property and is untouched.
+- **900px** — left as a bare class **on purpose**. The declaration there is `1fr 1fr`. Adding
+  `[data-cards]` would force a lone testimonial into a two-column grid — a regression. Every case
+  already lands correctly: `[data-cards="1"]` wins and centres one column, `[data-cards="2"]` wins
+  with the same `1fr 1fr` this rule wanted, and three-or-more falls through.
+
+Both blocks now carry the reasoning, because "looks like the rule next door" is exactly what made
+the wrong one look finished.
+
+**Reproduce (before the fix):**
+1. Theme editor → Testimonials → delete one of the three blocks, leaving two.
+2. Open the homepage at 375px → the two cards sit side by side.
+3. Restore the third block → one column returns, hiding the fault again.
+
+**Verify now:**
+```bash
+grep -n "lena-testimonial-grid" assets/lena-custom.css
+#   the 640px rule must read .lena-testimonial-grid[data-cards]
+#   the 900px rule must stay a bare .lena-testimonial-grid
+```
+In a browser at 375px, with the section set to **1**, **2**, **3** and **4** testimonials in turn:
+one column every time. Then 800px: 1 card centred, 2 cards side by side, 3+ two per row.
+
+**Regression risk:** any `[data-cards="N"]` rule paired with a bare-class override in a media
+query. The override reads as correct because it is inside the breakpoint, and it is only wrong for
+the specific counts that have an attribute rule — so the fault hides whenever the live content
+happens to sit outside those counts. The general check is to compare selector specificity, never
+position, and to enumerate **every** count the attribute rules name. The regression check now
+asserts the 640px rule carries `[data-cards]`.

@@ -197,6 +197,13 @@ assert_grep "featured-collection gates visibility on all_products_count" \
 assert_grep "lena-drop-header still asks the same question the same way" \
   "all_products_count" sections/lena-drop-header.liquid
 
+# S1 - the testimonial mobile override must out-specify [data-cards="2"] (DEVLOG 2026-09-20)
+assert_grep "the 640px testimonial override carries [data-cards] so it can win the tie" \
+  "lena-testimonial-grid\[data-cards\] { grid-template-columns: 1fr; }" assets/lena-custom.css
+# ...and the 900px one must NOT, or a lone testimonial is forced into two columns.
+assert_no_grep "the 900px testimonial rule stays a bare class" \
+  "lena-testimonial-grid\[data-cards\] { grid-template-columns: 1fr 1fr; }" assets/lena-custom.css
+
 # The New Arrivals smart collection rule (DEVLOG 2026-09-20)
 # CLAUDE.md described one condition where the store has two. The rule lives in Shopify admin,
 # so nothing here can read it - this only asserts the doc still names BOTH tags. Re-measure the
