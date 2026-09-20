@@ -1500,3 +1500,34 @@ rules were not touched, so both should look exactly as before.
 rendered into a heading has the same exposure, because the theme editor decides what it stores,
 not us. Sanitise on output, never by correcting the stored JSON - that fix gets overwritten by
 the next admin save and nobody is told.
+
+---
+
+## 2026-09-20 · Bug · The Shop by Category description stopped half way across the page
+**Commit:** <pending> · **Files:** assets/lena-custom.css
+
+**What it does / did:** `.lena-section-sub` - the one-line description under the "Our Collections"
+heading on the homepage - carried `max-width: 60ch`. The collection tiles directly below it run the
+full 1200px page width, so the text broke onto a second line and ended well short of the right edge
+while the image row continued past it. Removed the cap. The sentence now runs the full width of the
+section on desktop, lining its right edge up with the tiles, and still wraps normally on narrow
+screens because the container itself is the limit.
+
+**Why it matters:** purely visual, but it is the first block of prose on the homepage and it read as
+a layout mistake - a ragged column of text sitting on top of an edge-to-edge grid.
+
+**Reproduce (before the fix):** open the homepage on a desktop browser at 1200px or wider, scroll to
+"Our Collections". The description wrapped after "New pieces go up as" and the second line ended
+around the middle of the page, while the four collection images below spanned the full width.
+
+**Verify now:**
+```
+grep -n "max-width" assets/lena-custom.css | grep -n "60ch"   # expect no output
+```
+In a browser at 1280px: the description is one line whose right edge finishes near the right edge of
+the last collection tile. At 640px it wraps to several lines with no horizontal scrolling.
+
+**Regression risk:** `.lena-section-sub` is rendered only by `sections/collection-list.liquid`, and
+"Our Collections" is the only section on the site using it, so nothing else moves. If a much longer
+subtitle is ever typed into that field it will now run the full 1200px, which is a long line to
+read - if that happens, cap it again at a width closer to the grid rather than at 60ch.

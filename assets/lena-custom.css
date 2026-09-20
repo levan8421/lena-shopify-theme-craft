@@ -300,11 +300,15 @@ a.lena-notify-btn {
 }
 
 /* Subtitle under a collection-list heading (Shop by Category) */
+/* Lena: no max-width. A 60ch cap wrapped this to two short lines while the
+   collection tiles below it ran the full 1200px, so the text stopped less than
+   half way across and looked misaligned with the row underneath. It is one
+   sentence, so it fits on a single full-width line on desktop and still wraps
+   normally on narrow screens. */
 .lena-section-sub {
   font-size: 15px;
   line-height: 1.6;
   color: var(--lena-slate);
-  max-width: 60ch;
   margin: -8px 0 28px;
 }
 .lena-section-p {
