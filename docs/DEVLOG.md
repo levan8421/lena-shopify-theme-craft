@@ -2590,7 +2590,7 @@ above: put the query next to the claim, so the next reader re-measures instead o
 ---
 
 ## 2026-09-20 · Bug · R1 was recorded as "unexplained" when the git history already explained it
-**Commit:** PENDING · **Files:** `docs/OPEN_ITEMS.md`
+**Commit:** 0116190 · **Files:** `docs/OPEN_ITEMS.md`
 
 **What it does / did:** R1 — the Featured Piece section pointing at the collection handle
 `artisan`, which does not exist — was marked `fixed` for months while the template still said
