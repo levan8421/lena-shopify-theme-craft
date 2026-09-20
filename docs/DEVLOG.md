@@ -2305,7 +2305,7 @@ changing the value.
 ---
 
 ## 2026-09-20 · Bug · Closing one dialog unlocked page scrolling behind the other
-**Commit:** <pending> · **Files:** assets/lena-modal.js (new), layout/theme.liquid, sections/lena-email-popup.liquid, snippets/lena-notify-modal.liquid, docs/regression-check.sh
+**Commit:** `e5802f5` · **Files:** assets/lena-modal.js (new), layout/theme.liquid, sections/lena-email-popup.liquid, snippets/lena-notify-modal.liquid, docs/regression-check.sh
 
 **Batch 7 of the CODE_SURVEY_2026-09-20 work** (survey finding C5).
 
