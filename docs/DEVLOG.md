@@ -2099,7 +2099,7 @@ for a hidden value, that is a new `fallback` name, not a filter at the call site
 ---
 
 ## 2026-09-20 · Bug · The nav-hiding rule only worked at the top level of the menu
-**Commit:** <pending> · **Files:** snippets/lena-hide-nav-link.liquid (new), snippets/header-dropdown-menu.liquid, snippets/header-drawer.liquid, snippets/header-mega-menu.liquid, snippets/card-product.liquid, sections/lena-find-us.liquid, docs/regression-check.sh
+**Commit:** `3bb9852` · **Files:** snippets/lena-hide-nav-link.liquid (new), snippets/header-dropdown-menu.liquid, snippets/header-drawer.liquid, snippets/header-mega-menu.liquid, snippets/card-product.liquid, sections/lena-find-us.liquid, docs/regression-check.sh
 
 **Batch 4 of the CODE_SURVEY_2026-09-20 work** (survey findings B3, B8, B9). Three unrelated small
 faults, batched because each is a few lines and none touches the others.
