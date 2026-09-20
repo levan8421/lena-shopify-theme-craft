@@ -2172,7 +2172,7 @@ depth added without a guard shows up as a count mismatch rather than as a link n
 ---
 
 ## 2026-09-20 · Bug · Artisan Spotlight kept the rotation fault that Featured Piece documents as fixed
-**Commit:** <pending> · **Files:** sections/lena-spotlight.liquid, docs/regression-check.sh
+**Commit:** `febb78b` · **Files:** sections/lena-spotlight.liquid, docs/regression-check.sh
 
 **Batch 5 of the CODE_SURVEY_2026-09-20 work** (survey findings B6, B7).
 
