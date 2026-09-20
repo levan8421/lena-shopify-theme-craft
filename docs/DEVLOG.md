@@ -2465,7 +2465,7 @@ lives only in a DEVLOG entry is a convention nobody reads.
 ---
 
 ## 2026-09-20 · Bug · The New Arrivals bar and its grid asked "is this empty?" two different ways
-**Commit:** <pending> · **Files:** sections/featured-collection.liquid, sections/main-collection-product-grid.liquid, docs/regression-check.sh, docs/OPEN_ITEMS.md
+**Commit:** `4d00fdc` · **Files:** sections/featured-collection.liquid, sections/main-collection-product-grid.liquid, docs/regression-check.sh, docs/OPEN_ITEMS.md
 
 **Batch 9 of the CODE_SURVEY_2026-09-20 work** (survey findings B10 and B12).
 
