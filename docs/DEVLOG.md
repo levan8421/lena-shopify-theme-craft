@@ -1504,7 +1504,7 @@ the next admin save and nobody is told.
 ---
 
 ## 2026-09-20 · Bug · The Shop by Category description stopped half way across the page
-**Commit:** <pending> · **Files:** assets/lena-custom.css
+**Commit:** e885b34 · **Files:** assets/lena-custom.css
 
 **What it does / did:** `.lena-section-sub` - the one-line description under the "Our Collections"
 heading on the homepage - carried `max-width: 60ch`. The collection tiles directly below it run the
