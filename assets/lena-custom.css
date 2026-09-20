@@ -361,15 +361,35 @@ a.lena-notify-btn {
   right: -120px;
   bottom: -200px;
 }
+/* Lena: four things here, all about making the hero's spacing one number.
+
+   width: 100% - .lena-hero is a flex container, and a flex item without this is
+   sized by its own content, so max-width was often never reached and the auto
+   margins had nothing left to centre. That is why the hero sat off-centre while
+   every other section did not.
+
+   max-width: var(--page-width) - the same variable .page-width uses in base.css,
+   so the hero's edges line up with Our Collections and everything below it. It
+   was a second hardcoded 1200px that would have drifted the moment the page
+   width setting was changed in admin.
+
+   padding: 56px - one value on all four sides. It was 56px top/bottom against
+   24px left/right, so the gap to the left of the text was less than half the gap
+   above it.
+
+   align-items: stretch (the default, so the line is simply gone) - with centre,
+   the shorter of the two columns floated in the middle of the taller one, which
+   is what pushed the mosaic down away from the eyebrow and up away from the
+   buttons. Stretch makes both columns start and end on the same two lines. */
 .lena-hero-content {
   position: relative;
-  max-width: 1200px;
+  width: 100%;
+  max-width: var(--page-width);
   margin: 0 auto;
-  padding: 56px 24px;
+  padding: 56px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 56px;
-  align-items: center;
 }
 .lena-hero-eyebrow {
   font-size: 11.5px;
@@ -403,7 +423,10 @@ a.lena-notify-btn {
 .lena-hero-sub {
   line-height: 1.8;
   color: rgba(255,255,255,0.65);
-  margin-bottom: 36px;
+  /* Lena: was 36px. The eyebrow and the h1 both use 22px below them, so the
+     description had a larger gap under it than over it. Same number now, which
+     makes every gap in the left column identical. */
+  margin-bottom: 22px;
   max-width: 400px;
   font-weight: 300;
 }
@@ -446,10 +469,18 @@ a.lena-notify-btn {
 }
 
 /* Hero Mosaic */
+/* Lena: the rows are fr, not px. Fixed pixel rows made the mosaic a fixed 510px
+   tall regardless of how tall the text column was, so one of the two always had
+   space left over and the padding above and below it could not match the 56px on
+   its left. As fractions the mosaic fills whatever height the row is, keeping the
+   175:140:175 proportion, so its top, left and bottom gaps are all 56px. The
+   min-height is the floor for the case where the text column is the shorter one -
+   it is the old fixed height, 175+140+175 plus two 10px gaps. */
 .lena-hero-mosaic {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: 175px 140px 175px;
+  grid-template-rows: 175fr 140fr 175fr;
+  min-height: 510px;
   gap: 10px;
 }
 .lena-hero-img {
@@ -995,7 +1026,10 @@ a.lena-notify-btn {
 /* --- Responsive --- */
 @media (max-width: 900px) {
   .lena-hero-content { grid-template-columns: 1fr; gap: 36px; }
-  .lena-hero-mosaic { grid-template-rows: 130px 110px 130px; }
+  /* Lena: one column below 900px, so there is no second column to match a height
+     against - back to fixed rows, and the desktop min-height floor must be
+     cleared or it would force 510px onto a 370px stack. */
+  .lena-hero-mosaic { grid-template-rows: 130px 110px 130px; min-height: 0; }
   .lena-spot-card { grid-template-columns: 1fr; text-align: center; justify-items: center; }
   .lena-find-grid { grid-template-columns: 1fr; }
   .lena-testimonial-grid { grid-template-columns: 1fr 1fr; }

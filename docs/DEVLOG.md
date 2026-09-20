@@ -1645,3 +1645,57 @@ out by design, so desktop is unchanged - check that too.
 was copied from the heading rather than one class being picked. If the heading's condition ever
 changes, this one has to change with it. `swipe_on_mobile` is `false` for this section today, so
 only the `--self-padded-mobile` branch is live.
+
+---
+
+## 2026-09-20 · Bug · The hero was off-centre and had five different spacing values
+**Commit:** <pending> · **Files:** assets/lena-custom.css
+
+**What it does / did:** the owner marked six gaps in the hero that should have matched and did not.
+Measured in the CSS, 2026-09-20, the hero was using: 56px above and below the content, 24px to its
+left and right, 56px between the two columns, 22px below the eyebrow, 22px below the h1 and 36px
+below the description. Four separate faults:
+
+1. **Off-centre.** `.lena-hero` is `display: flex`. A flex item with no width is sized by its own
+   content, so `.lena-hero-content`'s `max-width: 1200px` was frequently never reached and
+   `margin: 0 auto` had no leftover space to centre with. Adding `width: 100%` makes the box fill
+   the row first and then cap, so the auto margins are equal by construction.
+2. **Not aligned with the rest of the page.** That `1200px` was a second hardcoded copy of the
+   theme's page width. Now `var(--page-width)`, the same variable `base.css:80` gives `.page-width`,
+   so the hero's edges line up with Our Collections below it and both follow the admin setting.
+3. **Uneven padding.** `56px 24px` became `56px`. The gap to the left of the text was previously
+   less than half the gap above it.
+4. **Columns floating.** `align-items: center` made the shorter of the two columns float in the
+   middle of the taller one - the mosaic sat below the eyebrow and above the buttons rather than
+   squaring off with them. Removed, so the grid default `stretch` applies. To make stretch actually
+   do something, `.lena-hero-mosaic` rows went from `175px 140px 175px` to `175fr 140fr 175fr` with
+   `min-height: 510px` as the floor (the old fixed total: 175+140+175 plus two 10px gaps). The
+   mosaic now fills the row height at the same proportions, so its top, left and bottom gaps are all
+   56px.
+
+Separately, `.lena-hero-sub`'s `margin-bottom` went 36px to 22px, matching the eyebrow and the h1,
+so every gap inside the left column is now the same number.
+
+**Why it matters:** the hero is the first thing on the site. Off-centre by itself reads as broken,
+and edges that do not line up with the section below it make the whole page look untidy.
+
+**Reproduce (before the fix):** homepage at 1280px. The left text started closer to the screen edge
+than the mosaic finished from the right one; the mosaic's top edge sat below the eyebrow and its
+bottom edge above the buttons; the gap under the description was visibly larger than the gap above
+it.
+
+**Verify now:**
+```
+grep -n "lena-hero-content" -A10 assets/lena-custom.css   # width:100%, var(--page-width), padding:56px, no align-items
+grep -n "lena-hero-mosaic" -A7 assets/lena-custom.css     # 175fr 140fr 175fr, min-height 510px
+```
+In a browser at 1280px: the left edge of "ARTISAN-CRAFTED IN VIETNAM" should sit directly above the
+left edge of the "Our Collections" heading further down the page. The mosaic's top edge should be
+level with the top of the eyebrow and its bottom edge level with the bottom of the buttons.
+
+**Regression risk:** `min-height: 510px` has to be cleared at every breakpoint that switches the
+mosaic to fixed pixel rows, or it forces a 510px box onto a 370px stack. The `max-width: 900px`
+block now sets `min-height: 0` for exactly this reason, and it carries down to the 640px block
+because that one never sets `min-height` again. Any new mosaic breakpoint must do the same. The fr
+rows also mean very long hero text stretches the images taller - that is the intended trade for
+matching gaps, but a much longer subheading is the thing that would show it.
