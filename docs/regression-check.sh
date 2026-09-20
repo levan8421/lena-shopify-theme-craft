@@ -137,6 +137,14 @@ assert_no_grep "the card link no longer names an emptied badge span" \
 assert_grep "Find Us hides itself when nothing is visible" \
   "if visible_count > 0" sections/lena-find-us.liquid
 
+# Batch 5 - Spotlight rotation (DEVLOG 2026-09-20)
+assert_grep "Spotlight seeds its rotation off days since the epoch" \
+  "assign spot_days = 'now' | date: '%s'" sections/lena-spotlight.liquid
+assert_no_grep "Spotlight no longer seeds off the calendar week number" \
+  "assign week_num" sections/lena-spotlight.liquid
+assert_no_grep "Spotlight draws a dot for every article, not just the first six" \
+  "blog.articles limit: 6" sections/lena-spotlight.liquid
+
 echo
 if [ "$FAIL" -eq 0 ]; then
   printf '\033[32mAll checks passed.\033[0m\n'

@@ -28,10 +28,23 @@
   </div>
 
   {%- if blog != blank and blog.articles_count > 0 -%}
-    {%- comment -%} Rotation: pick one article based on configurable period {%- endcomment -%}
+    {%- comment -%}
+      Rotation: pick one article for the whole period.
+
+      This used to seed off 'now' | date: '%W' - the calendar week number. That number caps
+      at about 54 and resets to 0 every January, which breaks the rotation in two ways: a
+      blog with more than 54/rotation_weeks articles can never reach its later ones, and the
+      sequence jumps at the year boundary instead of continuing.
+
+      lena-featured-piece hit exactly this and fixed it by counting days since the epoch,
+      which only ever increases. The same seed is used here rather than a second version of
+      the idea. If the rotation ever needs changing, change both - or better, note here which
+      one is the original.
+    {%- endcomment -%}
     {%- assign rotation_weeks = section.settings.rotation_weeks | default: 2 -%}
-    {%- assign week_num = 'now' | date: '%W' | plus: 0 -%}
-    {%- assign period = week_num | divided_by: rotation_weeks -%}
+    {%- assign spot_days = 'now' | date: '%s' | divided_by: 86400 -%}
+    {%- assign spot_weeks = spot_days | divided_by: 7 -%}
+    {%- assign period = spot_weeks | divided_by: rotation_weeks -%}
     {%- assign article_index = period | modulo: blog.articles_count -%}
 
     {%- assign current_index = 0 -%}
@@ -75,8 +88,25 @@
       </div>
 
       {%- if blog.articles_count > 1 -%}
+        {%- comment -%}
+          One dot per article, with no limit.
+
+          This loop used to carry `limit: 6` while article_index above was taken modulo
+          blog.articles_count. With 7 or more articles the featured one was regularly outside
+          the first six, so no dot matched it and the row showed six inactive dots - an
+          indicator that indicated nothing, and looked like a CSS fault rather than a Liquid
+          one.
+
+          A cap on the dots and an uncapped rotation cannot both be right. Capping the
+          rotation instead would have been worse: articles past the sixth would never be
+          featured at all, which silently drops content nobody knows is missing.
+
+          The practical limit is a blog sized to the job - the same answer R15 gives for
+          lena-featured-piece. A very long Artisan Stories blog will draw a long row of dots,
+          and that is the visible signal to split it.
+        {%- endcomment -%}
         <div class="lena-spot-nav">
-          {%- for article in blog.articles limit: 6 -%}
+          {%- for article in blog.articles -%}
             <span class="dm filled sm{% if article.id == featured.id %} active{% endif %}"></span>
           {%- endfor -%}
         </div>

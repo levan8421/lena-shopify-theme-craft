@@ -2168,3 +2168,55 @@ In a browser:
 **Regression risk (B3):** adding a fourth menu snippet, or a fourth depth, and not calling the
 snippet. The regression check asserts each of the three files calls it exactly three times, so a
 depth added without a guard shows up as a count mismatch rather than as a link nobody notices.
+
+---
+
+## 2026-09-20 · Bug · Artisan Spotlight kept the rotation fault that Featured Piece documents as fixed
+**Commit:** <pending> · **Files:** sections/lena-spotlight.liquid, docs/regression-check.sh
+
+**Batch 5 of the CODE_SURVEY_2026-09-20 work** (survey findings B6, B7).
+
+**What it did (B6):** the rotation seeded off `'now' | date: '%W'` — the calendar week number. That
+value caps at about 54 and resets to 0 every January. Two consequences: a blog holding more than
+`54 / rotation_weeks` articles can never reach its later ones, and the sequence jumps backwards at
+the year boundary instead of continuing.
+
+`lena-featured-piece` hit this exact fault and fixed it by counting **days since the epoch**, which
+only ever increases, and its file carries a comment explaining precisely why `'%W'` is wrong.
+Spotlight was never updated. The same seed is now used here.
+
+**What it did (B7):** the dot navigation looped `{%- for article in blog.articles limit: 6 -%}` while
+`article_index` was taken `modulo: blog.articles_count`. With 7 or more articles the featured one was
+regularly outside the first six, so **no dot matched it** — a row of six inactive dots indicating
+nothing, which reads as a CSS fault rather than a Liquid one.
+
+**What it does now:** one dot per article, no limit. A cap on the dots and an uncapped rotation
+cannot both be right, and capping the *rotation* instead would have been worse — articles past the
+sixth would never be featured at all, silently dropping content nobody knows is missing. A very long
+blog will draw a long row of dots, and that is the visible signal to split it; the same practical
+answer R15 gives for `lena-featured-piece`.
+
+**Why it matters, and why it is not urgent.** The section is **disabled** in `templates/index.json`
+and its required "Artisan Stories" blog does not exist in admin (measured 2026-09-20), so neither
+fault is reachable today. They are fixed now because the trigger for reaching them is *switching the
+section on* — at which point nobody will be thinking about a modulo.
+
+**Reproduce (before the fix):** not reproducible on the live store; the section has no blog to read.
+Reproducible only by creating an "Artisan Stories" blog with 7+ articles and enabling the section.
+1. B7: with 7+ articles, whichever article was featured, the dot row showed six inactive dots.
+2. B6: with more than `54 / rotation_weeks` articles, the later ones never appeared.
+
+**Verify now:**
+```
+bash docs/regression-check.sh
+grep -n "spot_days\|blog.articles limit" sections/lena-spotlight.liquid
+```
+**This one cannot be checked in a browser today** and should not be reported as verified. It becomes
+checkable the moment an Artisan Stories blog exists: create it with 7+ articles, enable the section,
+and confirm exactly one dot is filled. Until then the regression check is the only evidence.
+
+**Regression risk:** the rotation seed now exists in two files — here and in `lena-featured-piece`.
+They agree today. That is the "one rule written twice" class the global rules warn about, and the
+honest position is that it has been narrowed, not eliminated: the two sections rotate different
+things over different periods, so a shared snippet would need a parameter for each difference. If a
+third rotating section ever appears, extract it rather than writing the seed a third time.
