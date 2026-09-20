@@ -1397,7 +1397,7 @@ then set it back.
 ---
 
 ## 2026-09-19 · Bug · The return window on the PDP contradicted the refund policy page
-**Commit:** PENDING · **Files:** sections/main-product.liquid
+**Commit:** 5f6cb6a · **Files:** sections/main-product.liquid
 
 **What it does / did:** Every product page told the customer "Returns accepted within **30 days of
 delivery**". The store's own Refund Policy page said 15 days for purses and 7 days for
