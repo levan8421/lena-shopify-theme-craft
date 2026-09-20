@@ -48,9 +48,18 @@
       </div>
     {%- endunless -%}
 
-    {%- comment -%} Lena: optional one-line subtitle under the section heading {%- endcomment -%}
+    {%- comment -%}
+      Lena: optional one-line subtitle under the section heading.
+
+      The two title-wrapper--self-padded classes are not decoration. On mobile,
+      section-collection-list.css strips the side padding off .page-width entirely and
+      every child re-adds its own - the heading through these classes, the tile grid
+      through its own rule. This div had neither, so it alone sat flush against both
+      screen edges while the heading and the tiles were inset. Same classes and same
+      condition as the heading above, so the two cannot drift apart.
+    {%- endcomment -%}
     {%- if section.settings.subtitle != blank -%}
-      <div class="lena-section-sub{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+      <div class="lena-section-sub{% if show_mobile_slider %} title-wrapper--self-padded-tablet-down{% else %} title-wrapper--self-padded-mobile{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
         {{ section.settings.subtitle }}
       </div>
     {%- endif -%}

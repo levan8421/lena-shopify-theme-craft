@@ -1609,3 +1609,39 @@ weight were left alone deliberately, so the blocks still look different in other
 Adding a `font-size` to `.lena-hero`, `.lena-hero-content`, `.lena-hero-text`, `.collection-list-
 wrapper` or `.page-width` would break the match silently, with no error anywhere. The reverse of
 the earlier entry today: matching `h3` here was the wrong reference and lasted one screenshot.
+
+---
+
+## 2026-09-20 · Bug · The Shop by Category description touched both screen edges on mobile
+**Commit:** <pending> · **Files:** sections/collection-list.liquid
+
+**What it does / did:** on screens under 750px, `assets/section-collection-list.css:16` sets
+`.section-collection-list .page-width { padding-left: 0; padding-right: 0 }` - it removes the
+section's side padding outright, and each child is expected to supply its own. The heading does,
+through `title-wrapper--self-padded-mobile` (1.5rem, `base.css:800`); the tile grid does, through
+`.section-collection-list .collection-list:not(.slider)` (1.5rem, same file). The Lena subtitle
+`<div>` had neither, so it rendered at 0 while everything around it was inset by 1.5rem. Fixed by
+giving it the same class the heading uses, under the same `show_mobile_slider` condition - no new
+CSS, and nothing to keep in step by hand.
+
+**Why it matters:** text touching the edge of a phone screen reads as broken layout, and it was the
+only element in the section doing it, which made the heading look wrongly indented rather than the
+paragraph wrongly flush.
+
+**Reproduce (before the fix):** homepage at 390px wide, scroll to "Our Collections". The heading
+and the collection tiles started ~1.5rem in; the description started at x=0 and its last line broke
+mid-word ("in-person") against the right edge.
+
+**Verify now:**
+```
+grep -n "title-wrapper--self-padded" sections/collection-list.liquid   # expect 2 hits: heading, subtitle
+```
+In a browser at 390px: the first letter of the description lines up under the first letter of "Our
+Collections" and under the left edge of the first tile. At 750px and above the class zeroes itself
+out by design, so desktop is unchanged - check that too.
+
+**Regression risk:** these classes zero their padding at different breakpoints (750px for
+`--self-padded-mobile`, 990px for `--self-padded-tablet-down`), which is exactly why the condition
+was copied from the heading rather than one class being picked. If the heading's condition ever
+changes, this one has to change with it. `swipe_on_mobile` is `false` for this section today, so
+only the `--self-padded-mobile` branch is live.
