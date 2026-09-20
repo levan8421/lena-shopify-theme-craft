@@ -204,6 +204,10 @@ assert_grep "the 640px testimonial override carries [data-cards] so it can win t
 assert_no_grep "the 900px testimonial rule stays a bare class" \
   "lena-testimonial-grid\[data-cards\] { grid-template-columns: 1fr 1fr; }" assets/lena-custom.css
 
+# R1 - the storefront beats the Admin API (DEVLOG 2026-09-20)
+assert_grep "CLAUDE.md records that the storefront outranks the Admin API" \
+  "storefront outranks the Admin API" CLAUDE.md
+
 # The New Arrivals smart collection rule (DEVLOG 2026-09-20)
 # CLAUDE.md described one condition where the store has two. The rule lives in Shopify admin,
 # so nothing here can read it - this only asserts the doc still names BOTH tags. Re-measure the

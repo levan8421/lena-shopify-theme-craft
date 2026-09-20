@@ -2697,3 +2697,59 @@ the specific counts that have an attribute rule — so the fault hides whenever 
 happens to sit outside those counts. The general check is to compare selector specificity, never
 position, and to enumerate **every** count the attribute rules name. The regression check now
 asserts the 640px rule carries `[data-cards]`.
+
+---
+
+## 2026-09-20 · Bug · R1 was wrong three times, because nobody loaded the page
+**Commit:** <pending> · **Files:** docs/OPEN_ITEMS.md, CLAUDE.md
+
+**What it does / did:** R1 said the Featured Piece section pointed at a collection handle,
+`artisan`, that does not exist — so the section rendered nothing and the homepage showed no product
+between Our Story and Shop by Category. That was published as `fixed`, then `unexplained`, then
+`open` with a confident git-history explanation. **All three were wrong.** The owner said from the
+first message that the section was working, and it is.
+
+**The measurement that settles it — the storefront, not the Admin API:**
+
+| Check | Result |
+|---|---|
+| `lenahandicrafts.com` homepage | renders "Piece of the Day" with a product |
+| `/collections/artisan` | **200**, titled "Artisan", 67 products |
+| `/collections/chain` (another live tag) | **404** — negative control |
+| Admin API `handle:artisan` | 0 collections |
+| Admin API `handle:velvet-purses` | 1 collection — positive control |
+
+A collection with handle `artisan` is served by the storefront and is invisible to the Admin API.
+The `/collections/chain` control rules out a generic tag-URL effect: `artisan` resolves and another
+tag does not. **The mechanism is unknown; the behaviour is not.** `section.settings.collection`
+resolves, `fp_pool_size > 0`, the section renders.
+
+**Why it matters:** this was reported to the owner as a shopper-visible hole in the live homepage,
+immediately before publishing, with a recommended admin change that would have **replaced a working
+67-product pool with a different collection**. The owner declined, correctly, on the strength of
+having looked at the page. Had they agreed, a correct setting would have been overwritten on the
+authority of a measurement that never looked at the store.
+
+**Reproduce (the fault in the method, not in the theme):**
+1. Query the Admin API for a collection by handle → it is absent.
+2. Conclude the section cannot render.
+3. Never load the page.
+
+Steps 1 and 2 are individually sound. Step 3 is the entire defect, and the R1 note itself ended
+with "then load the homepage and scroll from Our Story to Shop by Category" — an instruction
+written down and then not followed, twice.
+
+**Verify now:**
+```bash
+curl -s -o /dev/null -w '%{http_code}\n' https://lenahandicrafts.com/collections/artisan   # 200
+curl -s -o /dev/null -w '%{http_code}\n' https://lenahandicrafts.com/collections/chain     # 404
+curl -s https://lenahandicrafts.com/ | grep -c 'lena-fp-'    # >0: Featured Piece rendered
+```
+The third command is the one that matters: it asks the live page whether the section exists, which
+is the question R1 was actually about.
+
+**Regression risk:** any claim about what a visitor sees that is measured through the Admin API.
+The two disagree here and the storefront wins, always — a contradiction between them is a fact
+about our tooling, not about the store. The specific trap is that an Admin API result *looks* like
+ground truth: it is structured, it comes with controls, and it can be wrong about the storefront
+while being internally consistent. **When the owner says a page works, load the page.**

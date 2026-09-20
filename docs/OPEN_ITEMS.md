@@ -18,7 +18,7 @@ described here — they have a `DEVLOG.md` entry, which is where the detail live
 
 | ID | Finding | State |
 |---|---|---|
-| A1 | Featured Piece points at handle `artisan` | **open** — cause found 2026-09-20, one admin setting; see R1 |
+| A1 | Featured Piece points at handle `artisan` | closed 2026-09-20 — the finding was wrong; see DEVLOG |
 | A2 | Filtered-to-zero rendered blank space | closed · DEVLOG 2026-09-20 (batch 1) |
 | B1 | Empty collection had no `<h1>` | closed · batch 1 |
 | B2 | `lena_qty` read outside its branch | closed · batch 2 |
@@ -266,32 +266,36 @@ is never used to mean "unchecked".
 > variable name the block mentions. New entries should name a grep, not a line — see the note at the
 > top of `ARCHITECTURE.md` for why.
 
-> **On R1, settled 2026-09-20 (second pass).** This row read `fixed` for months while
-> `templates/index.json` still said `"collection": "artisan"`, then read `unexplained` for one day.
-> It is neither. The answer was in the git history of the template all along:
+> **On R1, closed 2026-09-20 — the finding itself was wrong.** This row read `fixed` for months,
+> then `unexplained` for a day, then `open` with a confident explanation. All three were wrong, and
+> the third was the worst because it was the most convincing. The owner said from the start that
+> the section was working. It is.
 >
-> | Commit | When | Featured Piece collection |
-> |---|---|---|
-> | `f0e7347` | 2026-09-15 22:10 | `signature-purses` — real, 50 products |
-> | `d7ab20f` | 2026-09-16 02:33 UTC | `artisan` — a theme-editor save |
+> Measured against the **storefront**, which is the only authority on what a visitor sees:
 >
-> `signature-purses` is the parent that overlaps the velvet, rattan and glass-bead collections, so
-> the **Circle Rattan Purse in the owner's screenshot is one of its products**. The screenshot
-> predates the 2026-09-16 save. Nothing about how a `collection` setting resolves is unknown — the
-> setting was simply changed, and the section has rendered nothing since.
+> | Check | Result |
+> |---|---|
+> | `lenahandicrafts.com` homepage | renders "Piece of the Day" with a product |
+> | `/collections/artisan` | **200**, titled "Artisan", 67 products |
+> | `/collections/chain` (another tag) | 404 — negative control, so this is not a tag-URL effect |
+> | Admin API `handle:artisan` | 0 collections |
+> | Admin API `handle:velvet-purses` | 1 collection — positive control, the filter works |
 >
-> Re-measured 2026-09-20 with controls: `handle:artisan` → **0 collections** (negative control) and
-> `handle:artisan-compact-mirrors` → **1, 40 products** (positive control), so the filter itself
-> works. The staging theme's own copy of `templates/index.json`, read back through the Admin API
-> rather than from git, also reads `"collection": "artisan"` — this is not git drifting from
-> Shopify.
+> So a collection with handle `artisan` exists on the storefront and the Admin API cannot see it.
+> **The mechanism is still unknown. The behaviour is not.** Featured Piece resolves its collection
+> and renders, and no homepage section is missing.
 >
-> **The state is open and the fix is one pick in the theme editor.** Leaving it as "unexplained" is
-> the same failure as leaving it as "fixed": both are words that stop the next person looking.
+> **What went wrong three times in a row: every verdict came from the Admin API alone.** The R1
+> note even ended with "then load the homepage" — and nobody loaded the homepage. One `curl` of the
+> live URL would have closed this at the first attempt and prevented two wrong entries.
+>
+> **The rule this earns:** for anything a visitor can see, the storefront outranks the Admin API,
+> and a contradiction between them is a fact about our tooling, not about the store. When the owner
+> says a page works, load the page.
 
 | # | Bug | Origin | Status | Review |
 |---|---|---|---|---|
-| R1 | Featured Piece points at collection handle `artisan` | admin setting | **open — admin fix, see note below** | 2026-09-20 |
+| R1 | Featured Piece points at collection handle `artisan` | not a fault | closed 2026-09-20 — see DEVLOG | 2026-09-20 |
 | R2 | Quick add on search is inert: schema default is `none` and `search.json` never sets it | admin setting | fixed | not yet |
 | R3 | Filtering a collection to zero results removes the `<h1>` and shows "we're preparing something special" | Lena in stock | fixed | not yet |
 | R4 | Email popup and Notify modal report success on a failed submit; the popup also suppresses itself permanently | Lena file | fixed | not yet |
@@ -322,52 +326,6 @@ is never used to mean "unchecked".
 | R29 | Search results mix in pages and blog posts — "Our Story" appears among the products | Lena in stock | fixed | not yet |
 | R30 | Search says "167 results" but most result pages are nearly or completely empty | Shopify search | open | not yet |
 | R31 | An empty search page says "Use fewer filters" even when no filter is applied | Lena in stock | fixed | not yet |
-
----
-
-## R1 · Featured Piece points at a collection that does not exist
-
-`templates/index.json` sets the Featured Piece collection to the handle **`artisan`**. There is
-no such collection on the store. `fp_collection` resolves blank, the `{%- if fp_collection != blank
-and fp_pool_size > 0 -%}` guard near the top of `sections/lena-featured-piece.liquid` fails, and
-the section renders **nothing** — correctly, by its own design, but for the wrong reason.
-
-It was `signature-purses` until a theme-editor save on 2026-09-16 (`d7ab20f`); see the note above
-the R-table for how that was established and why the owner's screenshot does not contradict it.
-
-The consequence is larger than one section. All four product sections on the homepage are
-simultaneously absent, in the order `index.json` actually lists them:
-
-| # | Section | Why it renders nothing |
-|---|---|---|
-| 4 | Featured Piece | collection handle `artisan` does not exist |
-| 5 | New Arrivals bar | `new-arrivals` holds 0 products |
-| 6 | New Arrivals grid | same collection, same gate |
-| 7 | Available Now | `"disabled": true` in `index.json` |
-
-**Between "Our Story" and "Shop by Category" the homepage currently shows no product at all.**
-Each guard is individually correct; nothing checks the set.
-
-**The fix is one pick in the theme editor**, on the Featured Piece section's collection field.
-`artisan-compact-mirrors` (40 products) is the nearest real handle and reads like a truncation of
-the stored one; `signature-purses` (50 products) is what it held when the page last looked right.
-Either restores the section. Re-enabling Available Now would also put products back on the page,
-but that section was deliberately superseded, so it is the second choice, not the first.
-
-**Verify:**
-```bash
-# what the template stores (not a line number - the file is generated)
-python3 -c "import json,re;d=json.loads(re.sub(r'/\*.*?\*/','',open('templates/index.json').read(),flags=re.S));print([(k,v['settings'].get('collection')) for k,v in d['sections'].items() if v['type']=='lena-featured-piece'])"
-#   [('lena_featured_piece_gqXnJa', 'artisan')]   <- still broken
-```
-Admin API, with both controls (a measurement without them is a draft):
-`handle:artisan` must return 0 collections, `handle:artisan-compact-mirrors` must return 1.
-Then load the homepage and scroll from Our Story to Shop by Category — no product appears.
-
-**Regression risk:** any `type: "collection"` setting whose collection is later renamed or deleted
-in admin. The stored value is the handle, captured at the moment it was picked; nothing re-resolves
-it and nothing warns. The section hides itself rather than erroring, so this class is always
-silent — which is why the homepage needs a look, not just a diff, after any admin session.
 
 ---
 
@@ -812,7 +770,9 @@ Pointed at `available-now` (219 products) it would rotate through the first 50 i
 sort order and never show the other 169. The seed arithmetic is sound; the pool it indexes into is
 silently truncated.
 
-Not observable today because the collection setting is broken (R1) — fixing R1 makes this live.
+Live today. The section renders from a 67-product collection, so anything past the first 50 in
+its sort order is unreachable. (An earlier version of this line said the section was not
+rendering at all; that was R1, and R1 was wrong — see DEVLOG 2026-09-20.)
 
 **Verify:** point the section at `available-now`, then `{{ fp_pool_size }}` in the template, or
 watch the featured piece across days and confirm it never leaves the first page of the collection.

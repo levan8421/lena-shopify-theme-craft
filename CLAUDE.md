@@ -251,6 +251,13 @@ Do not hand-edit `templates/*.json`, `sections/*-group.json`, or `config/setting
   smart collection matches it; the section and nav link render only while
   `collections['new-arrivals'].all_products_count > 0`. Deliberately **no** date filter, staleness
   read or item cap — those would make the theme second-guess the app.
+- **The storefront outranks the Admin API for anything a visitor can see.** Measured 2026-09-20:
+  `/collections/artisan` serves a real 67-product collection page (200) while the Admin API reports
+  no collection with that handle — with controls on both sides (`/collections/chain`, another live
+  tag → 404; `handle:velvet-purses` → 1 collection). A contradiction between the two is a fact
+  about our tooling, not about the store. This cost three wrong entries on one issue, all because
+  the page was never loaded. Check with:
+  `curl -s -o /dev/null -w '%{http_code}\n' https://lenahandicrafts.com/collections/<handle>`
 - **`all_products_count`, not `products_count`**: the latter reflects the current tag-filtered view.
   Use `all_products_count` for any visibility decision.
 - **Color filter**: the whitelist lives in `snippets/lena-color-facet.liquid`, once. It used to be
