@@ -48,6 +48,12 @@ restructure introduces the inconsistency it exists to remove.
   (`collections['new-arrivals'].all_products_count`), and `lena-hide-nav-link`. Shopify does not
   change a handle when you edit a title, but it does offer to, so decline.
   Check with: `{ collectionByIdentifier(identifier: {handle: "new-arrivals"}) { title handle } }`
+- **`/collections/this-weeks-drop` serves a permanent empty state.** The collection is live and
+  holds 0 products (measured 2026-09-20). `CLAUDE.md` keeps it in case the URL was printed on a
+  card, which is a fair reason to keep the *collection* — but a visitor holding an old card gets
+  "we're preparing something special" forever. A **301 redirect to `/collections/available-now`**
+  in *Settings → Navigation → URL redirects* would serve them better. Admin-only; the template
+  (`templates/collection.this-weeks-drop.json`, a copy of the New Arrivals one) can then go.
 - A bare `Black` tag coexists with `color-black` — one tag, cleanup.
 - `Phone Travel Wallet` → **`Phone Travel Wallets`** (pluralisation, for consistency with the other
   seven category names).

@@ -145,6 +145,14 @@ assert_no_grep "Spotlight no longer seeds off the calendar week number" \
 assert_no_grep "Spotlight draws a dot for every article, not just the first six" \
   "blog.articles limit: 6" sections/lena-spotlight.liquid
 
+# Batch 6 - a mobile rule that never applied, and a dead-code sweep (DEVLOG 2026-09-20)
+assert_grep "the mobile Find Us override can out-specify the [data-cards] rules" \
+  "lena-find-grid\[data-cards\] { grid-template-columns: 1fr; }" assets/lena-custom.css
+assert_count "that override is declared once, not once per breakpoint" \
+  "lena-find-grid\[data-cards\] {" assets/lena-custom.css 1
+assert_no_grep "the popup no longer guards a value that cannot be empty" \
+  "form.action ||" sections/lena-email-popup.liquid
+
 echo
 if [ "$FAIL" -eq 0 ]; then
   printf '\033[32mAll checks passed.\033[0m\n'

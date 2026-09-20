@@ -358,6 +358,17 @@
                           section_id: section.id
                         %}
                         {%- assign skip_card_product_styles = true -%}
+                      {%- comment -%}
+                        Lena: the 'article' and 'page' branches below are unreachable today.
+                        A hidden <input name="type" value="product"> is added to all three
+                        search entry points, and search_url carries &type=product, so even
+                        "clear all filters" keeps results product-only.
+
+                        They are kept rather than deleted, deliberately. Their deadness is
+                        caused by a Lena setting, not by Shopify: remove the type filter and
+                        these branches are needed again immediately. Deleting them would make
+                        a one-line revert silently render nothing for articles and pages.
+                      {%- endcomment -%}
                       {%- when 'article' -%}
                         {% render 'article-card',
                           article: item,

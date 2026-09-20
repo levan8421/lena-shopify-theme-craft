@@ -1055,7 +1055,25 @@ a.lena-notify-btn {
      cleared or it would force 510px onto a 370px stack. */
   .lena-hero-mosaic { grid-template-rows: 130px 110px 130px; min-height: 0; }
   .lena-spot-card { grid-template-columns: 1fr; text-align: center; justify-items: center; }
-  .lena-find-grid { grid-template-columns: 1fr; }
+
+  /* Lena: the [data-cards] part of this selector is doing real work, not decoration.
+
+     .lena-find-grid[data-cards="3"] above sets repeat(3, 1fr). That selector is a class plus
+     an attribute; this one was a class alone. A media query adds no specificity of its own,
+     so the plain .lena-find-grid rule LOST to it at every width - and Find Us kept three
+     columns on a 375px phone whenever it had three cards. The rule looked like it worked
+     because it is inside a mobile query, which is exactly why nobody read it twice.
+
+     Matching [data-cards] makes the two selectors equally specific, and this one comes later
+     in the file, so it wins the tie. The attribute is always present - lena-find-us writes
+     data-cards on every render - so nothing is missed by requiring it.
+
+     .lena-testimonial-grid below is deliberately NOT changed. It has the same shape of
+     selector and is winnable in the same way, but it happens to come out right: for 1 card
+     [data-cards="1"] gives one centred column, which is what you want at this width, and for
+     3 or more no attribute rule matches so the line below applies normally. Making it
+     specific would force a lone testimonial into a 2-column grid - a regression, not a fix. */
+  .lena-find-grid[data-cards] { grid-template-columns: 1fr; }
   .lena-testimonial-grid { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 640px) {
@@ -1103,7 +1121,6 @@ a.lena-notify-btn {
     gap: 12px;
   }
 
-  .lena-find-grid { grid-template-columns: 1fr; }
   .lena-pdp-badge-1of1 { font-size: 9px; padding: 5px 11px; }
   .lena-pdp-artisan { font-size: 12px; }
 }

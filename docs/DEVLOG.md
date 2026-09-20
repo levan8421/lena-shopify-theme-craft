@@ -2220,3 +2220,84 @@ They agree today. That is the "one rule written twice" class the global rules wa
 honest position is that it has been narrowed, not eliminated: the two sections rotate different
 things over different periods, so a shared snippet would need a parameter for each difference. If a
 third rotating section ever appears, extract it rather than writing the seed a third time.
+
+---
+
+## 2026-09-20 · Bug · Find Us kept three columns on a phone, because its mobile rule could never win
+**Commit:** <pending> · **Files:** assets/lena-custom.css, sections/lena-email-popup.liquid, sections/main-search.liquid, docs/regression-check.sh, docs/OPEN_ITEMS.md
+
+**Batch 6 of the CODE_SURVEY_2026-09-20 work** (survey findings D1, D2, D4 — and one bug the survey
+recorded as dead code).
+
+**What it did:** the survey listed `.lena-find-grid { grid-template-columns: 1fr }` appearing in both
+the 900px and the 640px media query as **D4, duplicated dead code**. Checking it turned up something
+worse: *neither copy ever applied.*
+
+```
+.lena-find-grid[data-cards="3"]   { grid-template-columns: repeat(3, 1fr); }   /* class + attribute */
+@media (max-width: 900px) { .lena-find-grid { grid-template-columns: 1fr; } }  /* class only        */
+```
+
+A media query adds **no specificity of its own**. Class-plus-attribute beats class-alone at every
+width, so the `[data-cards]` rules won on a phone exactly as they did on a desktop. Find Us rendered
+**three columns inside a 375px screen** whenever it had three cards, and two columns for two or four.
+
+**Why it survived:** the rule *looks* correct. It is inside a mobile media query, it says `1fr`, and
+it sits in the block where all the other mobile fixes live. Nothing about reading it suggests it is
+inert — which is why it was catalogued as harmless duplication rather than as a fault.
+
+**What it does now:** the mobile rule matches `[data-cards]` too, making it equally specific and
+later in the file, so it wins the tie. The attribute is always present — `lena-find-us` writes
+`data-cards` on every render — so nothing is missed by requiring it. The 640px copy is deleted: at
+640px the 900px query applies anyway, so it was genuinely redundant *as well as* inert.
+
+**Deliberately not changed — `.lena-testimonial-grid`.** It has the identical selector shape and is
+losing in the identical way, but it comes out right by luck: with one card `[data-cards="1"]` gives
+one centred column, which is what you want at that width, and with three or more no attribute rule
+matches so the mobile line applies normally. Making it specific would force a lone testimonial into
+a two-column grid — a regression, not a fix. The stylesheet now says this in place, so the next
+reader does not "finish the job".
+
+**Reproduce (before the fix):**
+1. Homepage at 375px with three Find Us cards visible.
+2. Saw: three columns squeezed across the screen. Expected: one column.
+3. In devtools, the `@media (max-width: 900px)` rule appears struck through under
+   `.lena-find-grid[data-cards="3"]` — that is the visible proof.
+
+**Verify now:**
+```
+bash docs/regression-check.sh
+grep -n "lena-find-grid" assets/lena-custom.css
+```
+In a browser at **375px and 640px**: Find Us must be a single column with 1, 2, 3 and 4 cards.
+Then at **1200px** it must still be 1/2/3/2 columns as before — that is the positive control, and
+the half that was never broken. Testimonials must be unchanged at every width.
+
+**Also in this batch — the dead-code sweep.**
+
+- **D2** — `fetch(form.action || '/contact', …)`. `HTMLFormElement.action` always returns a resolved
+  absolute URL, so the fallback could never fire. Removed. Reading it from the form is kept on
+  purpose: Shopify's customer form tag writes the action including any locale or subfolder prefix,
+  and hardcoding `/contact` would drop that.
+- **D1** — the `'article'` and `'page'` result branches in `main-search.liquid` are unreachable, a
+  hidden `type=product` input having made results product-only. **Kept and marked, not deleted.**
+  Their deadness is caused by a Lena setting, not by Shopify: remove the type filter and they are
+  needed again immediately, and deleting them would make that one-line revert silently render
+  nothing.
+- **D3** — `.lena-popup-content` and `.lena-fp-body` carry no CSS rules. Left alone: an unstyled
+  class in markup is a hook, not dead code, and removing them gains nothing while risking a
+  selector someone adds later.
+- **D5** — the permanent empty state at `/collections/this-weeks-drop` is an admin redirect, not a
+  theme change. Recorded in `docs/OPEN_ITEMS.md` rather than fixed here.
+
+**A mistake worth recording.** The first version of the D2 comment wrote Shopify's customer form tag
+out literally inside a `<script>`. A JavaScript comment is not a Liquid comment — Liquid parsed it as
+a real opening tag and the section stopped parsing. `shopify theme check` caught it immediately
+(`LiquidHTMLSyntaxError`, 1 error), which is the first time the batch harness has actually earned
+its place. **Never write a Liquid tag inside a JS comment.**
+
+**Regression risk:** adding another `.lena-find-grid[data-cards="N"]` rule for a 5th card without
+also checking the mobile override still out-specifies it. More generally: any mobile override in
+this file written as a bare class, against a base rule written with an attribute or a second class,
+is inert and will look fine. When a mobile rule appears not to work, check specificity before
+changing the value.

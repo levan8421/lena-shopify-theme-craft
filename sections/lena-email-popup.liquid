@@ -114,7 +114,11 @@
   form.addEventListener('submit', function(e) {
     e.preventDefault();
     errorBox.style.display = 'none';
-    fetch(form.action || '/contact', { method: 'POST', body: new FormData(form) })
+    // form.action on an HTMLFormElement always returns a resolved absolute URL, so the
+    // `|| '/contact'` that used to sit here could never fire. Reading it from the form is
+    // still the right thing: Shopify's customer form tag writes the action, which carries
+    // any locale or subfolder prefix. Hardcoding '/contact' would drop that.
+    fetch(form.action, { method: 'POST', body: new FormData(form) })
       .then(function(response) {
         if (!response.ok) { throw new Error('HTTP ' + response.status); }
         // Only remember the signup once it actually succeeded. This used to run on
