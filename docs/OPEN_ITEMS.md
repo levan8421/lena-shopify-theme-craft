@@ -4,7 +4,7 @@
 same fact is never recorded twice. Everything here was lifted out of the Tier 0 responses and the
 May 2026 plan so those can be archived without losing the tail.
 
-Last swept: 2026-09-15.
+Last swept: 2026-09-20.
 
 ---
 
@@ -18,7 +18,7 @@ described here — they have a `DEVLOG.md` entry, which is where the detail live
 
 | ID | Finding | State |
 |---|---|---|
-| A1 | Featured Piece points at handle `artisan` | **unexplained** — see the note above the R-table |
+| A1 | Featured Piece points at handle `artisan` | **open** — cause found 2026-09-20, one admin setting; see R1 |
 | A2 | Filtered-to-zero rendered blank space | closed · DEVLOG 2026-09-20 (batch 1) |
 | B1 | Empty collection had no `<h1>` | closed · batch 1 |
 | B2 | `lena_qty` read outside its branch | closed · batch 2 |
@@ -66,6 +66,113 @@ described here — they have a `DEVLOG.md` entry, which is where the detail live
 
 *(A6, the duplicated colour whitelist, and the Notify Me failure item were all closed on
 2026-09-16 — see `DEVLOG.md`. A6 was stale, the other two were fixed as R21 and R4.)*
+
+### Second-pass review 2026-09-20 — after the survey fixes shipped
+
+The survey's fixes were reviewed against the code that shipped for them: `0287c8d..HEAD`, 21
+commits, 30 files. `shopify theme check` reports **0 errors** (its 8 warnings are all pre-existing
+stock-Craft ones, none in the new code), `docs/regression-check.sh` passes every check, the two
+translation keys the restored empty state uses both exist in `locales/en.default.json`, and no
+orphaned `lena_qty` or `fp_qty` reference survives anywhere. `lena-drop-header` kept its setting id
+`collection_handle` when it changed to a collection picker, which is what stopped the stored
+`new-arrivals` value being orphaned — worth recording as the trap that was avoided.
+
+Four things stayed open. None is reachable by a shopper today; each becomes reachable through a
+specific, likely change.
+
+| ID | Finding | Becomes reachable when | State |
+|---|---|---|---|
+| S1 | Testimonial grid keeps 2 columns on a phone at exactly 2 cards | a testimonial block is deleted in admin | open |
+| S2 | A card with no photo still has no badge, New badge or sold overlay | a published product ships without a featured image | open — may be intended |
+| S3 | Hiding the only child of a dropdown leaves an empty submenu | the `Shop ▾` menu restructure ships | open |
+| S4 | The default collection template has no empty state | a new category collection is created before its products load | open |
+
+#### S1 · The testimonial grid is two columns on a phone when it has exactly two cards
+
+`assets/lena-custom.css` sets `.lena-testimonial-grid[data-cards="2"] { grid-template-columns: 1fr
+1fr; }`. The mobile override inside `@media (max-width: 640px)` is `.lena-testimonial-grid {
+grid-template-columns: 1fr; }` — a class alone against a class plus an attribute, so it loses at
+every width. A media query adds no specificity of its own.
+
+This is the same cascade fault that was just fixed for `.lena-find-grid`, on the one selector the
+fix's own comment declares safe. That comment reasons about one card and about three-or-more and
+skips the case of two. `index.json` carries three testimonial blocks today and no
+`[data-cards="3"]` rule exists, so the override applies and the phone layout is correct — by luck,
+not by construction, which is the same standard the `featured-collection` gate was just held to.
+
+The fix is the one already applied next door: `.lena-testimonial-grid[data-cards] {
+grid-template-columns: 1fr; }`, which makes the two selectors equally specific so the later one
+wins. It touches only `grid-template-columns`, so `[data-cards="1"]`'s `max-width: 600px` centring
+is unaffected.
+
+**Verify:**
+```bash
+grep -n "lena-testimonial-grid" assets/lena-custom.css
+```
+Order alone cannot fix this: `[data-cards="2"]` is more specific, so it wins wherever it sits. The
+mobile override has to match that specificity — carry `[data-cards]` — *and* come later in the file.
+Then set the section to two testimonials and look at 375px.
+
+#### S2 · A card with no photo still has no badge, New badge or sold overlay
+
+Survey B2 is recorded as closed, and the scarcity line and the Notify button did move out of the
+`{%- if card_product.featured_media -%}` branch in `snippets/card-product.liquid`. Three elements
+did not: `lena-badge-1of1` (rendered through `lena-stock`), `lena-badge-new` and
+`lena-sold-overlay`. All three are still inside that branch.
+
+That is defensible — all three are positioned over the image and there is no image. It is recorded
+because "closed" reads as *all* of B2, and because a sold-out photoless card then shows a Notify Me
+button with nothing on the card saying the piece is sold.
+
+Not reachable today: the only products with no featured image are the 6 POS-tagged ones, and every
+POS product has `publishedAt: null` (measured 2026-09-20 — the first attempt at this number used
+`-has:media`, which Shopify silently ignores; see the blockquote in the survey archive before
+re-measuring it that way).
+
+**Verify:**
+```bash
+grep -n "card_product.featured_media -%}\|lena-badge-new\|lena-sold-overlay\|lena-stock" snippets/card-product.liquid
+```
+Decide deliberately: either move the three out of the branch with a no-image layout for them, or
+write the reason they stay into the file and close this row.
+
+#### S3 · Hiding the only child of a dropdown leaves an empty submenu
+
+`snippets/lena-hide-nav-link.liquid` is now applied at all three menu depths in all three header
+snippets, which is exactly what B3 asked for. Nothing checks whether a parent still has children
+once its children are filtered. Put New Arrivals under a dropdown as that dropdown's only entry and
+the parent renders with an empty list beneath it — the same shape of fault as B9, where Find Us drew
+a heading over nothing.
+
+The menu is flat today, so no parent has a hideable only child. It becomes reachable exactly when
+the `Shop ▾` restructure below ships, which is the change most likely to create one.
+
+**Verify:**
+```bash
+grep -n "lena_nav_hide" snippets/header-dropdown-menu.liquid snippets/header-drawer.liquid snippets/header-mega-menu.liquid
+```
+Six lines in each of the three files — a `capture` and a test at each of the three depths. Then, in
+the menu editor, move New Arrivals under a parent as its only child and open the menu.
+
+#### S4 · The default collection template has no empty state
+
+The A2 fix restores stock Craft's "No products found / remove all" for the **filtered** case only —
+it is gated on `all_products_count > 0`. For a collection that genuinely holds nothing,
+`main-collection-product-grid` still renders nothing and relies on `lena-drop-coming-soon` being in
+the template. `templates/collection.json` does not contain that section; only
+`collection.new-arrivals.json` and `collection.this-weeks-drop.json` do.
+
+So an empty collection served by the default template shows the banner and the `<h1>` — which the
+B1 fix correctly restored — and then blank space. Both collections that are empty today
+(`new-arrivals`, `this-weeks-drop`, measured 2026-09-20) have their own template, so nobody can
+reach it now.
+
+**Verify:**
+```bash
+for t in templates/collection*.json; do echo -n "$t "; python3 -c "import json,re,sys;print(json.loads(re.sub(r'/\*.*?\*/','',open(sys.argv[1]).read(),flags=re.S))['order'])" "$t"; done
+```
+`collection.json` shows `['main-collection-banner', 'main-collection-product-grid']` — no empty
+state. Then create a collection with no products and open it.
 
 ---
 
@@ -186,29 +293,32 @@ is never used to mean "unchecked".
 > variable name the block mentions. New entries should name a grep, not a line — see the note at the
 > top of `ARCHITECTURE.md` for why.
 
-> **On R1, added 2026-09-20.** This row read `fixed` for months while `templates/index.json` still
-> said `"collection": "artisan"` and no DEVLOG entry had ever changed it. That false `fixed` is the
-> reason nobody looked — a state table is only worth more than prose while it stays true.
+> **On R1, settled 2026-09-20 (second pass).** This row read `fixed` for months while
+> `templates/index.json` still said `"collection": "artisan"`, then read `unexplained` for one day.
+> It is neither. The answer was in the git history of the template all along:
 >
-> The honest state today is **unexplained, not open and not fixed**, because two reliable
-> measurements disagree:
-> - **The data says the collection does not exist.** `collectionByIdentifier(handle: "artisan")`
->   returns `null`; a positive control (`rattan-purses` → 26 products) and a negative control (a
->   made-up handle → `null`) both behave correctly; and a full listing of all 22 collections in the
->   store contains no `artisan` handle. The setting is `"collection": "artisan"` in git *and* in the
->   live staging theme's own copy of `templates/index.json`, read back through the Admin API.
-> - **The page says otherwise.** The owner's screenshot of the live staging homepage on 2026-09-20
->   shows the section rendering a Circle Rattan Purse, with the badge, price and CTA all correct —
->   and the section has a hard gate, `{%- if fp_collection != blank and fp_pool_size > 0 -%}`, with
->   no fallback branch.
+> | Commit | When | Featured Piece collection |
+> |---|---|---|
+> | `f0e7347` | 2026-09-15 22:10 | `signature-purses` — real, 50 products |
+> | `d7ab20f` | 2026-09-16 02:33 UTC | `artisan` — a theme-editor save |
 >
-> Both cannot be true, so something about how a `collection` setting resolves is not understood
-> here. **It is working, so nothing was changed.** To settle it: open the theme editor, look at the
-> Featured Piece section's collection field, and record what it actually shows.
+> `signature-purses` is the parent that overlaps the velvet, rattan and glass-bead collections, so
+> the **Circle Rattan Purse in the owner's screenshot is one of its products**. The screenshot
+> predates the 2026-09-16 save. Nothing about how a `collection` setting resolves is unknown — the
+> setting was simply changed, and the section has rendered nothing since.
+>
+> Re-measured 2026-09-20 with controls: `handle:artisan` → **0 collections** (negative control) and
+> `handle:artisan-compact-mirrors` → **1, 40 products** (positive control), so the filter itself
+> works. The staging theme's own copy of `templates/index.json`, read back through the Admin API
+> rather than from git, also reads `"collection": "artisan"` — this is not git drifting from
+> Shopify.
+>
+> **The state is open and the fix is one pick in the theme editor.** Leaving it as "unexplained" is
+> the same failure as leaving it as "fixed": both are words that stop the next person looking.
 
 | # | Bug | Origin | Status | Review |
 |---|---|---|---|---|
-| R1 | Featured Piece points at collection handle `artisan` | admin setting | **unexplained — see note below** | 2026-09-20 |
+| R1 | Featured Piece points at collection handle `artisan` | admin setting | **open — admin fix, see note below** | 2026-09-20 |
 | R2 | Quick add on search is inert: schema default is `none` and `search.json` never sets it | admin setting | fixed | not yet |
 | R3 | Filtering a collection to zero results removes the `<h1>` and shows "we're preparing something special" | Lena in stock | fixed | not yet |
 | R4 | Email popup and Notify modal report success on a failed submit; the popup also suppresses itself permanently | Lena file | fixed | not yet |
@@ -245,35 +355,46 @@ is never used to mean "unchecked".
 ## R1 · Featured Piece points at a collection that does not exist
 
 `templates/index.json` sets the Featured Piece collection to the handle **`artisan`**. There is
-no such collection on the store. `fp_collection` resolves blank, the `{%- if -%}` guard at
-`sections/lena-featured-piece.liquid:31` fails, and the section renders **nothing** — correctly,
-by its own design, but for the wrong reason.
+no such collection on the store. `fp_collection` resolves blank, the `{%- if fp_collection != blank
+and fp_pool_size > 0 -%}` guard near the top of `sections/lena-featured-piece.liquid` fails, and
+the section renders **nothing** — correctly, by its own design, but for the wrong reason.
 
-The consequence is larger than one section. All three product surfaces on the homepage are
-simultaneously absent:
+It was `signature-purses` until a theme-editor save on 2026-09-16 (`d7ab20f`); see the note above
+the R-table for how that was established and why the owner's screenshot does not contradict it.
+
+The consequence is larger than one section. All four product sections on the homepage are
+simultaneously absent, in the order `index.json` actually lists them:
 
 | # | Section | Why it renders nothing |
 |---|---|---|
-| 4 | New Arrivals bar | `new-arrivals` holds 0 products |
-| 5 | New Arrivals grid | same collection, same gate |
-| 6 | Featured Piece | collection handle `artisan` does not exist |
+| 4 | Featured Piece | collection handle `artisan` does not exist |
+| 5 | New Arrivals bar | `new-arrivals` holds 0 products |
+| 6 | New Arrivals grid | same collection, same gate |
 | 7 | Available Now | `"disabled": true` in `index.json` |
 
 **Between "Our Story" and "Shop by Category" the homepage currently shows no product at all.**
-Each guard is individually correct; nothing checks the set. The nearest real handle is
-`artisan-compact-mirrors` (40 products) — the setting reads like a truncation of it.
+Each guard is individually correct; nothing checks the set.
+
+**The fix is one pick in the theme editor**, on the Featured Piece section's collection field.
+`artisan-compact-mirrors` (40 products) is the nearest real handle and reads like a truncation of
+the stored one; `signature-purses` (50 products) is what it held when the page last looked right.
+Either restores the section. Re-enabling Available Now would also put products back on the page,
+but that section was deliberately superseded, so it is the second choice, not the first.
 
 **Verify:**
 ```bash
-# the handle resolves to nothing
-#   Admin API: collectionByHandle(handle: "artisan")  ->  null   (measured 2026-09-16)
-grep -A2 '"lena_featured_piece' templates/index.json | grep collection
-#   "collection": "artisan"
+# what the template stores (not a line number - the file is generated)
+python3 -c "import json,re;d=json.loads(re.sub(r'/\*.*?\*/','',open('templates/index.json').read(),flags=re.S));print([(k,v['settings'].get('collection')) for k,v in d['sections'].items() if v['type']=='lena-featured-piece'])"
+#   [('lena_featured_piece_gqXnJa', 'artisan')]   <- still broken
 ```
+Admin API, with both controls (a measurement without them is a draft):
+`handle:artisan` must return 0 collections, `handle:artisan-compact-mirrors` must return 1.
 Then load the homepage and scroll from Our Story to Shop by Category — no product appears.
 
-**Regression risk:** any `type: "collection"` setting whose handle is retyped or renamed in
-admin. The section hides itself rather than erroring, so this class is always silent.
+**Regression risk:** any `type: "collection"` setting whose collection is later renamed or deleted
+in admin. The stored value is the handle, captured at the moment it was picked; nothing re-resolves
+it and nothing warns. The section hides itself rather than erroring, so this class is always
+silent — which is why the homepage needs a look, not just a diff, after any admin session.
 
 ---
 

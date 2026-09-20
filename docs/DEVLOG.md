@@ -2586,3 +2586,55 @@ behaving exactly as designed — it does not decide what "new" means, the app do
 rule both live in Shopify admin, where nothing in this repository can read them at review time, so a
 sentence here is a claim about another system that no test touches. The fix is the one applied
 above: put the query next to the claim, so the next reader re-measures instead of trusting.
+
+---
+
+## 2026-09-20 · Bug · R1 was recorded as "unexplained" when the git history already explained it
+**Commit:** PENDING · **Files:** `docs/OPEN_ITEMS.md`
+
+**What it does / did:** R1 — the Featured Piece section pointing at the collection handle
+`artisan`, which does not exist — was marked `fixed` for months while the template still said
+`artisan`, and then marked **unexplained** for one day. The `unexplained` verdict rested on two
+measurements that appeared to contradict each other: the Admin API said the collection did not
+exist, and the owner's screenshot of the staging homepage showed the section rendering a Circle
+Rattan Purse. The note concluded "it is working, so nothing was changed."
+
+The history of `templates/index.json` settles it. The setting was `signature-purses` at `f0e7347`
+(2026-09-15 22:10) and became `artisan` at `d7ab20f` (2026-09-16 02:33 UTC, a theme-editor save).
+`signature-purses` is the parent that overlaps the velvet, rattan and glass-bead collections, so a
+Circle Rattan Purse is one of its products. The screenshot predates the save. Nothing about how a
+`collection` setting resolves was ever unknown. R1 is **open**, the homepage has shown no product
+between Our Story and Shop by Category since 2026-09-16, and the fix is one pick in the theme
+editor.
+
+The same entry records four findings from a second-pass review of the batch work as S1–S4, each
+with the change that makes it reachable. None is reachable today.
+
+**Why it matters:** `fixed` and `unexplained` fail in the same way — both are words that stop the
+next person looking, and this row carried the only shopper-visible blocker before go-live. A state
+table is worth more than prose only while it stays true; two wrong states in a row on the same row
+is the argument for checking a claim against `git log` before writing "cannot be explained".
+
+**Reproduce (before the fix):** open `docs/OPEN_ITEMS.md`, read the R1 note, and conclude that the
+section is working and needs no action. Then load the staging homepage and scroll from Our Story to
+Shop by Category — no product appears.
+
+**Verify now:**
+```bash
+# the setting, read from the generated template
+python3 -c "import json,re;d=json.loads(re.sub(r'/\*.*?\*/','',open('templates/index.json').read(),flags=re.S));print([(k,v['settings'].get('collection')) for k,v in d['sections'].items() if v['type']=='lena-featured-piece'])"
+#   [('lena_featured_piece_gqXnJa', 'artisan')]   <- still open
+
+# when it changed, and to what
+git log --format='%h %ad' --date=iso -- templates/index.json   # then read the setting at f0e7347 and d7ab20f
+```
+Admin API, with both controls — a measurement without them is a draft: `handle:artisan` must
+return **0** collections, `handle:artisan-compact-mirrors` must return **1** (40 products). The
+staging theme's own copy of `templates/index.json`, read back through
+`theme(id:) { files(filenames: ["templates/index.json"]) }`, also reads `"collection": "artisan"`,
+so this is not git drifting from Shopify.
+
+**Regression risk:** any `type: "collection"` setting whose collection is later renamed or deleted
+in admin. The stored value is the handle as captured when it was picked; nothing re-resolves it and
+nothing warns, and the section hides itself rather than erroring. The general guard is to look at
+the homepage after an admin session, not only at the diff.
