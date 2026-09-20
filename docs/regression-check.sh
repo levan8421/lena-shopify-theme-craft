@@ -197,6 +197,13 @@ assert_grep "featured-collection gates visibility on all_products_count" \
 assert_grep "lena-drop-header still asks the same question the same way" \
   "all_products_count" sections/lena-drop-header.liquid
 
+# The New Arrivals smart collection rule (DEVLOG 2026-09-20)
+# CLAUDE.md described one condition where the store has two. The rule lives in Shopify admin,
+# so nothing here can read it - this only asserts the doc still names BOTH tags. Re-measure the
+# live rule with the query in that DEVLOG entry.
+assert_grep "CLAUDE.md names both tags in the New Arrivals rule, not just one" \
+  "Tag is equal to new-arrivals" CLAUDE.md
+
 echo
 if [ "$FAIL" -eq 0 ]; then
   printf '\033[32mAll checks passed.\033[0m\n'

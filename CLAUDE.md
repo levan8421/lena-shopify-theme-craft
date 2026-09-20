@@ -124,7 +124,12 @@ python3 -c "import json,re;print(json.loads(re.sub(r'/\*.*?\*/','',open('templat
 ## Required Shopify Admin Objects
 
 - **Collections:** `available-now` (smart, `inventory > 0 AND tag ≠ POS`) and `new-arrivals` (smart,
-  **`Tag is equal to new`** — set once, never edited; the app owns the tag), plus the **seven
+  **`Tag is equal to new-arrivals` OR `Tag is equal to new`** — two conditions, not one; the admin UI
+  writes the relation as *includes*, but the API reports `EQUALS`, so both are exact tag matches and
+  neither is a substring test. Set once, never edited; the app owns the tag. Print the live rule
+  rather than trusting this line:
+  `{ collectionByIdentifier(identifier: {handle: "new-arrivals"}) { ruleSet { appliedDisjunctively rules { column relation condition } } } }`),
+  plus the **seven
   canonical category collections**, which are not listed here by hand. They live in
   `snippets/lena-category-handles.liquid`, which is the single source of truth that `breadcrumbs`
   and `related-products` both read:

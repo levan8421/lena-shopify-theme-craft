@@ -2519,3 +2519,70 @@ one product `new` in admin and confirm **both** show up together.
 **Regression risk:** `products.size` reads as the obvious way to ask "does this collection have
 anything", and it is shorter. It will be reached for again. The regression check asserts both files
 use `all_products_count`, so the two can no longer drift apart silently.
+
+---
+
+## 2026-09-20 · Bug · The New Arrivals collection was titled "New", and the documented rule named one tag instead of two
+**Commit:** <pending> · **Files:** CLAUDE.md, docs/OPEN_ITEMS.md
+
+**What it does / did:** Two separate facts about the same collection were wrong.
+
+1. **The title.** `collections/new-arrivals` was titled **`New`** in Shopify admin. Nothing on the
+   site displayed it until the batch 1 fix earlier the same day removed the gate that hid the
+   collection page's `<h1>` while the collection was empty. The owner renamed it to **`New Arrivals`**
+   in admin on 2026-09-20. **The handle did not change** — measured after the rename, below. This
+   closes the "Smaller data items" entry that was opened in `docs/OPEN_ITEMS.md` the same morning;
+   that entry is removed rather than marked closed, per the global rule that a closed item becomes a
+   DEVLOG entry instead of a "Closed" row.
+
+2. **The smart collection rule.** `CLAUDE.md` recorded it as a single condition, `Tag is equal to
+   new`. It is actually **two conditions joined by OR** — `new-arrivals` and `new`. The owner
+   confirmed the rule has never been edited, so this was written down wrong from the start rather
+   than drifting.
+
+**Why it matters:** The title was cosmetic — "New" is a thin `<h1>` and read oddly in the
+breadcrumb (`snippets/breadcrumbs.liquid` uses `collection.title` when a product is reached through
+a collection). The rule is not cosmetic. `CLAUDE.md` is what a future reader consults before
+touching the collection, and it named **one** of the two tags that fill it. Someone tidying the rule
+against that line would delete the `new-arrivals` condition believing it was never part of the
+design, and the app's tagging would half-stop working with no error anywhere.
+
+The admin UI compounds this: it renders the relation as **"includes"**, which reads like a substring
+test. It is not. The API reports `EQUALS` for both rules, so `newest` would not match `new`. The
+corrected line in `CLAUDE.md` says so, because "includes" is what the next person will see on screen
+and disbelieve the doc over.
+
+**Reproduce (before the fix):**
+1. Open `/collections/new-arrivals` after the batch 1 fix → the page heading reads **New**.
+2. Read `CLAUDE.md` "Required Shopify Admin Objects" → one condition, `Tag is equal to new`.
+3. Open the collection in admin → two conditions, `new-arrivals` OR `new`.
+
+**Verify now:**
+```bash
+grep -n "Tag is equal to new-arrivals" CLAUDE.md        # one hit, two conditions named
+grep -c "collection's title in admin is" docs/OPEN_ITEMS.md   # 0 - the item is closed
+```
+Against the live store — the title, the handle and the rule in one query:
+```graphql
+{ collectionByIdentifier(identifier: {handle: "new-arrivals"}) {
+    title handle productsCount { count }
+    ruleSet { appliedDisjunctively rules { column relation condition } } } }
+```
+Measured 2026-09-20 14:07 UTC, immediately after the rename:
+`title: "New Arrivals"`, `handle: "new-arrivals"`, `productsCount: 0`,
+`appliedDisjunctively: true`, rules `TAG EQUALS "new-arrivals"` and `TAG EQUALS "new"`.
+
+The handle is the load-bearing half. Three things address the collection by it: the smart collection
+rule, the theme's visibility gate (`collections['new-arrivals'].all_products_count`) and
+`snippets/lena-hide-nav-link.liquid`. Shopify offers to rewrite the handle when a title is edited;
+the query above is how you confirm the offer was declined.
+
+**Why the collection is still empty, and why that is correct:** measured the same day,
+`productsCount(query: "tag:new")` → **0** and `productsCount(query: "tag:new-arrivals")` → **0**.
+No product carries either tag, so the bar, the grid and the nav link all stay hidden. The theme is
+behaving exactly as designed — it does not decide what "new" means, the app does.
+
+**Regression risk:** any store-side setting described in prose in a repo file. The title and the
+rule both live in Shopify admin, where nothing in this repository can read them at review time, so a
+sentence here is a claim about another system that no test touches. The fix is the one applied
+above: put the query next to the claim, so the next reader re-measures instead of trusting.
