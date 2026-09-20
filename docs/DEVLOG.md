@@ -1535,7 +1535,7 @@ read - if that happens, cap it again at a width closer to the grid rather than a
 ---
 
 ## 2026-09-20 · Feature · Match the Shop by Category description to the collection-name size
-**Commit:** <pending> · **Files:** assets/lena-custom.css
+**Commit:** 7c90020 · **Files:** assets/lena-custom.css
 
 **What it does / did:** `.lena-section-sub` was a fixed `font-size: 15px`. The collection names
 under each tile are plain `<h3>` elements in `snippets/card-collection.liquid:86`, with no size
