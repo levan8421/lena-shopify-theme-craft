@@ -1844,7 +1844,7 @@ only makes sense while the two columns have different content heights.
 ---
 
 ## 2026-09-20 · Bug · Filtering a collection to no matches showed a blank area with no message
-**Commit:** <pending> · **Files:** sections/main-collection-product-grid.liquid, docs/regression-check.sh
+**Commit:** `40ccdea` · **Files:** sections/main-collection-product-grid.liquid, docs/regression-check.sh
 
 **Batch 1 of the CODE_SURVEY_2026-09-20 work** (survey finding A2). Batched with the banner `<h1>`
 entry below because both are the same visitor on the same page.
@@ -1899,7 +1899,7 @@ reaches for one count to answer both questions brings this back.
 ---
 
 ## 2026-09-20 · Bug · A genuinely empty collection page had no `<h1>` at all
-**Commit:** <pending> · **Files:** sections/main-collection-banner.liquid, docs/regression-check.sh
+**Commit:** `40ccdea` · **Files:** sections/main-collection-banner.liquid, docs/regression-check.sh
 
 **Batch 1 of the CODE_SURVEY_2026-09-20 work** (survey findings B1 and B11).
 
