@@ -1699,3 +1699,42 @@ block now sets `min-height: 0` for exactly this reason, and it carries down to t
 because that one never sets `min-height` again. Any new mosaic breakpoint must do the same. The fr
 rows also mean very long hero text stretches the images taller - that is the intended trade for
 matching gaps, but a much longer subheading is the thing that would show it.
+
+---
+
+## 2026-09-20 · Bug · CLAUDE.md told the next reader the return window was 30 days
+**Commit:** <hash> · **Files:** CLAUDE.md
+
+**What it does / did:** the "Modified stock files" table described `sections/main-product.liquid` as
+carrying "30-day returns". The PDP has said **15 days** since the return-window fix. The same row's
+line ranges (`101–140, 300–420, 593, 630–645`) were also stale: line 593 holds no `Lena:` marker at
+all, and the return blurb it was meant to point at is at 648–658, outside every listed range.
+
+Both are corrected, and a new bullet under *Shopify Liquid patterns* records that the return window
+is written by hand in three unlinked places, with the command that finds them.
+
+**Why it matters:** CLAUDE.md is the first file read before any edit, including by a subagent. A
+number in it is trusted without checking. Someone asked to "make the FAQ agree with the product
+page" would have set the FAQ to 30 days from this table and reopened the exact contradiction that
+the outside review called the single biggest issue it found. The stale line ranges are the same
+hazard in the other direction — the table exists to stop people editing outside the marked ranges,
+and pointing at line 593 sends them to stock Craft code.
+
+**Reproduce (before the fix):** `grep -n "30-day" CLAUDE.md` returned the `main-product.liquid` row,
+while `grep -n "days of delivery" sections/main-product.liquid` returned `15 days of delivery`. The
+two disagreed.
+
+**Verify now:**
+```
+grep -rn "days of delivery" sections/ templates/   # two hits, both "15 days of delivery"
+grep -c "30-day" CLAUDE.md                         # 0
+grep -n "Lena:" sections/main-product.liquid       # markers fall inside the ranges now in the table
+```
+The Refund Policy page is the third copy and is not in git — check it in Shopify admin → Settings →
+Policies. Measured 2026-09-20: "Returns are accepted within 15 days of delivery, on all products."
+
+**Regression risk:** the return window still lives in three places with nothing linking them, so any
+future change reopens this. The new bullet under *Shopify Liquid patterns* names all three and gives
+the grep; a change that edits one of them without the other two is the failure mode. The line-number
+columns in that table decay on every edit to a stock file — treat any range there as a hint, and
+confirm with `grep -n "Lena:"` before editing.

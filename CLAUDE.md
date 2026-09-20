@@ -39,7 +39,7 @@ them. Neither has anything to do with drops any more; see their header comments.
 
 | File | Lena lines | What was added |
 |------|-----------|----------------|
-| `sections/main-product.liquid` | 101–140, 300–420, 593, 630–645 | PDP: breadcrumbs, inventory badge, artisan line, scarcity/sold msg · quantity stepper hidden at max-purchasable 1 · 30-day returns. **No category eyebrow** — it duplicated the breadcrumb |
+| `sections/main-product.liquid` | 89, 115–168, 285, 318, 435, 611, 648–658 | PDP: breadcrumbs, inventory badge, artisan line, scarcity/sold msg · quantity stepper hidden at max-purchasable 1 · **15-day returns** (the number must match the Refund Policy page and the homepage Q&A — see below). **No category eyebrow** — it duplicated the breadcrumb |
 | `sections/main-collection-banner.liquid` | 14–33 | Collection: diamond eyebrow, title class, product count pill |
 | `sections/featured-collection.liquid` | 67, ~215 | Conditional wrapper: hides section when linked collection is empty (**unmarked** — no `Lena:` comment, so grep misses it) |
 | `snippets/card-product.liquid` | 108–122, 164–167, 228–237, 332–337, 436–437 | Cards: inventory badge (dynamic), sold overlay, category label, scarcity/notify · quick add gated on `card_product.available` so a sold-out card keeps Notify Me as its only CTA |
@@ -200,6 +200,12 @@ Do not hand-edit `templates/*.json`, `sections/*-group.json`, or `config/setting
 - **Metaobjects**: Use `section.settings.{metaobject}` for dynamic data
 - **No cadence claims**: The business is supply-driven — gaps run from days to a month. No frequency
   or day-of-week wording anywhere, and no countdown. The Friday countdown was removed for this reason.
+- **Return window is written in three places by hand.** `sections/main-product.liquid` (the PDP
+  blurb), the homepage Q&A row in `templates/index.json`, and the Refund Policy page in Shopify
+  admin. All three read **15 days** (measured 2026-09-20). Nothing links them, so changing one and
+  missing the others is silent — that is exactly how the site shipped 30 days on two of them against
+  15 on the third. Check all three together:
+  `grep -rn "days of delivery" sections/ templates/` plus the admin policy page.
 - **New Arrivals**: the theme does not know what "new" means. The app owns a single `new` tag; the
   smart collection matches it; the section and nav link render only while
   `collections['new-arrivals'].all_products_count > 0`. Deliberately **no** date filter, staleness
