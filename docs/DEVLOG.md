@@ -1443,7 +1443,7 @@ source. The policy page is the binding one; the other two must follow it, never 
 ---
 
 ## 2026-09-19 · Bug · Three faults in the hero and trust strip
-**Commit:** PENDING · **Files:** sections/lena-hero.liquid, assets/lena-custom.css, templates/index.json
+**Commit:** 9a8b656 · **Files:** sections/lena-hero.liquid, assets/lena-custom.css, templates/index.json
 
 ### 1. The theme editor kept putting a `<p>` back inside the H1
 
