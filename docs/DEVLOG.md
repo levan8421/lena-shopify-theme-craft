@@ -1954,7 +1954,7 @@ The regression check asserts the gate is absent for this reason.
 ---
 
 ## 2026-09-20 · Bug · A card with no photo silently lost its scarcity line, and two other copies of the same rule could not tell
-**Commit:** <pending> · **Files:** snippets/lena-stock.liquid (new), snippets/lena-notify-button.liquid (new), snippets/card-product.liquid, sections/main-product.liquid, sections/lena-featured-piece.liquid, docs/regression-check.sh
+**Commit:** `00ee335` · **Files:** snippets/lena-stock.liquid (new), snippets/lena-notify-button.liquid (new), snippets/card-product.liquid, sections/main-product.liquid, sections/lena-featured-piece.liquid, docs/regression-check.sh
 
 **Batch 2 of the CODE_SURVEY_2026-09-20 work** (survey findings B2 and C1–C4). The bug and its
 duplicates are fixed together on purpose; fixing only the bug would have left two copies free to
