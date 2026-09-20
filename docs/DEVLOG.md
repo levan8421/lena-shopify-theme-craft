@@ -2523,7 +2523,7 @@ use `all_products_count`, so the two can no longer drift apart silently.
 ---
 
 ## 2026-09-20 · Bug · The New Arrivals collection was titled "New", and the documented rule named one tag instead of two
-**Commit:** <pending> · **Files:** CLAUDE.md, docs/OPEN_ITEMS.md
+**Commit:** 1a8412d · **Files:** CLAUDE.md, docs/OPEN_ITEMS.md, docs/regression-check.sh
 
 **What it does / did:** Two separate facts about the same collection were wrong.
 
