@@ -76,6 +76,10 @@ assert_grep() {   # assert_grep <description> <pattern> <file>
 assert_no_grep() { # assert_no_grep <description> <pattern> <file>
   if grep -q "$2" "$3"; then fail "$1"; else pass "$1"; fi
 }
+assert_count() { # assert_count <description> <pattern> <file> <expected count>
+  local n; n="$(grep -c "$2" "$3")"
+  if [ "$n" = "$4" ]; then pass "$1"; else fail "$1 (found $n, expected $4)"; fi
+}
 assert_single_source() { # assert_single_source <description> <pattern> <expected file>
   # The pattern must appear in exactly one file under sections/ and snippets/, and that
   # file must be the one named. This is what stops a rule being copied back out again.
@@ -107,6 +111,18 @@ assert_single_source "the Notify Me button is built in only one place" \
   'onclick="window.lenaNotify(' snippets/lena-notify-button.liquid
 assert_grep "...and the function it calls is still defined by the modal" \
   "window.lenaNotify = " snippets/lena-notify-modal.liquid
+
+# Batch 3 - facets (DEVLOG 2026-09-20)
+assert_no_grep "no facet pill falls back to the raw tag value" \
+  "default: value.label" snippets/facets.liquid
+assert_count "all four active-filter pills use the shared snippet" \
+  "render 'lena-facet-pill'" snippets/facets.liquid 4
+assert_single_source "the pill's label line is written in exactly one place" \
+  "filter.label | escape }}:" snippets/lena-facet-pill.liquid
+assert_count "both checkbox lists skip a filter with no visible values" \
+  "render 'lena-facet-visible'" snippets/facets.liquid 2
+assert_grep "the empty-fieldset guard still spares price_range filters" \
+  "filter.type == 'boolean' or filter.type == 'list'" snippets/facets.liquid
 
 echo
 if [ "$FAIL" -eq 0 ]; then

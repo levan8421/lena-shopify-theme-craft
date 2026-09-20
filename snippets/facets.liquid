@@ -74,19 +74,7 @@
                 </div>
                 {%- for filter in results.filters -%}
                   {%- for value in filter.active_values -%}
-                    {%- capture lena_pill_raw -%}{%- render 'lena-color-facet', filter: filter, value: value -%}{%- endcapture -%}
-                    {%- assign lena_pill_label = lena_pill_raw | strip | default: value.label -%}
-                    <facet-remove>
-                      <a href="{{ value.url_to_remove }}" class="active-facets__button active-facets__button--light">
-                        <span class="active-facets__button-inner button button--tertiary">
-                          {{ filter.label | escape }}: {{ lena_pill_label | escape }}
-                          <span class="svg-wrapper">
-                            {{- 'icon-close-small.svg' | inline_asset_content -}}
-                          </span>
-                          <span class="visually-hidden">{{ 'products.facets.clear_filter' | t }}</span>
-                        </span>
-                      </a>
-                    </facet-remove>
+                    {%- render 'lena-facet-pill', filter: filter, value: value -%}
                   {%- endfor -%}
                   {% if filter.type == 'price_range' %}
                     {% assign min = filter.min_value.value %}
@@ -122,6 +110,21 @@
                 else
                   assign show_more_number = 10
                   assign visual_layout_class = 'facets-layout facets-layout-list facets-layout-list--' | append: presentation
+                endif
+              %}
+
+              {% liquid
+                # Lena: skip a filter whose every value the colour rule hides, rather than rendering an
+                # empty fieldset around no list items. Guarded on the filter type because price_range has
+                # no `values` at all and would otherwise be skipped too, taking price filtering with it.
+                # Placed after total_active_values is accumulated above, so the "(N)" count is unaffected.
+                if filter.type == 'boolean' or filter.type == 'list'
+                  capture lena_facet_visible
+                    render 'lena-facet-visible', filter: filter
+                  endcapture
+                  if lena_facet_visible == blank
+                    continue
+                  endif
                 endif
               %}
 
@@ -355,19 +358,7 @@
             <div class="active-facets active-facets-desktop">
               {%- for filter in results.filters -%}
                 {%- for value in filter.active_values -%}
-                  {%- capture lena_pill_raw -%}{%- render 'lena-color-facet', filter: filter, value: value -%}{%- endcapture -%}
-                  {%- assign lena_pill_label = lena_pill_raw | strip | default: value.label -%}
-                  <facet-remove>
-                    <a href="{{ value.url_to_remove }}" class="active-facets__button active-facets__button--light">
-                      <span class="active-facets__button-inner button button--tertiary">
-                        {{ filter.label | escape }}: {{ lena_pill_label | escape }}
-                        <span class="svg-wrapper">
-                          {{- 'icon-close-small.svg' | inline_asset_content -}}
-                        </span>
-                        <span class="visually-hidden">{{ 'products.facets.clear_filter' | t }}</span>
-                      </span>
-                    </a>
-                  </facet-remove>
+                  {%- render 'lena-facet-pill', filter: filter, value: value -%}
                 {%- endfor -%}
                 {% if filter.type == 'price_range' %}
                   {% assign min = filter.min_value.value %}
@@ -532,6 +523,21 @@
                       assign visual_layout_class = 'facets-layout facets-layout-grid facets-layout-grid--' | append: presentation
                     else
                       assign visual_layout_class = 'facets-layout facets-layout-list facets-layout-list--' | append: presentation
+                    endif
+                  %}
+
+                  {% liquid
+                    # Lena: skip a filter whose every value the colour rule hides, rather than rendering an
+                    # empty fieldset around no list items. Guarded on the filter type because price_range has
+                    # no `values` at all and would otherwise be skipped too, taking price filtering with it.
+                    # Placed after total_active_values is accumulated above, so the "(N)" count is unaffected.
+                    if filter.type == 'boolean' or filter.type == 'list'
+                      capture lena_facet_visible
+                        render 'lena-facet-visible', filter: filter
+                      endcapture
+                      if lena_facet_visible == blank
+                        continue
+                      endif
                     endif
                   %}
 
@@ -815,19 +821,7 @@
   <div class="active-facets active-facets-mobile medium-hide large-up-hide">
     {%- for filter in results.filters -%}
       {%- for value in filter.active_values -%}
-        {%- capture lena_pill_raw -%}{%- render 'lena-color-facet', filter: filter, value: value -%}{%- endcapture -%}
-        {%- assign lena_pill_label = lena_pill_raw | strip | default: value.label -%}
-        <facet-remove>
-          <a href="{{ value.url_to_remove }}" class="active-facets__button active-facets__button--light">
-            <span class="active-facets__button-inner button button--tertiary">
-              {{ filter.label | escape }}: {{ lena_pill_label | escape }}
-              <span class="svg-wrapper">
-                {{- 'icon-close-small.svg' | inline_asset_content -}}
-              </span>
-              <span class="visually-hidden">{{ 'products.facets.clear_filter' | t }}</span>
-            </span>
-          </a>
-        </facet-remove>
+        {%- render 'lena-facet-pill', filter: filter, value: value -%}
       {%- endfor -%}
 
       {%- if filter.type == 'price_range' -%}
@@ -926,19 +920,7 @@
         <div class="active-facets active-facets-desktop">
           {%- for filter in results.filters -%}
             {%- for value in filter.active_values -%}
-              {%- capture lena_pill_raw -%}{%- render 'lena-color-facet', filter: filter, value: value -%}{%- endcapture -%}
-              {%- assign lena_pill_label = lena_pill_raw | strip | default: value.label -%}
-              <facet-remove>
-                <a href="{{ value.url_to_remove }}" class="active-facets__button active-facets__button--light">
-                  <span class="active-facets__button-inner button button--tertiary">
-                    {{ filter.label | escape }}: {{ lena_pill_label | escape }}
-                    <span class="svg-wrapper">
-                      {{- 'icon-close-small.svg' | inline_asset_content -}}
-                    </span>
-                    <span class="visually-hidden">{{ 'products.facets.clear_filter' | t }}</span>
-                  </span>
-                </a>
-              </facet-remove>
+              {%- render 'lena-facet-pill', filter: filter, value: value -%}
             {%- endfor -%}
 
             {%- if filter.type == 'price_range' -%}

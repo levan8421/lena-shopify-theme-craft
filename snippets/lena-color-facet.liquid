@@ -14,10 +14,25 @@
   "color-blue". The ~55-name whitelist itself was pasted out in full twice. Six copies, two
   meanings, and nothing fails when one is edited.
 
+  Accepts an optional `fallback`, which decides what a non-whitelisted value on the Color
+  filter returns:
+
+    fallback: 'hide'  (default) -> nothing, so the caller drops the value from its list
+    fallback: 'clean'           -> the raw tag tidied up: prefix stripped, capitalised
+
+  Why two answers. The checkbox lists want 'hide' - a non-colour like "Accessories" has no
+  business in a Color list. The active pills cannot hide anything, because the pill IS the
+  control that removes the filter; hiding it would strand the visitor with a filter applied
+  and no way to clear it. Before this parameter existed the pills passed
+  `| default: value.label` instead, which printed the raw tag: a visitor arriving on a
+  bookmarked or shared URL saw **Color: color-accessories**. That is the exact
+  "checkbox says Blue, pill says color-blue" inconsistency this snippet was written to
+  remove, surviving on the other side of the fallback.
+
   Behaviour:
     not the Color filter  -> the value's own label, unchanged
     a whitelisted colour  -> the colour name, prefix stripped and capitalised
-    anything else         -> nothing, so the caller hides the value
+    anything else         -> per `fallback`, above
 
   The whitelist is still a whitelist, because the Color facet is fed from tags and the tag
   namespace carries non-colours. It now fails in one place instead of two. R28 records that
@@ -30,12 +45,19 @@
   if cf_filter_lower == 'color' or cf_filter_lower == 'colour'
     assign cf_whitelist = 'pink,red,orange,yellow,green,blue,purple,brown,beige,white,gray,grey,black,multi,navy,teal,coral,ivory,cream,gold,silver,rose,lavender,mint,burgundy,maroon,tan,khaki,olive,turquoise,magenta,peach,charcoal,indigo,aqua,mauve,plum,rust,salmon,taupe,wine,amber,bronze,champagne,copper,crimson,emerald,fuchsia,jade,lilac,mustard,sage,sapphire,scarlet,slate,violet' | split: ','
     assign cf_stripped = value.label | downcase | remove_first: 'color-'
+    assign cf_matched = false
     for cf_name in cf_whitelist
       if cf_stripped == cf_name
-        echo cf_stripped | capitalize
+        assign cf_matched = true
         break
       endif
     endfor
+
+    # A whitelisted colour and a tidied non-colour happen to print the same way - strip the
+    # prefix, capitalise. Only whether we print at all differs, so this is one branch.
+    if cf_matched or fallback == 'clean'
+      echo cf_stripped | capitalize
+    endif
   else
     echo value.label
   endif

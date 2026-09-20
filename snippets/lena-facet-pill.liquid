@@ -1,0 +1,32 @@
+{%- comment -%}
+  One active-filter pill - the whole <facet-remove> element.
+
+  Accepts: filter (required), value (required)
+
+  This markup was written out four times in snippets/facets.liquid (the drawer, the two
+  desktop layouts and the mobile sheet), identical in all four but for indentation, each
+  preceded by the same two lines of label plumbing. Four copies of a control whose job is
+  "let the visitor undo a filter" is four chances for one of them to stop undoing it.
+
+  The label comes from lena-color-facet with `fallback: 'clean'`. A pill must never be
+  hidden: it is the only control that removes the filter, so hiding it would strand a
+  visitor with a filter applied and no way to clear it. 'clean' therefore tidies a
+  non-whitelisted value - "color-accessories" prints as "Accessories" - instead of dropping
+  it. The checkbox lists pass no fallback and still hide such values, which is right for a
+  list you choose from.
+{%- endcomment -%}
+{%- capture fp_raw -%}
+  {%- render 'lena-color-facet', filter: filter, value: value, fallback: 'clean' -%}
+{%- endcapture -%}
+{%- assign fp_label = fp_raw | strip -%}
+<facet-remove>
+  <a href="{{ value.url_to_remove }}" class="active-facets__button active-facets__button--light">
+    <span class="active-facets__button-inner button button--tertiary">
+      {{ filter.label | escape }}: {{ fp_label | escape }}
+      <span class="svg-wrapper">
+        {{- 'icon-close-small.svg' | inline_asset_content -}}
+      </span>
+      <span class="visually-hidden">{{ 'products.facets.clear_filter' | t }}</span>
+    </span>
+  </a>
+</facet-remove>

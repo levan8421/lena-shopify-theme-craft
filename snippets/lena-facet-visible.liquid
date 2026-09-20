@@ -1,0 +1,32 @@
+{%- comment -%}
+  Does this filter have at least one value that will actually be rendered?
+
+  Accepts: filter (required). Outputs `1` for yes, nothing for no.
+
+  The Color facet is fed from tags, and the tag namespace carries non-colours. lena-color-facet
+  drops those from the checkbox list, which is right - but the <fieldset>, <summary> and <ul>
+  around the list were rendered before anything checked whether a single <li> would survive.
+  If every value were skipped the visitor got a Color accordion that opened onto nothing.
+
+  This asks the question the fieldset should have asked first. It calls the same snippet the
+  list itself calls, so the two can never disagree about which values count - asking it any
+  other way would be the duplication that lena-color-facet exists to prevent.
+
+  Cost: one extra pass over filter.values per filter, only for boolean and list filters.
+{%- endcomment -%}
+{%- liquid
+  assign fv_found = false
+  for fv_value in filter.values
+    capture fv_label
+      render 'lena-color-facet', filter: filter, value: fv_value
+    endcapture
+    assign fv_label = fv_label | strip
+    if fv_label != blank
+      assign fv_found = true
+      break
+    endif
+  endfor
+  if fv_found
+    echo 1
+  endif
+-%}

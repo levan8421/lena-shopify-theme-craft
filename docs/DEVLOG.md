@@ -2028,3 +2028,70 @@ line.
 site again "just this once". The next copy will agree on the day it is written and drift later, the
 same way these three did. If a new surface needs the badge, give `lena-stock` a new `style`; if it
 needs the number for something else, that is a new `part`, not a new `assign`.
+
+---
+
+## 2026-09-20 · Bug · The Color filter hid non-colours from the list but printed them raw in the pill above it
+**Commit:** <pending> · **Files:** snippets/lena-color-facet.liquid, snippets/lena-facet-pill.liquid (new), snippets/lena-facet-visible.liquid (new), snippets/facets.liquid, docs/regression-check.sh
+
+**Batch 3 of the CODE_SURVEY_2026-09-20 work** (survey findings B4, B5, C7).
+
+**What it did:** `lena-color-facet` returns a blank label to mean *this value is not a colour, hide
+it*. The two checkbox lists honoured that. The four active-filter pills instead wrote
+`| default: value.label`, which substitutes the raw tag the moment the label is blank. So a
+non-whitelisted value that was **active** printed as **`Color: color-accessories`** — the exact
+"checkbox says Blue, pill says color-blue" inconsistency the snippet was written to eliminate,
+surviving on the other side of the fallback.
+
+Reachable by arriving on a URL carrying that facet — a bookmark, a shared link, a back button —
+rather than by clicking, since the checkbox for it is hidden.
+
+**Why `default:` was the wrong tool, and what replaced it.** A pill cannot simply be hidden: the
+pill **is** the control that removes the filter. Hiding it strands the visitor with a filter applied
+and nothing to clear it with. So the two call sites genuinely need different answers, and
+`lena-color-facet` now takes a `fallback` parameter that names them:
+
+- `fallback: 'hide'` (the default) — checkbox lists drop the value, as before.
+- `fallback: 'clean'` — pills print the tag tidied: prefix stripped, capitalised.
+  `color-accessories` reads as **Accessories**, and the remove control still works.
+
+**Also fixed — the empty Color accordion (survey B5).** If every value of a filter were hidden, the
+`<fieldset>`, `<summary>` and `<ul>` still rendered with no `<li>` inside: a Color accordion that
+opens onto nothing. `snippets/lena-facet-visible.liquid` now answers "will anything survive?" using
+the *same* snippet the list itself calls, so the two cannot disagree about which values count, and
+both checkbox sites skip the filter entirely when the answer is no.
+
+That guard is deliberately restricted to `boolean` and `list` filters. A `price_range` filter has no
+`values` at all, so an unguarded version would have found nothing, skipped it, and silently removed
+price filtering from the store. The restriction is asserted in the regression check for that reason.
+
+**Also fixed — four copies of the pill (survey C7).** The `<facet-remove>` element was written out
+four times (drawer, two desktop layouts, mobile sheet), identical but for indentation, each preceded
+by the same two lines of label plumbing. `snippets/lena-facet-pill.liquid` renders the whole element
+and all four sites are now one line. 52 lines removed, 4 added.
+
+**Reproduce (before the fix):**
+1. Open `/collections/compact-mirrors?filter.p.tag=color-accessories` (any non-whitelisted tag on
+   the Color filter).
+2. Saw: a pill reading `Color: color-accessories`, with no matching checkbox anywhere in the list.
+   Expected: a readable label.
+
+**Verify now:**
+```
+bash docs/regression-check.sh
+grep -c "render 'lena-facet-pill'" snippets/facets.liquid    # 4
+grep -n "default: value.label" snippets/facets.liquid        # nothing
+```
+In a browser, on `/collections/compact-mirrors`:
+- tick a colour — the pill must read `Color: Blue`, not `Color: color-blue` (**positive control:
+  this is what already worked and must keep working**)
+- the × on the pill must still clear that one filter, and *Clear all* must still clear every filter
+- **the price filter must still be there** — that is the negative control for the new guard
+- the Color accordion must still open onto a list of colours
+- check the mobile filter sheet at 640px as well as desktop; the pill markup is shared now, so a
+  mistake shows up in all four places at once rather than one
+
+**Regression risk:** reaching for `| default:` again the next time a label comes back blank. It
+looks like defensive coding and is actually the bug: blank is a *decision* this snippet made, and
+overriding it locally puts the decision back in two places. If a call site needs different wording
+for a hidden value, that is a new `fallback` name, not a filter at the call site.
