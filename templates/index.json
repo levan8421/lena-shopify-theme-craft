@@ -316,7 +316,7 @@
       "settings": {
         "title": "Our Collections",
         "subtitle": "Browse what's in stock online, all handmade in Vietnam. New pieces go up as they're finished, and a few stay exclusive to our in-person markets.",
-        "heading_size": "h1",
+        "heading_size": "h0",
         "image_ratio": "portrait",
         "columns_desktop": 4,
         "color_scheme": "scheme-2",
