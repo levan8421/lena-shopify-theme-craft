@@ -1570,7 +1570,7 @@ follow. There is no size there today, which is the only reason reading base.css 
 ---
 
 ## 2026-09-20 · Bug · Four blocks of prose on the homepage were four different sizes
-**Commit:** <pending> · **Files:** assets/lena-custom.css
+**Commit:** 999a5f4 · **Files:** assets/lena-custom.css
 
 **What it does / did:** the owner asked for the top menu, the hero subheading, the Our Story
 paragraphs and the Shop by Category description to be the same size, with Our Story as the
