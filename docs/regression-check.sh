@@ -77,7 +77,15 @@ assert_no_grep() { # assert_no_grep <description> <pattern> <file>
   if grep -q "$2" "$3"; then fail "$1"; else pass "$1"; fi
 }
 
-echo "  (assertions are added here as each batch lands)"
+# Batch 1 - collection page empty states (DEVLOG 2026-09-20)
+assert_grep "filtered-to-zero shows 'No products found' + remove-all link" \
+  "use_fewer_filters_html" sections/main-collection-product-grid.liquid
+assert_grep "the filtered empty state is gated on all_products_count, not products.size" \
+  "if collection.all_products_count > 0" sections/main-collection-product-grid.liquid
+assert_grep "the collection banner still has its <h1>" \
+  "collection-hero__title" sections/main-collection-banner.liquid
+assert_no_grep "the banner's <h1> is not gated on a product count" \
+  "if collection.all_products_count > 0" sections/main-collection-banner.liquid
 
 echo
 if [ "$FAIL" -eq 0 ]; then

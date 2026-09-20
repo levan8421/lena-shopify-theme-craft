@@ -10,19 +10,24 @@
 {%- endstyle -%}
 
 {%- comment -%}
-  Lena: hide the banner when the collection is empty - the empty-state section handles that
-  case. Gated on all_products_count, NOT products_count.
+  Lena: the banner always renders, including when the collection holds nothing.
 
-  products_count reflects the current filtered view. Gating on it meant that filtering a
-  collection down to no matches removed the whole banner: the eyebrow, the <h1>, the
-  description and the count pill. The visitor was left on a page with no heading at all,
-  with their filter chips still on screen above nothing, and - on the New Arrivals
-  templates - the "we're preparing something special" empty state underneath, which says
-  the collection is empty when the truth is that their filter matched nothing.
+  It used to be wrapped in a gate on the collection's total product count. That gate was added
+  to fix a real bug - it had been products_count, so filtering a collection down to no
+  matches removed the eyebrow, the <h1>, the description and the count pill, leaving the
+  visitor on a page with no heading and their filter chips floating above nothing.
+  Switching to all_products_count fixed the filtered case and left the empty case broken
+  in the same way: a genuinely empty collection had no <h1> at all, and the page's first
+  heading was the <h2> inside lena-drop-coming-soon. That is a page with no title and a
+  heading order starting at h2.
 
-  all_products_count is the collection total and is what a visibility decision should ask.
+  Both /collections/new-arrivals and /collections/this-weeks-drop hold 0 products
+  (measured 2026-09-20), so this was reachable on the live store, not hypothetical.
+
+  A collection page's <h1> is its title. There is no count at which it should disappear,
+  so there is no gate here now. The pieces that genuinely depend on a count keep their own
+  test: the count pill below still hides itself at zero.
 {%- endcomment -%}
-{%- if collection.all_products_count > 0 -%}
 <div class="collection-hero{% if section.settings.show_collection_image and collection.image %} collection-hero--with-image{% endif %} color-{{ section.settings.color_scheme }} gradient">
   <div class="collection-hero__inner page-width {% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}">
     <div class="collection-hero__text-wrapper lena-collection-banner">
@@ -35,7 +40,7 @@
         {{- collection.title | escape -}}
       </h1>
 
-      {%- if section.settings.show_collection_description and collection.all_products_count > 0 -%}
+      {%- if section.settings.show_collection_description -%}
         <div class="collection-hero__description rte">{{ collection.description }}</div>
       {%- endif -%}
 
@@ -75,7 +80,6 @@
     {%- endif -%}
   </div>
 </div>
-{%- endif -%}
 
 {% schema %}
 {

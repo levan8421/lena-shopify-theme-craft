@@ -1840,3 +1840,113 @@ should move at all - that is the check that this did not leak into mobile.
 mosaic as well, which is what caused the original off-centre and uneven-gap faults - the mosaic must
 keep stretching. Any future breakpoint that keeps two columns needs to decide this again; the rule
 only makes sense while the two columns have different content heights.
+
+---
+
+## 2026-09-20 · Bug · Filtering a collection to no matches showed a blank area with no message
+**Commit:** <pending> · **Files:** sections/main-collection-product-grid.liquid, docs/regression-check.sh
+
+**Batch 1 of the CODE_SURVEY_2026-09-20 work** (survey finding A2). Batched with the banner `<h1>`
+entry below because both are the same visitor on the same page.
+
+**What it did:** stock Craft renders *"No products found — Use fewer filters or remove all"* with a
+working clear-all link when `collection.products.size == 0`. A Lena change deleted that block and
+left a comment in its place reading *"lena-drop-coming-soon section handles messaging."* That claim
+was wrong in both directions:
+
+1. `templates/collection.json` — the template every ordinary collection uses — does not contain
+   `lena-drop-coming-soon` at all. Its section list is banner + grid, nothing else.
+2. Where that section *does* exist (the two New Arrivals templates) it is gated on
+   `collection.all_products_count == 0`. A filter never makes that true, so it correctly stays
+   hidden — and nothing took its place.
+
+**What it does now:** the zero branch splits the two cases that reach it. A genuinely empty
+collection still renders nothing here, because `lena-drop-coming-soon` really does own that message.
+A collection filtered down to no matches gets the stock block back, including the *remove all* link
+pointing at `collection.url`.
+
+**Why it matters:** `/collections/compact-mirrors` holds 145 products and has filtering switched on.
+A colour facet matching nothing gave the visitor a banner, a row of filter chips, and then empty
+space — no message, no explanation, and no route back except the chips themselves. Nothing on the
+page said the filter was the reason. This is the most common dead end in a filtered catalogue and
+the theme had no answer for it.
+
+**How it got here:** this is a *residual* of the R3 fix, not a regression of it. R3's own symptom —
+the `<h1>` disappearing under a filter — is genuinely fixed. The R3 write-up never recorded that the
+stock empty state had already been removed underneath it, so nobody knew there was a hole left.
+
+**Reproduce (before the fix):**
+1. Open `/collections/compact-mirrors`.
+2. Tick a colour facet that shows `(0)`, or any combination matching nothing.
+3. Saw: banner, filter chips, blank space. Expected: a message and a way to clear the filters.
+
+**Verify now:**
+```
+bash docs/regression-check.sh          # assertions 1 and 2 under "Fixed bugs"
+sed -n '/products.size == 0/,/else/p' sections/main-collection-product-grid.liquid
+```
+In a browser: `/collections/compact-mirrors`, apply a filter matching nothing. You should see
+**"No products found / Use fewer filters or remove all"**, and *remove all* must clear every facet
+and bring the grid back. Then check `/collections/new-arrivals` (0 products, measured 2026-09-20)
+still shows the "preparing something special" section and **not** this message — that is the
+negative control, and it is the half that the original change got right.
+
+**Regression risk:** collapsing the two branches back into one. They look redundant — both are
+"there is nothing to show" — but `products.size` is the filtered view and `all_products_count` is
+the collection total, and the visitor needs a different sentence for each. Any future edit that
+reaches for one count to answer both questions brings this back.
+
+---
+
+## 2026-09-20 · Bug · A genuinely empty collection page had no `<h1>` at all
+**Commit:** <pending> · **Files:** sections/main-collection-banner.liquid, docs/regression-check.sh
+
+**Batch 1 of the CODE_SURVEY_2026-09-20 work** (survey findings B1 and B11).
+
+**What it did:** the whole banner — eyebrow, `<h1>`, description and count pill — was wrapped in
+`{%- if collection.all_products_count > 0 -%}`. When a collection genuinely held nothing, the page's
+first and only heading was the `<h2 class="lena-section-h">` inside `lena-drop-coming-soon`. That is
+a page with no title, and a heading order that starts at h2.
+
+**What it does now:** the banner always renders. The count pill keeps its own `products_count > 0`
+test, so it still hides itself rather than saying "0 pieces".
+
+**Why it matters:** a collection page's `<h1>` is its title. Search engines and screen readers both
+read it as the page's name, and there is no product count at which a page should stop having one.
+This was live-reachable, not hypothetical: `/collections/new-arrivals` and
+`/collections/this-weeks-drop` both hold 0 products (measured 2026-09-20 via
+`collectionByIdentifier(identifier: {handle: "..."}) { productsCount { count } }`).
+
+**The irony worth recording:** the comment block directly above that gate argues at length *against*
+losing the `<h1>`. It makes the argument for the filtered case, fixes that, and then removes the
+`<h1>` for the empty case two lines later. Getting half of a rule right is what made this invisible.
+
+**Also in this change (survey B11):** the description's test read
+`show_collection_description and collection.all_products_count > 0`, but the whole block already sat
+inside the count gate, so the second half could never be false. With the outer gate gone it would
+have quietly become live and started hiding the description on empty collections, so it was removed
+rather than left to change meaning on its own.
+
+**Reproduce (before the fix):**
+1. Open `/collections/new-arrivals` (0 products).
+2. View source, search for `<h1`.
+3. Saw: no `<h1>` anywhere on the page. Expected: the collection title.
+
+**Verify now:**
+```
+bash docs/regression-check.sh          # assertions 3 and 4 under "Fixed bugs"
+grep -n "all_products_count" sections/main-collection-banner.liquid   # comment prose only
+```
+In a browser: `/collections/new-arrivals` must show the Collection eyebrow and the title **New** as
+its `<h1>`, with the "preparing something special" block beneath it and **no** count pill. Then
+`/collections/compact-mirrors` (145 products) must be unchanged, pill included — that is the
+positive control.
+
+**Note for whoever writes the collection copy:** the `new-arrivals` collection's title in admin is
+**"New"**, not "New Arrivals". Nothing showed it before, because the homepage bar's heading is a
+theme setting. This change puts it on screen, so it is now worth renaming in admin if "New" reads
+oddly as a page title.
+
+**Regression risk:** re-adding a count gate around the banner. It will look like the right fix the
+next time a filtered page misbehaves, because that is exactly how it was introduced the first time.
+The regression check asserts the gate is absent for this reason.

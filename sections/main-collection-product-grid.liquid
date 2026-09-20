@@ -125,7 +125,40 @@
         {% endif %}
       >
         {%- if collection.products.size == 0 -%}
-          {%- comment -%} Lena: Hide default empty state — lena-drop-coming-soon section handles messaging {%- endcomment -%}
+          {%- comment -%}
+            Lena: two different situations reach this branch and they need different answers.
+            The original Lena change treated them as one and rendered nothing for both.
+
+            all_products_count == 0 - the collection genuinely holds nothing. The
+            lena-drop-coming-soon section owns that message, so nothing is rendered here.
+
+            all_products_count > 0 - the visitor filtered it down to no matches. Stock
+            Craft's "No products found / Use fewer filters or remove all" was deleted here
+            and nothing took its place: templates/collection.json does not contain
+            lena-drop-coming-soon at all, and where that section does exist it is gated on
+            all_products_count == 0, which a filter never makes true. So a filter matching
+            nothing gave the banner, the filter chips, and then blank space - no message,
+            and no way back except the chips themselves.
+
+            The stock block is restored for exactly that case. Its "remove all" link points
+            at collection.url, which drops every facet. id="product-grid" is kept because
+            the facets JS replaces that element by id when a filter changes.
+          {%- endcomment -%}
+          {%- if collection.all_products_count > 0 -%}
+            <div class="collection collection--empty page-width" id="product-grid" data-id="{{ section.id }}">
+              <div class="loading-overlay gradient"></div>
+              <div class="title-wrapper center">
+                <h2 class="title title--primary">
+                  {{ 'sections.collection_template.empty' | t -}}
+                  <br>
+                  {{
+                    'sections.collection_template.use_fewer_filters_html'
+                    | t: link: collection.url, class: 'underlined-link link'
+                  }}
+                </h2>
+              </div>
+            </div>
+          {%- endif -%}
         {%- else -%}
           <div
             class="collection{% if section.settings.filter_type != 'vertical' %} page-width{% endif %}"
