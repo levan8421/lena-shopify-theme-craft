@@ -1738,3 +1738,64 @@ future change reopens this. The new bullet under *Shopify Liquid patterns* names
 the grep; a change that edits one of them without the other two is the failure mode. The line-number
 columns in that table decay on every edit to a stock file — treat any range there as a hint, and
 confirm with `grep -n "Lena:"` before editing.
+
+---
+
+## 2026-09-20 · Bug · The hero heading broke into four lines and split a word on desktop
+**Commit:** <hash> · **Files:** assets/lena-custom.css
+
+**What it does / did:** `.lena-hero h1` was `clamp(36px, 5vw, 58px)`. Both the cap and the middle
+value size the text against the **viewport**, but the heading is not in the viewport - it is in the
+left half of a two-column grid. At the 1200px page width that column is about 516px
+(`1200 - 112px padding - 56px gap`, halved). 58px no longer fitted, so the two sentences broke into
+four lines and the hyphen in "mass-produced" became a line break:
+
+```
+One piece at a          One piece at a time.
+time.             vs    Never mass-produced.
+Never mass-             (mobile, one column)
+produced.
+```
+
+Now `clamp(36px, 4vw, 50px)`.
+
+**Why it matters:** this is the H1, the first line of the site. A word split at its hyphen reads as
+broken rather than styled, and four ragged lines push the buttons down the page. Mobile was already
+correct, which is what made it look like a desktop fault rather than a copy-length problem.
+
+**Reproduce (before the fix):** homepage at 1280px wide, heading set to
+`One piece at a time.<br><strong>Never mass-produced.</strong>`. The heading rendered on four lines
+with "Never mass-" and "produced." on separate lines. The same page at phone width rendered two
+clean lines.
+
+**How the numbers were chosen - read this before changing them.** The width one line needs was
+derived from the mobile rendering, which does fit: 20 characters occupied the full text column at
+the clamp minimum, giving roughly **0.465em of width per character**, so a 20-character sentence
+needs about **9.3em**. Applied to the narrowest column at each width where the grid has two columns:
+
+| Viewport | Text column | Font | Line needs | Fits |
+|---|---|---|---|---|
+| 900px (two columns begin) | 366px | 36px (min) | 335px | yes |
+| 1000px | 416px | 40px | 372px | yes |
+| 1200px | 516px | 48px | 446px | yes |
+| 1440px+ | 516px | 50px (cap) | 465px | yes |
+
+**That 0.465em is an estimate read off a screenshot, not a measured font metric.** It has not been
+run against a positive and a negative case, so by the project's own measurement rule the table above
+is a draft. It is recorded because it shows *why* these numbers and not others - the browser check
+below is what actually confirms the fix.
+
+**Verify now:**
+```
+grep -n "lena-hero h1" -A2 assets/lena-custom.css   # clamp(36px, 4vw, 50px)
+```
+In a browser, each sentence must sit on exactly one line, and "mass-produced" must never split, at
+**1440px, 1280px, 1200px, 1000px and 900px**. 900px is the tightest case - it is the first width
+where the grid has two columns and the font is already at its 36px floor, so it cannot shrink
+further to compensate. Below 900px the hero is one column and this rule does not apply.
+
+**Regression risk:** these values are a fitting constraint tied to the current heading text. A longer
+heading set in the theme editor - the field is admin-owned, so it can change without touching code -
+will overflow the column again, and nothing warns anyone. The failure is always the same shape: the
+longest sentence wraps, usually at a hyphen. If the heading grows, the cap comes down, or the text
+column gets more of the grid than `1fr 1fr` gives it.

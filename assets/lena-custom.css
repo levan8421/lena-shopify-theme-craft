@@ -402,8 +402,18 @@ a.lena-notify-btn {
   align-items: center;
   gap: 10px;
 }
+/* Lena: the cap was 58px and the middle value 5vw. Both were set against the
+   viewport, but the heading does not live in the viewport - it lives in the left
+   half of a two-column grid, which is roughly 516px at the 1200px page width.
+   At 58px the two sentences no longer fitted that column, so desktop broke them
+   into four lines and split a word at its hyphen ("Never mass- / produced."),
+   while mobile - one column, smaller font - kept each sentence whole. The sizes
+   below are set so the longer sentence still fits the column at every width where
+   the grid has two columns. See DEVLOG 2026-09-20 for how the numbers were
+   chosen; they are a fitting constraint, not a design preference, so if the
+   heading text gets longer they have to come down again. */
 .lena-hero h1 {
-  font-size: clamp(36px, 5vw, 58px);
+  font-size: clamp(36px, 4vw, 50px);
   font-weight: 300;
   line-height: 1.15;
   letter-spacing: 0.03em;
