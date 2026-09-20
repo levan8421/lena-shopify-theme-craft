@@ -1803,7 +1803,7 @@ column gets more of the grid than `1fr 1fr` gives it.
 ---
 
 ## 2026-09-20 · Bug · All the hero's leftover vertical space piled up under the buttons
-**Commit:** <hash> · **Files:** assets/lena-custom.css
+**Commit:** a90de8d · **Files:** assets/lena-custom.css
 
 **What it does / did:** the hero is a two-column grid. The text column holds less than the mosaic
 beside it, so the row is as tall as the mosaic and the text column stretched to match - but its
