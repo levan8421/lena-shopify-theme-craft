@@ -1566,3 +1566,46 @@ Easiest check is to zoom in - the two should stay the same as each other at any 
 **Regression risk:** if anyone ever adds a size to `.card__heading` for collection cards - in
 `section-collection-list.css` or `lena-custom.css` - the two stop matching and this rule has to
 follow. There is no size there today, which is the only reason reading base.css directly is safe.
+
+---
+
+## 2026-09-20 · Bug · Four blocks of prose on the homepage were four different sizes
+**Commit:** <pending> · **Files:** assets/lena-custom.css
+
+**What it does / did:** the owner asked for the top menu, the hero subheading, the Our Story
+paragraphs and the Shop by Category description to be the same size, with Our Story as the
+reference. Measured first, 2026-09-20:
+
+| Text | Set by | Desktop size |
+|---|---|---|
+| Top menu links | nothing - inherits `body` | 1.6rem |
+| Our Story paragraphs | nothing - inherits `body` | 1.6rem |
+| Hero subheading | `.lena-hero-sub` hardcoded | 16px |
+| Shop by Category description | `.lena-section-sub` hardcoded | `--font-heading-scale * 1.8rem` |
+
+Two of the four already agreed because neither declares a size - `component-list-menu.css` and
+`component-image-with-text.css` contain no `font-size` at all, so both fall through to the `body`
+rule in `layout/theme.liquid:236` (1.5rem, 1.6rem from 750px up). The fix was therefore to delete
+the two hardcoded sizes rather than add a third number. All four now read one rule.
+
+**Why it matters:** it is the difference between four sizes that happen to be close today and four
+sizes that cannot drift apart. The body scale is a theme setting the owner can change in admin;
+`16px` would have stopped matching the first time it moved.
+
+**Reproduce (before the fix):** homepage at 1280px. The Shop by Category description was visibly
+larger than the Our Story paragraphs directly above it, and the hero subheading was fractionally
+smaller than the menu above it.
+
+**Verify now:**
+```
+grep -n "lena-hero-sub" -A8 assets/lena-custom.css     # expect no font-size line
+grep -n "lena-section-sub" -A6 assets/lena-custom.css  # expect no font-size line
+```
+In a browser, zoom to 200% - the top menu, hero subheading, Our Story text and Shop by Category
+description should stay identical to each other at every zoom step. `line-height`, colour and
+weight were left alone deliberately, so the blocks still look different in other ways.
+
+**Regression risk:** this works only because nothing between `body` and these elements sets a size.
+Adding a `font-size` to `.lena-hero`, `.lena-hero-content`, `.lena-hero-text`, `.collection-list-
+wrapper` or `.page-width` would break the match silently, with no error anywhere. The reverse of
+the earlier entry today: matching `h3` here was the wrong reference and lasted one screenshot.
