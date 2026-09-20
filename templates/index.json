@@ -133,6 +133,21 @@
         "padding_bottom": 52
       }
     },
+    "lena_featured_piece_gqXnJa": {
+      "type": "lena-featured-piece",
+      "name": "Featured Piece",
+      "settings": {
+        "collection": "artisan",
+        "rotation": "daily",
+        "eyebrow": "Piece of the Day",
+        "heading": "<em><strong>Today's Feature</strong></em>",
+        "description": "",
+        "cta_label": "View this piece",
+        "color_scheme": "scheme-1",
+        "padding_top": 52,
+        "padding_bottom": 52
+      }
+    },
     "lena-drop-header": {
       "type": "lena-drop-header",
       "settings": {
@@ -170,21 +185,6 @@
         "columns_mobile": "2",
         "swipe_on_mobile": false,
         "padding_top": 0,
-        "padding_bottom": 52
-      }
-    },
-    "lena_featured_piece_gqXnJa": {
-      "type": "lena-featured-piece",
-      "name": "Featured Piece",
-      "settings": {
-        "collection": "artisan",
-        "rotation": "daily",
-        "eyebrow": "Piece of the Day",
-        "heading": "<em><strong>Today's Feature</strong></em>",
-        "description": "",
-        "cta_label": "View this piece",
-        "color_scheme": "scheme-1",
-        "padding_top": 52,
         "padding_bottom": 52
       }
     },
@@ -505,9 +505,9 @@
     "lena-hero",
     "lena-trust",
     "our-story",
+    "lena_featured_piece_gqXnJa",
     "lena-drop-header",
     "new-arrivals-grid",
-    "lena_featured_piece_gqXnJa",
     "featured-collection",
     "shop-by-category",
     "lena-testimonials",
