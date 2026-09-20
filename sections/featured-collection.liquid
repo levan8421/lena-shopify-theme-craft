@@ -64,7 +64,21 @@
   endif
 -%}
 
-{%- if section.settings.collection != blank and section.settings.collection.products.size > 0 -%}
+{%- comment -%}
+  Lena: gated on all_products_count, NOT products.size. This insertion carries the marker;
+  the wrapper itself is unmarked elsewhere in this file, so grep for it by this comment.
+
+  CLAUDE.md states the rule - "all_products_count, not products_count ... for any visibility
+  decision" - and this file was the one place breaking it. That matters here specifically
+  because this section and sections/lena-drop-header.liquid are supposed to appear and
+  disappear together: the bar is the grid's heading, and a bar with no grid under it, or a
+  grid with no heading over it, both read as broken.
+
+  They agreed by luck, not by construction. products.size is also capped at 50 outside a
+  paginate tag, so a collection holding 60 with the first 50 filtered out would have hidden
+  this section while the bar above it stayed. One question, one predicate, both files.
+{%- endcomment -%}
+{%- if section.settings.collection != blank and section.settings.collection.all_products_count > 0 -%}
 <div
   class="color-{{ section.settings.color_scheme }} isolate gradient"
 >
@@ -103,6 +117,11 @@
       >
         {% assign skip_card_product_styles = false %}
 
+        {%- comment -%}
+          Lena: products.size is correct HERE and must not be changed to all_products_count.
+          This guards the render loop - "is there anything on this page to draw" - not the
+          section's visibility. The gate at the top of the file is the visibility decision.
+        {%- endcomment -%}
         {%- if section.settings.collection.products.size > 0 -%}
           {% assign lazy_load = false %}
           {% paginate section.settings.collection.products by section.settings.products_to_show %}

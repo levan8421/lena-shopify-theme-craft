@@ -29,9 +29,9 @@ described here — they have a `DEVLOG.md` entry, which is where the detail live
 | B7 | Spotlight dot nav capped at 6 | closed · batch 5 |
 | B8 | `aria-labelledby` named an emptied span | closed · batch 4 |
 | B9 | Find Us rendered a heading over nothing | closed · batch 4 |
-| B10 | Two predicates answer "is this collection empty" | **open** — see below |
+| B10 | Two predicates answer "is this collection empty" | closed · batch 9 |
 | B11 | Dead condition in the banner | closed · batch 1 |
-| B12 | In-stock-first sorts within a page only | **open** — not fixable in Liquid; wants a comment |
+| B12 | In-stock-first sorts within a page only | closed · batch 9 — not fixable in Liquid; the limit is now recorded in the file |
 | C1–C4 | Badge / scarcity / sold / notify duplication | closed · batch 2 |
 | C5 | Modal focus-trap JS duplicated verbatim | closed · batch 7 |
 | C6 | `section-…-padding` style block ×6 | **open** — standard Shopify idiom, low value, zero risk |
@@ -47,18 +47,6 @@ described here — they have a `DEVLOG.md` entry, which is where the detail live
 | E2, E3 | `ARCHITECTURE.md` line table and dead selectors | closed · batch 8 — the file is rebuilt around commands |
 | E4–E7 | `CLAUDE.md` order, collections, missing files, counts | closed · batch 8 |
 | E8, E9 | `OPEN_ITEMS` verify commands and line refs | closed · batch 8 |
-
-**B10 · two predicates for one question.** `CLAUDE.md` states the rule — *"`all_products_count`, not
-`products_count` … for any visibility decision"* — and then two files answer it differently:
-
-```bash
-grep -n "all_products_count" sections/lena-drop-header.liquid       # the rule, followed
-grep -n "products.size > 0" sections/featured-collection.liquid     # the rule, not followed
-```
-
-`CLAUDE.md` claims the New Arrivals bar and grid "appear and disappear together". They agree today by
-luck, not by construction: `products.size` is also capped at 50 outside a `paginate`, so a
-collection of 60 with the first 50 filtered out would disagree. One rule written twice.
 
 **Still unaddressed from the survey's smaller notes:**
 

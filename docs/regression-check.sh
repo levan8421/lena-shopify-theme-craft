@@ -191,6 +191,12 @@ assert_no_grep "CLAUDE.md no longer lists signature-purses as a canonical catego
 assert_grep "CLAUDE.md points at the canonical handle list instead of copying it" \
   "lena-category-handles.liquid" CLAUDE.md
 
+# Batch 9 - one predicate for one question (DEVLOG 2026-09-20)
+assert_grep "featured-collection gates visibility on all_products_count" \
+  "section.settings.collection.all_products_count > 0" sections/featured-collection.liquid
+assert_grep "lena-drop-header still asks the same question the same way" \
+  "all_products_count" sections/lena-drop-header.liquid
+
 echo
 if [ "$FAIL" -eq 0 ]; then
   printf '\033[32mAll checks passed.\033[0m\n'

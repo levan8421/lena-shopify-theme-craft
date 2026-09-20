@@ -173,7 +173,21 @@
                 {% if section.settings.quick_add == 'bulk' %} collection-quick-add-bulk{% endif %}
               "
             >
-              {%- comment -%} Lena: Show in-stock products first, then sold-out {%- endcomment -%}
+              {%- comment -%}
+                Lena: show in-stock products first, then sold-out.
+
+                KNOWN LIMIT - this sorts WITHIN A PAGE ONLY, and cannot do better in Liquid.
+                The loop runs inside the paginate tag above, so collection.products is the
+                current page slice, not the collection. With products_per_page at 48 against
+                compact-mirrors' 145 products, page 1 sorts its own 48 and page 3 sorts its
+                own; page 2 can therefore open on sold-out pieces while page 1 still had
+                sold-out pieces at the bottom.
+
+                There is no way round it in a section: paginate takes its page from the URL.
+                A collection-level fix would be a Shopify sort order, not theme code. Recorded
+                here the way R15 is recorded in lena-featured-piece, so the next person to
+                notice the jump does not spend an afternoon on it.
+              {%- endcomment -%}
               {% assign skip_card_product_styles = false %}
               {% assign lena_item_index = 0 %}
               {%- for product in collection.products -%}

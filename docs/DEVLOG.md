@@ -2461,3 +2461,61 @@ command form, the other asserts the underlying code fact (those selectors are ab
 **Regression risk:** the next person who needs a line number and writes one down. The header of
 `ARCHITECTURE.md` now explains why not, in the file itself rather than only here — a convention that
 lives only in a DEVLOG entry is a convention nobody reads.
+
+---
+
+## 2026-09-20 · Bug · The New Arrivals bar and its grid asked "is this empty?" two different ways
+**Commit:** <pending> · **Files:** sections/featured-collection.liquid, sections/main-collection-product-grid.liquid, docs/regression-check.sh, docs/OPEN_ITEMS.md
+
+**Batch 9 of the CODE_SURVEY_2026-09-20 work** (survey findings B10 and B12).
+
+**What it did:** `CLAUDE.md` states the rule plainly — *"`all_products_count`, not `products_count`
+… for any visibility decision"* — and one file broke it:
+
+- `sections/lena-drop-header.liquid` → `na_collection.all_products_count`
+- `sections/featured-collection.liquid` → `section.settings.collection.products.size > 0`
+
+**Why it matters here specifically:** those two sections are the New Arrivals **bar** and the New
+Arrivals **grid**, and `CLAUDE.md` claims they "appear and disappear together". The bar *is* the
+grid's heading — the grid has no title of its own. A bar with no grid under it, or a grid with no
+heading over it, both read as broken.
+
+They agreed by luck, not by construction. `products.size` is capped at **50** outside a `paginate`
+tag, so a collection holding 60 products with the first 50 filtered out returns 0 from one predicate
+and 60 from the other: the grid would hide itself while the bar above it stayed. This is the "one
+rule written twice" class the global rules call the most expensive fault there is — every copy passes
+its own tests.
+
+**What it does now:** the visibility gate asks `all_products_count`, like every other visibility
+decision in the theme.
+
+**One thing deliberately left as `products.size`.** The inner test further down the same file guards
+the *render loop* — "is there anything on this page to draw" — not the section's visibility. That is
+a genuinely different question and `products.size` is the right one to ask. A comment now says so in
+place, because the obvious next move after reading this entry is to change both.
+
+**Also in this batch — B12, recorded rather than fixed.** The in-stock-first sort in
+`main-collection-product-grid.liquid` runs *inside* the `paginate` tag, so `collection.products` is
+the current page slice. With `products_per_page` at 48 against `compact-mirrors`' 145 products, page
+1 sorts its own 48 and page 3 sorts its own — page 2 can open on sold-out pieces while page 1 still
+had sold-out pieces at the bottom. **There is no way round this in Liquid**: `paginate` takes its
+page from the URL. A real fix is a Shopify collection sort order, not theme code. The limit is now
+written in the file the way R15 is written in `lena-featured-piece`, so the next person to notice the
+jump does not spend an afternoon on it.
+
+**Reproduce (before the fix):** B10 needs a collection of more than 50 where the first 50 are
+excluded by the smart-collection rule — not reproducible on the live store today, which is exactly
+why it was agreeing by luck.
+
+**Verify now:**
+```
+bash docs/regression-check.sh
+grep -n "all_products_count" sections/featured-collection.liquid sections/lena-drop-header.liquid
+```
+In a browser: the homepage must be **unchanged**. `new-arrivals` holds 0 products, so the bar and
+the grid are both hidden, before and after — that is the positive control. To see them appear, tag
+one product `new` in admin and confirm **both** show up together.
+
+**Regression risk:** `products.size` reads as the obvious way to ask "does this collection have
+anything", and it is shorter. It will be reached for again. The regression check asserts both files
+use `all_products_count`, so the two can no longer drift apart silently.
