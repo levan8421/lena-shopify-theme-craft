@@ -2373,7 +2373,7 @@ existing dialog inherits the right pattern.
 ---
 
 ## 2026-09-20 · Bug · The three reference documents had all stopped being true
-**Commit:** <pending> · **Files:** ARCHITECTURE.md, CLAUDE.md, docs/OPEN_ITEMS.md, docs/regression-check.sh
+**Commit:** `8da03ba` · **Files:** ARCHITECTURE.md, CLAUDE.md, docs/OPEN_ITEMS.md, docs/regression-check.sh
 
 **Batch 8 of the CODE_SURVEY_2026-09-20 work** (survey findings E1–E9).
 
