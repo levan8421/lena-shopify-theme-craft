@@ -168,6 +168,29 @@ for f in sections/lena-email-popup.liquid snippets/lena-notify-modal.liquid; do
     "DOMContentLoaded" "$f"
 done
 
+# Batch 8 - documentation that had stopped being true (DEVLOG 2026-09-20)
+# These assert the CORRECTIONS hold, not that prose is beautiful. A doc claim that can be
+# checked by grep should be.
+assert_no_grep "ARCHITECTURE.md no longer claims a fixed stylesheet length" \
+  "lena-custom.css\`, 1018 lines" ARCHITECTURE.md
+assert_no_grep "ARCHITECTURE.md no longer documents the removed countdown as current" \
+  "Countdown:" ARCHITECTURE.md
+found_dead="$(grep -rl "lena-pdp-cat\|lena-countdown-pill" assets/ sections/ snippets/ 2>/dev/null | tr '\n' ' ')"
+if [ -z "$found_dead" ]; then
+  pass "the selectors ARCHITECTURE.md records as removed are really gone from the code"
+else
+  fail "removed selectors are back in: $found_dead"
+fi
+assert_grep "ARCHITECTURE.md points at the real colour-facet file" \
+  "lena-color-facet.liquid" ARCHITECTURE.md
+assert_no_grep "OPEN_ITEMS has no command left that greps facets.liquid for the old name" \
+  'lena_color_whitelist" snippets/facets.liquid' docs/OPEN_ITEMS.md
+assert_no_grep "CLAUDE.md no longer lists signature-purses as a canonical category" \
+  "ribbon-embroidery-hats\`, \`signature-purses" CLAUDE.md
+# The canonical list has exactly one home; CLAUDE.md must point at it rather than restate it.
+assert_grep "CLAUDE.md points at the canonical handle list instead of copying it" \
+  "lena-category-handles.liquid" CLAUDE.md
+
 echo
 if [ "$FAIL" -eq 0 ]; then
   printf '\033[32mAll checks passed.\033[0m\n'

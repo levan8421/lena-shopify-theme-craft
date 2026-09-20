@@ -2369,3 +2369,95 @@ of it can be proven from the command line:
 of going through `LenaModal`. It would work alone and break the count for the other two. The
 regression check asserts neither existing dialog writes it directly, so a third one copying an
 existing dialog inherits the right pattern.
+
+---
+
+## 2026-09-20 · Bug · The three reference documents had all stopped being true
+**Commit:** <pending> · **Files:** ARCHITECTURE.md, CLAUDE.md, docs/OPEN_ITEMS.md, docs/regression-check.sh
+
+**Batch 8 of the CODE_SURVEY_2026-09-20 work** (survey findings E1–E9).
+
+**What it did:** `ARCHITECTURE.md` was last touched 2026-06-05, by a commit about a feature that has
+since been removed. It was built almost entirely out of line numbers, and **every one had rotted**:
+
+| Claim in the file | Reality on 2026-09-20 |
+|---|---|
+| `lena-custom.css`, 1018 lines | 1483 at survey time, 1500 after this work |
+| Hero CSS at 251 · Trust 430 · Drop bar 482 · Spotlight 532 · Find Us 628 · Testimonials 854 · Popup 982 | 331 · 567 · 619 · 656 · 752 · 975 · 1112 — **every row wrong, by 80–137 lines** |
+| `main-404.liquid`, 175 lines, self-contained styles | 52 lines; its styles live in `lena-custom.css` |
+| `.lena-pdp-cat`, `.lena-countdown-pill` | neither exists — both deliberately removed |
+| Colour whitelist in `snippets/facets.liquid` at 204–220 and 592–608 | moved to `snippets/lena-color-facet.liquid`, named `cf_whitelist` |
+| A JS countdown to Friday, documented in three places | removed; no cadence claim belongs in the theme |
+| — | six files created since June were not mentioned once |
+
+**Why it matters more than ordinary staleness:** a wrong line number is worse than no line number. No
+document makes a reader search. A wrong one makes them search *after* they have already decided to
+trust it — and that reader is increasingly a subagent that cannot tell the difference.
+
+**What it does now:** `ARCHITECTURE.md` is rebuilt so that **where it would have printed a number, it
+prints the command that produces the number now.** The CSS map is one grep:
+
+```bash
+grep -nE '^/\* ?[─-]{2,}' assets/lena-custom.css
+```
+
+Every section of the stylesheet opens with a banner comment in that form, so the output *is* the
+table of contents, correct by construction. Every command in the rewritten file was executed before
+committing; all eleven return what the file says they return. Numbers that remain carry a date,
+which makes them history rather than a claim about the present.
+
+**The worst single line was not in ARCHITECTURE.md.** `docs/OPEN_ITEMS.md` recorded **R1 as
+`fixed`** — a live, shopper-visible fault marked as dealt with, while `templates/index.json` still
+carried the setting and no DEVLOG entry had ever changed it. That false `fixed` is precisely what
+stops anyone looking. The global rule *"reply with a state table, not prose — a table of states stays
+true"* only holds while someone maintains it; an unmaintained state table is worse than prose,
+because it is trusted.
+
+R1 is now recorded as **unexplained**, with both contradicting measurements written out — the API
+says the collection does not exist, the owner's screenshot shows the section rendering. It is not
+marked fixed, and it is not marked open. It is working, so nothing was changed.
+
+**Also corrected:**
+
+- **CLAUDE.md homepage stack (E4)** — Featured Piece is section **#4**, before the New Arrivals pair,
+  not #6 after it. The table now says `templates/index.json` is the record and gives the command
+  that prints the live order.
+- **CLAUDE.md required collections (E5)** — the list named `signature-purses`, which is **not** one
+  of the seven canonical categories, and omitted three that are (`velvet-purses`, `rattan-purses`,
+  `glass-bead-woven-handbags`). It now points at `snippets/lena-category-handles.liquid` instead of
+  restating the list, because that file is the single source of truth two other snippets read.
+- **CLAUDE.md modified stock files (E6)** — four were missing: `main-collection-product-grid`,
+  `header-search`, `newsletter`, `footer`. Found with `git diff --name-only main`, which is now the
+  documented way to regenerate that list.
+- **CLAUDE.md stylesheet row (E7)** — "1414 lines, 80+ classes" replaced with `wc -l` and the
+  section-map grep.
+- **OPEN_ITEMS verify commands (E8)** — two greps named `lena_color_whitelist`, which returns 0.
+  Corrected to `cf_whitelist` in its new home, and re-run to confirm.
+- **OPEN_ITEMS line references (E9)** — stale throughout; four spot-checked, four wrong. Rather than
+  re-deriving 48 of them, a note at the top says they are not to be trusted and names the greps to
+  use instead.
+- **A state table for the survey** was added to `OPEN_ITEMS.md`, keeping the survey's own finding
+  IDs so references to the archive keep resolving. `docs/CODE_SURVEY_2026-09-20.md` itself is left
+  **untouched as the frozen archive**.
+
+**Verify now:**
+```
+bash docs/regression-check.sh
+```
+Section 3 asserts each correction: that ARCHITECTURE.md no longer claims a fixed stylesheet length,
+that the selectors it records as removed really are absent from the code, that OPEN_ITEMS has no
+command left greping `facets.liquid` for the renamed variable, and that CLAUDE.md points at the
+canonical handle list rather than copying it. Then run any command in `ARCHITECTURE.md` — that is
+the whole point of the rewrite, and if one fails, the file is wrong again.
+
+**Two mistakes in this batch, both the same shape.** An assertion checked that
+`docs/OPEN_ITEMS.md` never mentions `lena_color_whitelist` — but the note *explaining* the correction
+names it deliberately. A second checked that `ARCHITECTURE.md` never mentions `.lena-pdp-cat` — but
+the file correctly says the selector *was removed*. **"The document does not mention X" is the wrong
+assertion for a document that explains history.** Both were replaced: one targets the executable
+command form, the other asserts the underlying code fact (those selectors are absent from
+`assets/`, `sections/` and `snippets/`), which is what actually matters and is what should turn red.
+
+**Regression risk:** the next person who needs a line number and writes one down. The header of
+`ARCHITECTURE.md` now explains why not, in the file itself rather than only here — a convention that
+lives only in a DEVLOG entry is a convention nobody reads.

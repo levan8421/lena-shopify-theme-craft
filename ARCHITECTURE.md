@@ -1,222 +1,303 @@
 # ARCHITECTURE.md — Lena Handicrafts Theme Deep Reference
 
-> Line numbers verified 2026-06-05. Re-verify after major CSS or facets edits.
+> **This file deliberately contains almost no line numbers.**
+>
+> It used to be built out of them, and every one had rotted. On 2026-09-20 the CSS map was wrong
+> by 80–137 lines on every single row, `main-404.liquid` was documented as 175 lines when it is
+> 52, two of the selectors listed no longer existed, and a removed drop countdown was still
+> described in three places. A wrong line number is worse than no line number: it sends the reader
+> — including a subagent — to the wrong place *after* they have decided to trust it.
+>
+> So where this file would have printed a number, it prints **the command that produces the number
+> now**. Commands cannot go stale. Run them.
+>
+> Numbers that *are* here carry a date, which makes them history rather than a claim about today.
 
-## CSS Architecture (`assets/lena-custom.css`, 1018 lines)
+---
 
-| Lines | Section | Key selectors |
-|-------|---------|---------------|
-| 6–26 | CSS Variables | 19 `--lena-*` vars in `:root` |
-| 28–31 | Global | `html { scroll-behavior: smooth }` |
-| 33–49 | Diamond Motif System | `.dm`, `.dm.filled`, `.dm.gold`, `.dm.sm`, `@keyframes dm-pulse` |
-| 51–61 | Announcement Bar | `.announcement-bar` overrides |
-| 63–83 | Header / Nav | `.section-header` backdrop blur, `.header__menu-item::after` underline animation |
-| 85–215 | Product Cards | `.lena-badge-1of1`, `.lena-badge-new`, `.lena-sold-overlay`, `.lena-scarcity`, `.lena-card-cat`, `.lena-notify-btn`, `.card--sold-out` |
-| 218–247 | Section Headers | `.lena-section-eye`, `.lena-section-h`, `.lena-section-p` |
-| 251–426 | Hero Section | `.lena-hero`, `.lena-hero-bg`, `.lena-hero-content`, `.lena-hero-mosaic`, `.lena-hero-img`, `.lena-btn`, `.lena-btn-primary`, `.lena-btn-ghost` |
-| 430–478 | Trust Strip (Marquee) | `.lena-trust-strip`, `.lena-marquee`, `.lena-marquee-track`, `.lena-marquee-item`, `@keyframes lena-marquee` |
-| 482–515 | Drop Section Header | `.lena-drop-bar`, `.lena-countdown-pill`, `.lena-view-all` |
-| 519–528 | Category Cards Overlay | `.collection-list .card__media::after`, `.collection-list .card:hover` |
-| 532–624 | Artisan Spotlight | `.lena-spot-card`, `.lena-spot-photo`, `.lena-spot-photo-inner`, `.lena-spot-role`, `.lena-spot-link`, `.lena-spot-nav` |
-| 628–722 | Find Us Cards | `.lena-find-grid`, `.lena-find-card`, `.lena-find-card.primary`, `.lena-find-card.event`, `.lena-fc-dir`, `[data-cards]` grid |
-| 726–732 | Newsletter Overrides | `.newsletter-form__field-wrapper` focus states |
-| 736–815 | PDP Branding | `.lena-pdp-cat`, `.lena-pdp-badge-1of1`, `.lena-pdp-artisan`, `.lena-pdp-scarcity`, `.lena-pdp-sold-msg`, `.lena-pdp-notify-btn` |
-| 817–852 | Collection Banner | `.lena-collection-banner`, `.lena-collection-title`, `.lena-collection-count` |
-| 854–920 | Testimonials | `.lena-testimonial-grid`, `.lena-testimonial-card`, `.lena-star`, `.lena-testimonial-quote`, `.lena-testimonial-author` |
-| 922–928 | Product Specifications | `.lena-specs-table` — two-column table for PDP metafield display |
-| 930–980 | Responsive | `@media (max-width: 900px)` tablet, `@media (max-width: 640px)` mobile |
-| 982–1018 | Popup / Modal | `.lena-popup-overlay`, `.lena-popup`, `.lena-popup-close`, `.lena-popup-field`, `.lena-popup-success`, mobile stack |
+## Where to look first
 
-## CSS Variables
+| Question | Command |
+|---|---|
+| What are the CSS sections, and where does each start? | `grep -nE '^/\* ?[─-]{2,}' assets/lena-custom.css` |
+| How big is the stylesheet? | `wc -l assets/lena-custom.css` |
+| Where is every Lena change in a stock file? | `grep -rn "Lena:" sections/ snippets/ layout/` |
+| …and the ones with no marker? | `grep -rn "lena-color-facet\|lena_\|lena-" snippets/facets.liquid sections/featured-collection.liquid` |
+| Which stock files were touched at all? | `git diff --name-only main -- sections/ snippets/ layout/ assets/ \| grep -v lena` |
+| What does a section actually accept? | the `{% schema %}` at the bottom of its own file |
+| Is a rule written more than once? | `bash docs/regression-check.sh` — section 3 asserts the single-source rules |
 
-| Variable | Value | Usage |
-|----------|-------|-------|
-| `--lena-navy` | `#0E2240` | Dark backgrounds |
-| `--lena-navy-mid` | `#132E52` | Newsletter bg |
-| `--lena-blue-deep` | `#1B4F8A` | Buttons, headings |
-| `--lena-blue-mid` | `#2478BD` | Blue gradient mid |
-| `--lena-blue-bright` | `#2E8FD9` | Primary accent, CTAs, diamond motif |
-| `--lena-blue-sky` | `#5AAEE6` | Gradient highlights |
-| `--lena-blue-ice` | `#E6F0FA` | Light blue bg |
-| `--lena-blue-tint` | `rgba(46,143,217,0.07)` | Subtle blue bg |
-| `--lena-amber` | `#D4A853` | Secondary accent |
-| `--lena-amber-soft` | `#E8B867` | Badge text, eyebrow text |
-| `--lena-amber-pale` | `#FDF5E8` | Light amber bg |
-| `--lena-snow` | `#FAFBFC` | Default page bg |
-| `--lena-ink` | `#141A24` | Darkest text |
-| `--lena-graphite` | `#3A4250` | Body text |
-| `--lena-slate` | `#6B7585` | Secondary text |
-| `--lena-silver` | `#E2E5EA` | Borders, dividers |
-| `--lena-success` | `#1A8A5C` | Available/scarcity green |
-| `--lena-success-pale` | `#E6F7EF` | Light green bg |
+**Start with `grep -rn "Lena:"`.** Every deliberate change to a stock file is marked with
+`{%- comment -%} Lena: … {%- endcomment -%}`. Three insertions carry no marker and are listed in
+`CLAUDE.md`; they are the only exceptions.
 
-## Section Schema Reference
+---
 
-### `lena-drop-header.liquid`
-- **Settings:** `eyebrow`, `collection_handle` (text, default `this-weeks-drop`), `color_scheme`, `padding_top`, `padding_bottom`
-- **No blocks.** Uses `collections[collection_handle]` to detect product count.
-- **Has products:** heading "This Week's Drop", shows "View all →" link
-- **Empty:** heading "New Drop Coming Soon", hides "View all" link
-- **Countdown:** JS countdown to next Friday 6 AM EST (11:00 UTC). Shows "Drop is LIVE!" from Friday 6 AM EST through Sunday midnight EST (Monday 05:00 UTC), then counts down to next Friday. Supports optional `next_drop_date` override.
+## CSS architecture (`assets/lena-custom.css`)
 
-### `lena-drop-coming-soon.liquid`
-- **Settings:** `eyebrow`, `heading` (inline_richtext), `description` (textarea), `cta_label`, `cta_link` (url, default `/collections/all`), `next_drop_date` (optional override), `color_scheme`
-- **No blocks.** Entire section wrapped in `{%- if collection.products.size == 0 -%}` — only renders on empty collections.
-- **Countdown:** Same logic as `lena-drop-header.liquid` — "Drop is LIVE!" during drop window, countdown otherwise.
-- **Used in:** `templates/collection.this-weeks-drop.json`
+There is no table of line ranges here any more. This prints the current map, correct by construction:
 
-### `lena-hero.liquid`
-- **Settings:** `eyebrow`, `heading` (richtext), `subheading`, `button_label_1`, `button_link_1`, `button_label_2`, `button_link_2`, `padding_top`, `padding_bottom`
-- **Blocks:** `mosaic_image` — `image`, `collection`, `tag_label`, `placeholder_text` (max 4)
+```bash
+grep -nE '^/\* ?[─-]{2,}' assets/lena-custom.css
+```
 
-### `lena-spotlight.liquid`
-- **Settings:** `eyebrow`, `heading` (richtext), `blog` (blog picker), `rotation_weeks` (select: 1/2/4), `color_scheme`, `padding_top`, `padding_bottom`
-- **No blocks.** Rotation: `week_number / rotation_weeks % article_count`
+Every section of the stylesheet opens with a banner comment in that form, so the output *is* the
+table of contents. Measured 2026-09-20 it listed 26 sections across 1500 lines.
 
-### `lena-find-us.liquid`
-- **Settings:** `eyebrow`, `heading`, `subheading`, `color_scheme`, `padding_top`, `padding_bottom`
-- **Blocks:** `location` — `name`, `schedule`, `description`, `address`, `directions_url`, `icon`, `primary` (bool)
-- **Also reads:** `shop.metaobjects.scheduled_event` — auto-shows events within 14-day window
+**Two rules that matter more than the map:**
 
-### `lena-testimonials.liquid`
-- **Settings:** `eyebrow`, `heading` (inline_richtext), `subheading`, `color_scheme`, `padding_top`, `padding_bottom`
-- **Blocks:** `testimonial` (max 6) — `quote` (textarea), `author_name`, `author_info`, `rating` (range 0–5, default 5)
-- **Grid:** `.lena-testimonial-grid` adapts via `data-cards` attribute (1–3 columns). Cards have star rating, italic quote with diamond motif, author info.
-- **Used in:** `templates/index.json` (between Q&A and Find Us sections)
-- **Managed in:** Theme Editor — add/edit/remove/reorder testimonials without code
+1. **No `!important` anywhere.** Verify with `grep -c '!important' assets/lena-custom.css` → `0`.
+   That is unusual for an override sheet this size and it is what keeps the cascade predictable.
+   Do not be the first to add one.
 
-### `lena-email-popup.liquid`
-- **Settings:** `heading` (inline_richtext), `text` (textarea), `button_label`, `placeholder`, `success_message`, `delay_seconds` (range 3–30, default 10)
-- **No blocks.** Limit 1 per theme.
-- **Behavior:** Auto-shows after `delay_seconds` or on exit-intent (mouse toward browser top). localStorage prevents re-showing after dismiss or subscribe.
-- **Tags contact with:** `newsletter` (general interest only)
-- **Rendered in:** `layout/theme.liquid` (after footer-group)
+2. **A media query adds no specificity.** A mobile override written as a bare class loses to a base
+   rule written as class-plus-attribute, at every width, silently. This shipped: the mobile
+   `.lena-find-grid` rule lost to `.lena-find-grid[data-cards="3"]` and Find Us kept three columns
+   on a phone. See the DEVLOG entry of 2026-09-20. **When a mobile rule appears not to work, check
+   specificity before changing the value.**
 
-### `lena-notify-modal.liquid` (snippet)
-- **No schema** (rendered via `{% render %}`, not `{% section %}`).
-- **JS API:** `window.lenaNotify(label, handle)` — opens modal, sets category label and tags dynamically.
-- **Tags contact with:** `newsletter,notify-{handle}` (e.g. `newsletter,notify-crochet-dolls`)
-- **Called from:** `snippets/card-product.liquid` notify button on sold-out products.
-- **Rendered in:** `layout/theme.liquid` (after email popup section)
+Also note the load-order rule from `CLAUDE.md`: `lena-custom.css` loads in `<head>`, a section's own
+stylesheet loads later and therefore *wins* any tie. Inside a stock component, add one more class to
+the selector.
 
-## 404 Page (`sections/main-404.liquid`, 175 lines)
+---
 
-Fully branded 404 page replacing the stock Dawn 404. Self-contained styles (no external CSS dependency).
+## Custom files
 
-| Feature | Details |
-|---------|---------|
-| Diamond motif header | `.lena-404__diamond` — 3 diamonds (blue, gold, blue) |
-| Error code | `.lena-404__code` — Large "404" in `--lena-blue-bright` |
-| Search bar | `.lena-404__search` — Form submitting to `{{ routes.search_url }}` with focus ring |
-| Quick nav links | `.lena-404__links` — All Collections, All Products, New Arrivals, Contact Us |
-| Home CTA | `.lena-404__home` — Blue button back to root |
-| Responsive | `@media (max-width: 640px)` reduces padding and font sizes |
+### Sections
 
-## Color Filter Whitelist (`snippets/facets.liquid`)
+| File | What it does |
+|---|---|
+| `lena-hero.liquid` | Hero with mosaic image grid and dual CTAs |
+| `lena-drop-header.liquid` | New Arrivals bar — heading + linked count. Hidden while the collection is empty. **Nothing to do with drops any more**; the name is kept because three JSON templates bind the section `type` string |
+| `lena-drop-coming-soon.liquid` | Empty-state section for a collection page. Same naming note |
+| `lena-featured-piece.liquid` | One available product from a collection, rotating on a date seed |
+| `lena-spotlight.liquid` | Blog-powered artisan rotation |
+| `lena-testimonials.liquid` | Testimonial cards |
+| `lena-find-us.liquid` | Location cards + scheduled-event metaobjects |
+| `lena-email-popup.liquid` | Newsletter modal |
 
-Shopify's Storefront Filtering API exposes all product tags under the "Color" filter, including non-color values like "Accessories", "artisan", "Compact Mirrors". A Liquid whitelist (55+ recognized color names) skips non-color values before rendering.
+### Snippets — the single-source-of-truth layer
 
-| Location | Lines | Loop |
-|----------|-------|------|
-| Desktop filters | 204–220 | `for value in filter.values` (first occurrence) |
-| Mobile/drawer filters | 592–608 | `for value in filter.values` (second occurrence) |
+This is the most important part of the theme to understand, because most of the bugs found in 2026
+were one rule written twice and then edited once. Each of these exists so that a rule has exactly
+one home.
 
-**How it works:** Before each `<li>`, checks `value.label` against `lena_color_whitelist`. Non-matches set `lena_skip_value = true`, and the `<li>` is wrapped in `{%- unless lena_skip_value -%}`. The whitelist includes standard colors plus extended names (navy, teal, coral, champagne, etc.).
+| Snippet | The one question it answers |
+|---|---|
+| `lena-stock.liquid` | How many are left, and what do we say about it? (`part: badge` / `part: scarcity`) |
+| `lena-notify-button.liquid` | The Notify Me button, including the target plumbing |
+| `lena-notify-target.liquid` | Which category is a Notify signup filed under? Outputs `<handle>\|<label>` |
+| `lena-category-handles.liquid` | The canonical category handles, as one CSV |
+| `lena-color-facet.liquid` | Is this facet value a real colour, and what is its label? (`fallback: hide` / `clean`) |
+| `lena-facet-pill.liquid` | One active-filter pill, whole |
+| `lena-facet-visible.liquid` | Will this filter render anything at all? |
+| `lena-hide-nav-link.liquid` | Should this nav link be omitted? |
+| `lena-event-window.liquid` | Is this scheduled event inside the display window? |
+| `breadcrumbs.liquid` | PDP breadcrumbs. No trailing crumb — it would repeat the `<h1>` |
+| `lena-notify-modal.liquid` | The Notify Me dialog markup and its `window.lenaNotify` entry point |
 
-**Note:** The Color filter will appear empty on collections until products have `color-{family}` tags applied via the batch uploader app.
+**Consume a snippet that returns a value with `capture`**, since Liquid snippets cannot return:
 
-## Product Card Customizations (`snippets/card-product.liquid`)
+```liquid
+{%- capture csv -%}{%- render 'lena-category-handles' -%}{%- endcapture -%}
+{%- assign handles = csv | strip | split: ',' -%}
+```
 
-| Lines | Feature | Condition |
-|-------|---------|-----------|
-| 108–119 | Inventory badge (`.lena-badge-1of1`) | qty > 0: "1 of 1" when qty=1, "N in stock" when qty>1; hidden when sold out |
-| 112–118 | "New" badge (`.lena-badge-new`) | `created_at` < 7 days ago (604800s) |
-| 119–122 | Sold-out overlay (`.lena-sold-overlay`) | `!card_product.available` |
-| 164–167 | Category label (`.lena-card-cat`) | `card_product.type` present |
-| 228–232 | Scarcity text (`.lena-scarcity`) | `card_product.available and lena_qty == 1` |
-| 233–238 | Notify button (`.lena-notify-btn`) | `!card_product.available` — opens category-specific modal via `window.lenaNotify()` |
+### Assets
 
-## PDP Customizations (`sections/main-product.liquid`)
+| File | What it does |
+|---|---|
+| `lena-custom.css` | Every custom style. No inline `<style>`, no second CSS file |
+| `lena-modal.js` | Shared dialog behaviour — focus trap, scroll lock, close wiring. `LenaModal.create(overlay, { onClose })`. Loaded `defer` from `<head>`, so both dialogs do their setup on `DOMContentLoaded` |
 
-| Lines | Feature | Condition |
-|-------|---------|-----------|
-| 101–104 | Category eyebrow (`.lena-pdp-cat`) | `product.type` present |
-| 106–117 | Inventory badge (`.lena-pdp-badge-1of1`) | qty > 0: "1 of 1" when qty=1, "N in stock" when qty>1; hidden when sold out |
-| 110–113 | Artisan attribution (`.lena-pdp-artisan`) | Always |
-| 130–134 | Scarcity text (`.lena-pdp-scarcity`) | `product.available and lena_qty == 1` |
-| 135–139 | Sold-out message (`.lena-pdp-sold-msg`) | `!product.available` |
-| 140–143 | Notify button (`.lena-pdp-notify-btn`) | `!product.available` — opens category-specific modal via `window.lenaNotify()` |
-| 268–299 | Specifications table (`.lena-specs-table`) | New `specifications` block type — collapsible accordion with up to 8 label/value rows. Values connectable to product metafields via Theme Editor dynamic sources. Only renders rows with non-blank values. |
+**The scroll lock is a shared count**, not a per-dialog assignment. A third dialog that writes
+`document.body.style.overflow` itself will work alone and break the other two. Go through
+`LenaModal`.
 
-## Collection Product Grid (`sections/main-collection-product-grid.liquid`)
+---
 
-| Lines | Feature |
-|-------|---------|
-| 143–202 | In-stock-first sorting: two-loop approach renders `product.available` items first, then sold-out items. Reorders within each page. |
-| 225–230 | `products_per_page` range: 8–48 (default 48). High default ensures most collections fit on 1 page for effective availability sorting. |
+## Section schema reference
 
-## Collection Banner (`sections/main-collection-banner.liquid`)
+Settings verified against each file's `{% schema %}` on **2026-09-20**. Regenerate at any time:
 
-| Lines | Feature |
-|-------|---------|
-| 14–18 | Diamond eyebrow: `<span class="dm filled sm"></span> Collection <span class="dm filled sm"></span>` |
-| 19–22 | Title with `.lena-collection-title` class |
-| 28–33 | Product count pill (`.lena-collection-count`) with piece/pieces pluralization |
+```bash
+for f in sections/lena-*.liquid; do echo "### $f"; sed -n '/{% schema %}/,/{% endschema %}/p' "$f"; done
+```
 
-## Inline Sections (NOT standalone files)
+| Section | Settings | Blocks |
+|---|---|---|
+| `lena-hero` | `eyebrow`, `heading`, `subheading`, `button_label_1/2`, `button_link_1/2`, `padding_top/bottom` | `mosaic_image`: `image`, `collection`, `tag_label`, `placeholder_text` |
+| `lena-drop-header` | `eyebrow`, `heading`, `collection_handle`, `color_scheme`, `padding_top/bottom` | — |
+| `lena-drop-coming-soon` | `eyebrow`, `heading`, `description`, `cta_label`, `cta_link`, `color_scheme` | — |
+| `lena-featured-piece` | `collection`, `rotation`, `eyebrow`, `heading`, `description`, `cta_label`, `color_scheme`, `padding_top/bottom` | — |
+| `lena-spotlight` | `eyebrow`, `heading`, `blog`, `rotation_weeks`, `color_scheme`, `padding_top/bottom` | — |
+| `lena-find-us` | `eyebrow`, `heading`, `subheading`, `color_scheme`, `padding_top/bottom` | `location`: `name`, `schedule`, `description`, `address`, `directions_url`, `icon`, `primary` |
+| `lena-testimonials` | `eyebrow`, `heading`, `subheading`, `color_scheme`, `padding_top/bottom` | `testimonial`: `quote`, `author_name`, `author_info`, `rating` |
+| `lena-email-popup` | `heading`, `text`, `button_label`, `placeholder`, `success_message`, `delay_seconds` | — |
 
-These live as `custom_liquid` HTML inside `templates/index.json`, not as section `.liquid` files:
+**There is no countdown in any of these.** `lena-drop-header` and `lena-drop-coming-soon` used to
+carry a JS countdown to Friday. It was removed — the business is supply-driven and gaps run from
+days to a month, so no cadence claim belongs anywhere in the theme. Earlier versions of this file
+documented the countdown in three places; if you find another mention, it is stale.
 
-| Section | JSON key | What it contains |
-|---------|----------|-----------------|
-| Trust Strip | `lena-trust` | Scrolling marquee with 3 messages duplicated for seamless `translateX(-50%)` loop. Hover pauses. `prefers-reduced-motion` fallback. |
+**Every section with `presets` carries `"disabled_on": { "groups": ["header", "footer"] }`** except
+`lena-drop-coming-soon`, which has no presets. Without that guard, a section added from the "Add
+section" button inside the Header group lands in `sections/header-group.json`, pinned above the
+template and undraggable.
 
-> **Note:** Drop Header was previously inline `custom-liquid` but has been converted to a proper section (`sections/lena-drop-header.liquid`) to access collection data for empty-state handling.
+---
 
-## Custom Collection Templates
+## Rotation: how "pick one" works without a random filter
 
-| Template | Sections | Purpose |
-|----------|----------|---------|
-| `collection.this-weeks-drop.json` | `main-collection-banner` → `lena-drop-coming-soon` → `main-collection-product-grid` | Branded empty-state when no products in drop collection. Coming-soon section self-hides when products exist. |
+Liquid has no `random`. Both rotating sections seed an integer off the date and take it modulo the
+pool size, so every visitor sees the same piece for the whole period.
 
-**Shopify Admin step:** Assign `this-weeks-drop` template to the `this-weeks-drop` collection (Admin → Collections → This Week's Drop → Theme template).
+**The seed counts days since the epoch** — `'now' | date: '%s' | divided_by: 86400` — divided down
+for weekly or monthly. It must not read a calendar field directly: `'%m'` only takes 12 values,
+`'%W'` caps near 54, and both reset every year, so a pool larger than that can never be fully reached
+and the sequence jumps at the year boundary. `lena-featured-piece` hit this and `lena-spotlight`
+carried the same fault until 2026-09-20.
 
-## Common Tasks Cheat Sheet
+**Known limit (R15):** outside a `paginate` tag, `collection.products` returns at most 50 products,
+so `lena-featured-piece` can only ever feature the first 50 of its collection. Liquid offers no way
+round it in a section. The practical answer is a collection sized to the job.
 
-| Task | File(s) to edit |
-|------|----------------|
-| Change brand colors | `assets/lena-custom.css` lines 7–25 (`:root` vars) |
-| Change hero content/images | Shopify admin or `templates/index.json` → `lena-hero` |
-| Change drop header messaging | `sections/lena-drop-header.liquid` (heading text in Liquid conditionals) |
-| Change drop coming-soon page | `sections/lena-drop-coming-soon.liquid` or Shopify admin section settings |
-| Change trust strip messages | `templates/index.json` → `lena-trust` → `custom_liquid` |
-| Change product card badges | `snippets/card-product.liquid` lines 108–122 |
-| Change "New" badge threshold | `snippets/card-product.liquid` line 116 (`604800` = 7 days) |
-| Change scarcity/sold text | `snippets/card-product.liquid` lines 228–237 + `sections/main-product.liquid` lines 129–139 |
-| Change PDP branding | `sections/main-product.liquid` lines 101–139 |
-| Change collection banner | `sections/main-collection-banner.liquid` lines 14–33 |
-| Edit Q&A content | `templates/index.json` → `lena-qa` blocks, or Shopify admin (section settings) |
-| Add/edit Find Us locations | Shopify admin (section blocks) or `templates/index.json` |
-| Change event display window | `sections/lena-find-us.liquid` line 21 (`1209600` = 14 days) |
-| Change spotlight rotation | Shopify admin → section settings → `rotation_weeks` |
-| Add new CSS section | Append before responsive block (before line 831) |
-| Change responsive breakpoints | `assets/lena-custom.css` lines 831–879 |
-| Change 404 page content/style | `sections/main-404.liquid` (self-contained styles + markup) |
-| Edit color filter whitelist | `snippets/facets.liquid` lines 204–220 (desktop) and 592–608 (mobile) — keep both in sync |
-| Change fonts / page width | `config/settings_data.json` |
-| Change color schemes | `config/settings_data.json` → `color_schemes` |
-| Change email popup text/delay | Shopify admin → Email Popup section settings, or `sections/lena-email-popup.liquid` |
-| Change notify modal text | `snippets/lena-notify-modal.liquid` |
-| Add/edit testimonials | Shopify admin (section blocks) or `templates/index.json` → `lena-testimonials` |
-| Change PDP specifications | Theme Editor → Product page → "Product Specifications" block → connect values to metafields via dynamic sources |
-| Change products per page | `sections/main-collection-product-grid.liquid` line 225 (range setting) + `templates/collection.json` |
-| Change newsletter tags | `sections/newsletter.liquid` line 49, `sections/footer.liquid` line 174 (drop-list), `sections/lena-email-popup.liquid` (general), `snippets/lena-notify-modal.liquid` (category) |
+---
 
-## Newsletter Tagging Strategy
+## Stock files: what was changed and why
 
-| Segment | Tag(s) | Capture point |
-|---------|--------|---------------|
-| General interest | `newsletter` | Email popup (auto 10s / exit-intent) |
-| Drop list | `newsletter,drop-list` | Hero "Join the Drop List" button → footer newsletter, footer newsletter form |
-| Category notify | `newsletter,notify-{handle}` | "Notify Me" button on sold-out product cards |
-| POS subscribers | `newsletter,drop-list` | Shopify Flow auto-tags on customer creation with marketing consent |
+`CLAUDE.md` holds the authoritative table. This is the part that needs explaining rather than
+listing.
+
+### Colour filter (`snippets/facets.liquid`)
+
+The whitelist lives in **`snippets/lena-color-facet.liquid`**, once, in a variable named
+`cf_whitelist`. It used to be pasted out in full twice inside `facets.liquid`, surrounded by six
+copies of the "is this the Color filter" test written in two non-equivalent forms. Add a colour
+there and every call site follows.
+
+```bash
+grep -n "cf_whitelist" snippets/lena-color-facet.liquid     # the list
+grep -c "lena-color-facet" snippets/facets.liquid           # the call sites
+```
+
+Two answers, chosen by the caller:
+
+- `fallback: 'hide'` (default) — the checkbox lists drop a non-colour value.
+- `fallback: 'clean'` — the active pills tidy it instead (`color-accessories` → `Accessories`). A
+  pill can never be hidden: it **is** the control that removes the filter.
+
+A filter whose every value is hidden is skipped entirely by `lena-facet-visible`, so no empty
+fieldset renders. That guard is restricted to `boolean` and `list` filters — `price_range` has no
+`values` at all and an unguarded version would remove price filtering from the store.
+
+> The Color filter appears empty on a collection until its products carry `color-{family}` tags from
+> the batch uploader app.
+
+### Product cards (`snippets/card-product.liquid`)
+
+The badge, the scarcity line and the Notify button are **rendered from snippets**, not written here.
+That is deliberate: the quantity used to be assigned inside the `featured_media` branch and read
+outside it, so a product with no photo silently lost its scarcity line. There is no quantity variable
+at any call site now.
+
+The **New badge reads the app-owned `new` tag**, case-insensitively. It does *not* compute a window
+from `created_at`. The app owns what "new" means and the `new-arrivals` smart collection matches the
+same tag; a date filter in the theme would be a second opinion.
+
+### PDP (`sections/main-product.liquid`)
+
+Breadcrumbs, inventory badge, artisan line, scarcity/sold message, notify button, a quantity stepper
+hidden at max-purchasable 1, and the return-window blurb. **There is no category eyebrow** —
+`.lena-pdp-cat` was removed because it duplicated the breadcrumb directly above it.
+
+**The return window is written by hand in three places** — here, the homepage Q&A in
+`templates/index.json`, and the Refund Policy page in admin. Nothing links them.
+`grep -rn "days of delivery" sections/ templates/` plus the admin page.
+
+### Collection pages
+
+- **Banner** — diamond eyebrow, title class, count pill. The banner **always renders**, including
+  when the collection is empty; a collection page's `<h1>` is its title and there is no count at
+  which it should disappear. The count pill keeps its own zero test.
+- **Grid** — in-stock-first sorting via a two-pass loop, and two different empty states: a genuinely
+  empty collection is handled by `lena-drop-coming-soon`, a collection *filtered* to nothing gets
+  stock Craft's "No products found / remove all". Those are different sentences for different
+  situations and must not be collapsed.
+- **In-stock-first sorts within a page only.** The loop runs inside `paginate`, so
+  `collection.products` is the current page slice. Not fixable in Liquid.
+
+### 404 (`sections/main-404.liquid`)
+
+Full rewrite: branded page with search, nav links and diamond motifs. **Its styles live in
+`lena-custom.css`**, not in an inline block — an earlier version of this file said otherwise.
+
+---
+
+## Inline sections (NOT standalone files)
+
+| Section | JSON key | What it is |
+|---|---|---|
+| Trust Strip | `lena-trust` | `custom_liquid` HTML inside `templates/index.json`. Scrolling marquee, messages duplicated for a seamless `translateX(-50%)` loop. Hover pauses; `prefers-reduced-motion` fallback |
+
+Grepping the `sections/` directory will never find it. For the current homepage order:
+
+```bash
+python3 -c "import json,re;print(json.loads(re.sub(r'/\*.*?\*/','',open('templates/index.json').read(),flags=re.S))['order'])"
+```
+
+---
+
+## Custom collection templates
+
+| Template | Purpose |
+|---|---|
+| `collection.new-arrivals.json` | Banner + empty-state section + grid. Needs manual template assignment in admin |
+| `collection.this-weeks-drop.json` | **Legacy.** Nothing links here. The collection is live and holds 0 products, so it serves a permanent empty state — see `docs/OPEN_ITEMS.md` for the redirect that should replace it |
+
+---
+
+## Common tasks
+
+Files, not line numbers. Find the spot inside the file with the grep in the right-hand column.
+
+| Task | File | Find it with |
+|---|---|---|
+| Brand colours | `assets/lena-custom.css` | `grep -n '^  --lena-' assets/lena-custom.css` |
+| A CSS section | `assets/lena-custom.css` | `grep -nE '^/\* ?[─-]{2,}' assets/lena-custom.css` |
+| Responsive breakpoints | `assets/lena-custom.css` | `grep -n '@media' assets/lena-custom.css` |
+| Inventory badge / scarcity wording | `snippets/lena-stock.liquid` | whole file |
+| Notify button wording | `snippets/lena-notify-button.liquid` | whole file |
+| "New" badge rule | `snippets/card-product.liquid` | `grep -n 'lena_is_new' snippets/card-product.liquid` |
+| Colour whitelist | `snippets/lena-color-facet.liquid` | `grep -n 'cf_whitelist'` |
+| Event display window | `snippets/lena-event-window.liquid` | `grep -n 'ev_window'` |
+| Which nav links are hidden | `snippets/lena-hide-nav-link.liquid` | whole file |
+| Dialog behaviour | `assets/lena-modal.js` | whole file |
+| Return window | three places | `grep -rn "days of delivery" sections/ templates/` + admin |
+| Products per page | `templates/collection*.json` | `grep -rn products_per_page templates/` |
+| Hero, Q&A, testimonials, Find Us content | **Shopify admin** | `templates/index.json` stores it; edit in admin, then `git pull` |
+| Fonts, page width, colour schemes | **Shopify admin** | `config/settings_data.json` |
+
+**Before editing any of these, re-read the admin-vs-code table in `CLAUDE.md`.** Section setting
+text, images, colours, padding, and section show/hide/reorder live in `templates/*.json` and must be
+changed in admin — Shopify strips setting IDs it does not recognise when it ingests a hand-edited
+JSON template.
+
+---
+
+## Newsletter tagging
+
+| Segment | Tags | Capture point |
+|---|---|---|
+| General interest | `newsletter` | Email popup (delay or exit intent) |
+| Footer list | `newsletter,drop-list` | Footer newsletter form |
+| Category notify | `newsletter,notify-{handle}` | Notify Me on a sold-out card or PDP |
+| POS subscribers | `newsletter,drop-list` | Shopify Flow, on customer creation with marketing consent |
+
+The `{handle}` comes from `lena-notify-target`, **never from `product.type`** — the two disagree for
+five of the seven live categories.
+
+```bash
+grep -rn "contact\[tags\]\|notify-" snippets/lena-notify-modal.liquid sections/lena-email-popup.liquid
+```

@@ -10,6 +10,72 @@ Last swept: 2026-09-15.
 
 ## Theme code
 
+### Code survey 2026-09-20 — state table
+
+`docs/CODE_SURVEY_2026-09-20.md` is frozen as the archive and is not edited; its finding IDs are
+kept so references to it keep resolving. This is the state of each finding. **Closed items are not
+described here — they have a `DEVLOG.md` entry, which is where the detail lives.**
+
+| ID | Finding | State |
+|---|---|---|
+| A1 | Featured Piece points at handle `artisan` | **unexplained** — see the note above the R-table |
+| A2 | Filtered-to-zero rendered blank space | closed · DEVLOG 2026-09-20 (batch 1) |
+| B1 | Empty collection had no `<h1>` | closed · batch 1 |
+| B2 | `lena_qty` read outside its branch | closed · batch 2 |
+| B3 | Nav-hiding rule missed submenus | closed · batch 4 |
+| B4 | Non-colour value printed raw in the pill | closed · batch 3 |
+| B5 | Color fieldset could render empty | closed · batch 3 |
+| B6 | Spotlight's `'%W'` rotation seed | closed · batch 5 |
+| B7 | Spotlight dot nav capped at 6 | closed · batch 5 |
+| B8 | `aria-labelledby` named an emptied span | closed · batch 4 |
+| B9 | Find Us rendered a heading over nothing | closed · batch 4 |
+| B10 | Two predicates answer "is this collection empty" | **open** — see below |
+| B11 | Dead condition in the banner | closed · batch 1 |
+| B12 | In-stock-first sorts within a page only | **open** — not fixable in Liquid; wants a comment |
+| C1–C4 | Badge / scarcity / sold / notify duplication | closed · batch 2 |
+| C5 | Modal focus-trap JS duplicated verbatim | closed · batch 7 |
+| C6 | `section-…-padding` style block ×6 | **open** — standard Shopify idiom, low value, zero risk |
+| C7 | Facet pill boilerplate ×4 | closed · batch 3 |
+| C8 | Two near-identical collection templates | **open** — resolves with the `this-weeks-drop` redirect below |
+| D1 | Unreachable `article`/`page` search branches | closed · batch 6 — **kept and marked, not deleted** |
+| D2 | `form.action \|\| '/contact'` | closed · batch 6 |
+| D3 | `.lena-popup-content`, `.lena-fp-body` have no CSS | closed · batch 6 — **left in place on purpose**; an unstyled class is a hook, not dead code |
+| D4 | Duplicate `.lena-find-grid` mobile rule | closed · batch 6 — **it was not duplication, it was a live mobile bug** |
+| D5 | `this-weeks-drop` serves a permanent empty state | **open** — admin redirect, listed under *Smaller data items* |
+| D6 | Spotlight disabled, its blog does not exist | **open** — an admin decision, not a fault |
+| E1 | `OPEN_ITEMS` R1 said `fixed` | closed · batch 8 |
+| E2, E3 | `ARCHITECTURE.md` line table and dead selectors | closed · batch 8 — the file is rebuilt around commands |
+| E4–E7 | `CLAUDE.md` order, collections, missing files, counts | closed · batch 8 |
+| E8, E9 | `OPEN_ITEMS` verify commands and line refs | closed · batch 8 |
+
+**B10 · two predicates for one question.** `CLAUDE.md` states the rule — *"`all_products_count`, not
+`products_count` … for any visibility decision"* — and then two files answer it differently:
+
+```bash
+grep -n "all_products_count" sections/lena-drop-header.liquid       # the rule, followed
+grep -n "products.size > 0" sections/featured-collection.liquid     # the rule, not followed
+```
+
+`CLAUDE.md` claims the New Arrivals bar and grid "appear and disappear together". They agree today by
+luck, not by construction: `products.size` is also capped at 50 outside a `paginate`, so a
+collection of 60 with the first 50 filtered out would disagree. One rule written twice.
+
+**Still unaddressed from the survey's smaller notes:**
+
+- `main-404.liquid` builds `{{ routes.collections_url }}/available-now` and hardcodes
+  `/pages/contact` without `routes.root_url`. Both break under a locale or subfolder prefix.
+- `lena-email-popup` is rendered statically in `theme.liquid` **and** declares `presets`, so it can
+  also be added to a template from the theme editor — two popups on one page. `"limit": 1` does not
+  prevent this, because the static render is not counted.
+- `lena-find-us`'s default heading is "Find Us This **Weekend**" and its preset schedule reads
+  "Every Saturday". `CLAUDE.md` forbids day-of-week wording, but that rule was written about *drop
+  cadence* and a recurring market stall is a different thing. The rule as written does not carve
+  that out, so it needs one sentence either way — or the next reader will "fix" the heading or quietly
+  stop trusting the rule.
+
+---
+
+
 *(A6, the duplicated colour whitelist, and the Notify Me failure item were all closed on
 2026-09-16 — see `DEVLOG.md`. A6 was stale, the other two were fixed as R21 and R4.)*
 
@@ -136,9 +202,35 @@ the **Verify** steps for that item and it worked. `failed` means someone followe
 did not work. A fix stays `not yet` until a person looks at it; `failed` is a real verdict and
 is never used to mean "unchecked".
 
+> **Line numbers in the detail blocks below are stale and should not be trusted.** They were
+> correct when written and the files have moved under them; four were spot-checked on 2026-09-20 and
+> all four were wrong. Find the code with `grep -rn "Lena:" sections/ snippets/` or by the class or
+> variable name the block mentions. New entries should name a grep, not a line — see the note at the
+> top of `ARCHITECTURE.md` for why.
+
+> **On R1, added 2026-09-20.** This row read `fixed` for months while `templates/index.json` still
+> said `"collection": "artisan"` and no DEVLOG entry had ever changed it. That false `fixed` is the
+> reason nobody looked — a state table is only worth more than prose while it stays true.
+>
+> The honest state today is **unexplained, not open and not fixed**, because two reliable
+> measurements disagree:
+> - **The data says the collection does not exist.** `collectionByIdentifier(handle: "artisan")`
+>   returns `null`; a positive control (`rattan-purses` → 26 products) and a negative control (a
+>   made-up handle → `null`) both behave correctly; and a full listing of all 22 collections in the
+>   store contains no `artisan` handle. The setting is `"collection": "artisan"` in git *and* in the
+>   live staging theme's own copy of `templates/index.json`, read back through the Admin API.
+> - **The page says otherwise.** The owner's screenshot of the live staging homepage on 2026-09-20
+>   shows the section rendering a Circle Rattan Purse, with the badge, price and CTA all correct —
+>   and the section has a hard gate, `{%- if fp_collection != blank and fp_pool_size > 0 -%}`, with
+>   no fallback branch.
+>
+> Both cannot be true, so something about how a `collection` setting resolves is not understood
+> here. **It is working, so nothing was changed.** To settle it: open the theme editor, look at the
+> Featured Piece section's collection field, and record what it actually shows.
+
 | # | Bug | Origin | Status | Review |
 |---|---|---|---|---|
-| R1 | Featured Piece points at collection handle `artisan`, which does not exist — section renders nothing, and the homepage has no products at all | admin setting | fixed | not yet |
+| R1 | Featured Piece points at collection handle `artisan` | admin setting | **unexplained — see note below** | 2026-09-20 |
 | R2 | Quick add on search is inert: schema default is `none` and `search.json` never sets it | admin setting | fixed | not yet |
 | R3 | Filtering a collection to zero results removes the `<h1>` and shows "we're preparing something special" | Lena in stock | fixed | not yet |
 | R4 | Email popup and Notify modal report success on a failed submit; the popup also suppresses itself permanently | Lena file | fixed | not yet |
@@ -831,8 +923,12 @@ fails a test when one is edited.
 
 **Verify:**
 ```bash
-grep -c "lena_color_whitelist" snippets/facets.liquid   # 4  (2 assigns, 2 loops)
-grep -c "lena_pill_label" snippets/facets.liquid        # 8  (4 sites x 2 lines)
+# Corrected 2026-09-20. The old commands named lena_color_whitelist and lena_pill_label,
+# both of which returned 0: the whitelist moved to snippets/lena-color-facet.liquid as
+# cf_whitelist, and the pill markup moved to snippets/lena-facet-pill.liquid.
+grep -c "cf_whitelist" snippets/lena-color-facet.liquid   # the list, in one file
+grep -c "lena-color-facet" snippets/facets.liquid         # call sites in the checkbox lists
+grep -c "lena-facet-pill" snippets/facets.liquid          # 4 - one per active-pill site
 ```
 
 **Regression risk:** renaming the filter in Search & Discovery, or adding a colour to one
@@ -1036,7 +1132,8 @@ is present in the live tag list.
 **Verify:**
 ```
 # Admin API: productTags(first: 250), filter to color-*  ->  13 (measured 2026-09-16)
-grep -o "lena_color_whitelist = '[^']*'" snippets/facets.liquid | head -1
+# Corrected 2026-09-20: the whitelist is cf_whitelist in lena-color-facet.liquid now.
+grep -o "cf_whitelist = '[^']*'" snippets/lena-color-facet.liquid | head -1
 # confirm each of the 13 appears after the color- prefix is stripped
 ```
 

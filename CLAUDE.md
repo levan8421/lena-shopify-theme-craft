@@ -29,7 +29,13 @@ shopify theme push --unpublished   # Push for review
 | `snippets/lena-event-window.liquid` | 41 | Is a `scheduled_event` inside the 14-day display window? Outputs `1` or nothing. `lena-find-us` asks it twice — to count cards and to render them |
 | `snippets/breadcrumbs.liquid` | 56 | PDP breadcrumbs — `collection` when arrived through one, category list as fallback. **No trailing crumb**: it would repeat the `<h1>` beneath it |
 | `snippets/lena-category-handles.liquid` | 17 | The canonical category handles as one CSV. Single source of truth for `breadcrumbs` and `related-products`; consume with `capture` + `render` |
-| `assets/lena-custom.css` | 1414 | All custom styles (17 sections, 80+ classes). Includes the 404 page rules, moved here from an inline block in `main-404.liquid` |
+| `snippets/lena-stock.liquid` | 80 | The inventory rule, once. `part: 'badge'` gives "1 of 1" / "N in stock"; `part: 'scarcity'` gives "Only piece in existence". `style:` picks the CSS class only, never the wording. **Computes the quantity itself at every call site**, so no caller holds a variable that can be read out of scope — which is how the card version broke |
+| `snippets/lena-notify-button.liquid` | 47 | The Notify Me button, once. Renders nothing for an available product |
+| `snippets/lena-facet-pill.liquid` | 32 | One active-filter pill, whole. Was written out 4 times in `facets.liquid` |
+| `snippets/lena-facet-visible.liquid` | 31 | Will this filter render anything? Stops an empty Color accordion. Callers must restrict it to `boolean`/`list` — `price_range` has no `values` |
+| `snippets/lena-hide-nav-link.liquid` | 33 | Should this nav link be omitted? Called at all three menu depths in all three header snippets |
+| `assets/lena-modal.js` | 137 | Shared dialog behaviour — focus trap, scroll lock, close wiring. `LenaModal.create(overlay, { onClose })`. **The scroll lock is a shared count**: a dialog that writes `document.body.style.overflow` itself works alone and breaks the others |
+| `assets/lena-custom.css` | `wc -l` | All custom styles. Includes the 404 page rules, moved here from an inline block in `main-404.liquid`. **No `!important` anywhere** — keep it that way. Section map: `grep -nE '^/\* ?[─-]{2,}' assets/lena-custom.css` |
 
 **Filename note:** `lena-drop-header` and `lena-drop-coming-soon` keep their filenames for historical
 reasons — the section `type` string is bound by three JSON templates, so renaming the files breaks
@@ -51,6 +57,11 @@ them. Neither has anything to do with drops any more; see their header comments.
 | `sections/main-404.liquid` | whole file | Full rewrite: branded 404 with search, nav links, diamond motifs. Now 52 lines — its styles live in `lena-custom.css`, not inline |
 | `sections/collection-list.liquid` | ~18, schema | `subtitle` setting rendered under the section title |
 | `sections/related-products.liquid` | 30–145 | Recommendations filtered to matching `product.type`, topped up from the product's category collection so the row is never short |
+| `sections/main-collection-product-grid.liquid` | grep `Lena:` | Two different empty states: a genuinely empty collection (handled by `lena-drop-coming-soon`) and one filtered to nothing (stock Craft's "No products found / remove all"). **Do not collapse them** · in-stock-first two-pass sort, which only sorts within a page |
+| `snippets/header-search.liquid` | grep `Lena:` | Hidden `type=product` input, so search returns products only |
+| `sections/newsletter.liquid` | grep `Lena:` | Newsletter tagging |
+| `sections/footer.liquid` | grep `Lena:` | Footer newsletter tagging (`drop-list`) |
+| `layout/theme.liquid` | 259, ~36, 319–320 | Loads `lena-custom.css` and `lena-modal.js`; renders the email popup section and the notify modal snippet |
 
 ### Comment convention
 
@@ -67,9 +78,9 @@ All Lena changes in stock files are marked: `{%- comment -%} Lena: <description>
 | 1 | Hero | `lena-hero` | Navy bg, mosaic grid, "One piece at a time" |
 | 2 | Trust Strip | `custom-liquid` | Scrolling diamond marquee (inline HTML, not a section file) |
 | 3 | Our Story | `image-with-text` | Founder photo + brand narrative |
-| 4 | New Arrivals bar | `lena-drop-header` | Collection `new-arrivals`. Heading + linked count. **Hidden while empty** |
-| 5 | New Arrivals grid | `featured-collection` | Key `new-arrivals-grid`. Collection `new-arrivals`, no title — the bar above is its heading. Hides itself if empty, so the pair appear and disappear together |
-| 6 | Featured Piece | `lena-featured-piece` | One available product from a collection, rotating daily. Replaces the job Available Now was doing |
+| 4 | Featured Piece | `lena-featured-piece` | One available product from a collection, rotating daily. Replaces the job Available Now was doing. **Sits before the New Arrivals pair, not after** |
+| 5 | New Arrivals bar | `lena-drop-header` | Collection `new-arrivals`. Heading + linked count. **Hidden while empty** |
+| 6 | New Arrivals grid | `featured-collection` | Key `new-arrivals-grid`. Collection `new-arrivals`, no title — the bar above is its heading. Hides itself if empty, so the pair appear and disappear together |
 | 7 | Available Now | `featured-collection` | **Disabled.** 219 products behind a 4-item window; superseded by Featured Piece |
 | 8 | Shop by Category | `collection-list` | 12 collection tiles + subtitle |
 | 9 | Testimonials | `lena-testimonials` | Customer quotes |
@@ -78,6 +89,13 @@ All Lena changes in stock files are marked: `{%- comment -%} Lena: <description>
 | 12 | Find Us | `lena-find-us` | Uses `scheduled_event` metaobjects |
 
 **Note:** Trust Strip is custom-liquid HTML inside `templates/index.json`, NOT a standalone section file.
+
+**This table is a summary and can drift — `templates/index.json` is the record.** It was wrong about
+the position of Featured Piece until 2026-09-20. Print the live order with:
+
+```bash
+python3 -c "import json,re;print(json.loads(re.sub(r'/\*.*?\*/','',open('templates/index.json').read(),flags=re.S))['order'])"
+```
 
 ### Custom Collection Templates
 
@@ -105,7 +123,25 @@ All Lena changes in stock files are marked: `{%- comment -%} Lena: <description>
 
 ## Required Shopify Admin Objects
 
-- **Collections:** `available-now` (smart, `inventory > 0 AND tag ≠ POS`), `new-arrivals` (smart, **`Tag is equal to new`** — set once, never edited; the app owns the tag), `crochet-dolls`, `compact-mirrors`, `ribbon-embroidery-hats`, `signature-purses`, `phone-travel-wallet`
+- **Collections:** `available-now` (smart, `inventory > 0 AND tag ≠ POS`) and `new-arrivals` (smart,
+  **`Tag is equal to new`** — set once, never edited; the app owns the tag), plus the **seven
+  canonical category collections**, which are not listed here by hand. They live in
+  `snippets/lena-category-handles.liquid`, which is the single source of truth that `breadcrumbs`
+  and `related-products` both read:
+
+  ```bash
+  tail -1 snippets/lena-category-handles.liquid
+  ```
+
+  Measured 2026-09-20: `compact-mirrors`, `crochet-dolls`, `ribbon-embroidery-hats`,
+  `velvet-purses`, `rattan-purses`, `glass-bead-woven-handbags`, `phone-travel-wallet`.
+
+  **`signature-purses` is NOT one of them.** It exists in admin and holds 50 products, but it is
+  deliberately excluded from the canonical list — it is a parent that overlaps the velvet, rattan
+  and glass-bead collections. This list previously named it *instead of* those three, which is the
+  kind of error that makes a breadcrumb point at the wrong category. `compact-mirrors` is included
+  as the parent on purpose: artisan- and motif- mirrors both sit under it, and a breadcrumb naming
+  the parent is right for either.
 - **Blog:** `Artisan Stories` (for spotlight section)
 - **Metaobject:** `scheduled_event` (fields: `start_date`, `end_date`, `name`, `time_text`, `description`, `address`, `icon`)
 - **Menu:** `main-menu-gallery`
