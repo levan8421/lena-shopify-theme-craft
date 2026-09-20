@@ -1649,7 +1649,7 @@ only the `--self-padded-mobile` branch is live.
 ---
 
 ## 2026-09-20 · Bug · The hero was off-centre and had five different spacing values
-**Commit:** <pending> · **Files:** assets/lena-custom.css
+**Commit:** b55b816 · **Files:** assets/lena-custom.css
 
 **What it does / did:** the owner marked six gaps in the hero that should have matched and did not.
 Measured in the CSS, 2026-09-20, the hero was using: 56px above and below the content, 24px to its
