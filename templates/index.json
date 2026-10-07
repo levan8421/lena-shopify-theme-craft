@@ -221,12 +221,6 @@
     "shop-by-category": {
       "type": "collection-list",
       "blocks": {
-        "featured_collection_HXYULT": {
-          "type": "featured_collection",
-          "settings": {
-            "collection": ""
-          }
-        },
         "featured_collection_eEfXbj": {
           "type": "featured_collection",
           "settings": {
@@ -261,6 +255,12 @@
           "type": "featured_collection",
           "settings": {
             "collection": "large-round-mirror-pill-boxes"
+          }
+        },
+        "featured_collection_HXYULT": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "large-round-mirror-pill-boxes-copy"
           }
         },
         "featured_collection_AE3DGi": {
@@ -311,13 +311,13 @@
         }
       },
       "block_order": [
-        "featured_collection_HXYULT",
         "featured_collection_eEfXbj",
         "cat-crochet",
         "cat-hats",
         "cat-mirrors",
         "featured_collection_6XefqJ",
         "featured_collection_tgdHjG",
+        "featured_collection_HXYULT",
         "featured_collection_AE3DGi",
         "featured_collection_8Qe4FN",
         "featured_collection_yzefPm",
